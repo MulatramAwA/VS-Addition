@@ -100,7 +100,7 @@ dependencies {
     modImplementation("maven.modrinth:framedblocks:9.2.2")
 
     // Copycat+
-    modImplementation("maven.modrinth:copycats:2.0.4+mc.1.20.1-forge")
+    modImplementation("maven.modrinth:copycats:2.1.4+mc.1.20.1-forge")
 
     // CBC
     String rplSuffix = Boolean.valueOf(use_local_rpl_build) ? "" : "-build.${rpl_build}";

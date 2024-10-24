@@ -4,7 +4,6 @@ import io.github.xiewuzhiying.vs_addition.mixin.minecraft.HitResultAccessor
 import io.github.xiewuzhiying.vs_addition.mixinducks.valkyrienskies.ShipInertiaDataImplMixinDuck
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
-import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.level.BlockGetter
@@ -24,11 +23,8 @@ import org.valkyrienskies.core.api.ships.LoadedShip
 import org.valkyrienskies.core.api.ships.ServerShip
 import org.valkyrienskies.core.api.ships.Ship
 import org.valkyrienskies.core.api.ships.properties.ShipId
-import org.valkyrienskies.core.impl.collision.n
-import org.valkyrienskies.core.impl.game.ships.ShipObjectClient
-import org.valkyrienskies.mod.common.getShipManagingPos
+import org.valkyrienskies.mod.common.BlockStateInfo.get
 import org.valkyrienskies.mod.common.shipObjectWorld
-import org.valkyrienskies.mod.common.squaredDistanceBetweenInclShips
 import org.valkyrienskies.mod.common.util.DimensionIdProvider
 import org.valkyrienskies.mod.common.util.toJOML
 import org.valkyrienskies.mod.common.util.toMinecraft
@@ -37,8 +33,20 @@ import kotlin.math.floor
 
 object ShipUtils {
     @JvmStatic
-    fun ServerShip?.addMass(x: Double, y: Double, z: Double, mass: Double) {
-        (this?.inertiaData as? ShipInertiaDataImplMixinDuck)?.addMassAt(x, y, z, mass)
+    fun ServerShip?.addMass(mass: Double, pos: Any) {
+        val vector = toVector3dc(pos)
+        this.addMass(mass, vector.x(), vector.y(), vector.z())
+    }
+
+    @JvmStatic
+    fun ServerShip?.addMass(mass: Double, x: Double, y: Double, z: Double) {
+        (this?.inertiaData as? ShipInertiaDataImplMixinDuck)?.`vs_addition$addMassAt`(x, y, z, mass)
+    }
+
+    @JvmStatic
+    fun getMass(material: BlockState): Double {
+        val pair = get(material) ?: return 0.0
+        return pair.first
     }
 
     @JvmStatic

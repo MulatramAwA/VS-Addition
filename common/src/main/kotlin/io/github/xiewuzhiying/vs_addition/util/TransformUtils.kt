@@ -182,7 +182,7 @@ data class Quadruple<A,B,C,D>(var first: A, var second: B, var third: C, var fou
     override fun toString(): String = "($first, $second, $third, $fourth)"
 }
 
-private fun toVector3dc(inputPos: Any) : Vector3dc {
+fun toVector3dc(inputPos: Any) : Vector3dc {
     return when (inputPos) {
         is Vec3i -> inputPos.centerJOMLD
         is Position -> inputPos.toJOML()

@@ -47,6 +47,9 @@ object VSAdditionConfig {
 
             @JsonSchema(description = "Enable encased fan to work between ships")
             var encasedFanMixin : Boolean = false
+
+            @JsonSchema(description = "Not available yet. DO NOT OPEN THIS!")
+            var copycatMaterialMass : Boolean = false
         }
 
         val createBigCannons = CREATEBIGCANNONS()
