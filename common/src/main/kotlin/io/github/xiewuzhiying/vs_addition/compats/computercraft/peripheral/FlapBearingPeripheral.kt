@@ -37,7 +37,7 @@ open class FlapBearingPeripheral(val peripheralType: String, val tileEntity: Fla
         return false
     }
 
-    @LuaFunction(mainThread = true)
+    @LuaFunction
     open fun setAngle(angle: Double): Boolean {
         if (tileEntity.isRunning) {
             (this.tileEntity as FlapBearingBlockEntityMixinDuck).lockedFlapAngle = angle.toFloat()
@@ -47,7 +47,7 @@ open class FlapBearingPeripheral(val peripheralType: String, val tileEntity: Fla
         return false
     }
 
-    @LuaFunction(mainThread = true)
+    @LuaFunction
     fun unlock() : Any {
         if (tileEntity.isRunning) {
             (this.tileEntity as FlapBearingBlockEntityMixinDuck).isLocked = false

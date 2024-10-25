@@ -136,14 +136,17 @@ val Vec3i.centerDJOMLF : Vector3f
 val Entity.isOnShip : Boolean
     get() = this.level().getShipsIntersecting(this.boundingBox).any()
 
-val ClipContext.block : ClipContext.Block
+var ClipContext.block : ClipContext.Block
     get() = (this as ClipContextMixinDuck).block
+    set(value) { (this as ClipContextMixinDuck).block = value }
 
-val ClipContext.fluid : ClipContext.Fluid
+var ClipContext.fluid : ClipContext.Fluid
     get() = (this as ClipContextMixinDuck).fluid
+    set(value) { (this as ClipContextMixinDuck).fluid = value }
 
-val ClipContext.entity : Entity
+var ClipContext.entity : Entity?
     get() = (this as ClipContextMixinDuck).entity
+    set(value) { (this as ClipContextMixinDuck).entity = value}
 
 val ClipContext.collisionContext : CollisionContext
     get() = (this as ClipContextMixinDuck).collisionContext
@@ -154,18 +157,6 @@ fun ClipContext.setForm(vec3: Vec3) {
 
 fun ClipContext.setTo(vec3: Vec3) {
     (this as ClipContextMixinDuck).setTo(vec3)
-}
-
-fun ClipContext.setBlock(block: ClipContext.Block) {
-    (this as ClipContextMixinDuck).block = block
-}
-
-fun ClipContext.setFluid(fluid: ClipContext.Fluid) {
-    (this as ClipContextMixinDuck).fluid = fluid
-}
-
-fun ClipContext.setEntity(entity: Entity) {
-    (this as ClipContextMixinDuck).entity = entity
 }
 
 fun ClipContext.setCollisionContext(ctx: CollisionContext) {

@@ -11,14 +11,11 @@ import io.github.xiewuzhiying.vs_addition.compats.computercraft.PeripheralCommon
 import io.github.xiewuzhiying.vs_addition.compats.create.content.redstone.link.DualLinkRenderer
 import io.github.xiewuzhiying.vs_addition.forge.compats.computercraft.ForgePeripheralProvider
 import io.github.xiewuzhiying.vs_addition.forge.compats.computercraft.PeripheralForge.registerGenericPeripheralForge
-import io.github.xiewuzhiying.vs_addition.forge.compats.create.content.redstone.link.DualLinkHandler
 import io.github.xiewuzhiying.vs_addition.forge.compats.create.content.redstone.display_link.target.FramedSignDisplayTarget
-import io.github.xiewuzhiying.vs_addition.stuff.EntityFreshCaller
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.server.level.ServerLevel
 import net.minecraftforge.client.ConfigScreenHandler
+import net.minecraftforge.client.event.RenderBlockScreenEffectEvent
 import net.minecraftforge.event.TickEvent.ClientTickEvent
-import net.minecraftforge.event.entity.EntityJoinLevelEvent
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock
 import net.minecraftforge.eventbus.api.IEventBus
 import net.minecraftforge.fml.ModLoadingContext
@@ -53,11 +50,9 @@ class VSAdditionModForge {
             }
         }
 
-        getForgeBus().addListener(this::rightClickBlock)
-
         getForgeBus().addListener(this::clientTick)
 
-        getForgeBus().addListener(this::entityJoinLevel)
+        getForgeBus().addListener(this::onRenderWorldLast)
     }
 
     private fun clientSetup(event: FMLClientSetupEvent) {
@@ -83,13 +78,6 @@ class VSAdditionModForge {
         }
     }
 
-    private fun rightClickBlock(event: RightClickBlock?) {
-        if(event==null)
-            return
-        if(VSAdditionMod.CREATE_ACTIVE)
-            DualLinkHandler.onBlockActivated(event)
-    }
-
     private fun clientTick(event: ClientTickEvent?) {
         if(event==null)
             return
@@ -97,8 +85,11 @@ class VSAdditionModForge {
             DualLinkRenderer.tick()
     }
 
-    private fun entityJoinLevel(event: EntityJoinLevelEvent) {
-        (event.level as? ServerLevel)?.let { EntityFreshCaller.freshEntityInShipyard(event.entity, it) }
+
+    private fun onRenderWorldLast(event: RenderBlockScreenEffectEvent) {
+        if (event.overlayType.equals(RenderBlockScreenEffectEvent.OverlayType.WATER)) {
+            event.isCanceled = true
+        }
     }
 
     companion object {

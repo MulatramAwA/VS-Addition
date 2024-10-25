@@ -1,6 +1,13 @@
 package io.github.xiewuzhiying.vs_addition
 
+import dev.architectury.event.events.client.ClientTickEvent
+import dev.architectury.event.events.common.EntityEvent
+import dev.architectury.event.events.common.InteractionEvent
+import dev.architectury.event.events.common.InteractionEvent.RightClickBlock
 import dev.architectury.platform.Platform
+import io.github.xiewuzhiying.vs_addition.compats.create.content.redstone.link.DualLinkHandler
+import io.github.xiewuzhiying.vs_addition.compats.create.content.redstone.link.DualLinkRenderer
+import io.github.xiewuzhiying.vs_addition.stuff.EntityFreshCaller
 import org.valkyrienskies.core.impl.config.VSConfigClass
 
 object VSAdditionMod {
@@ -29,9 +36,21 @@ object VSAdditionMod {
         CBCMW_ACTIVE = Platform.isModLoaded("cbcmodernwarfare")
 
         VSConfigClass.registerConfig("vs_addition", VSAdditionConfig::class.java)
+
+        EntityEvent.ADD.register(EntityEvent.Add { entity, world -> EntityFreshCaller.freshEntityInShipyard(entity, world) } )
+        if (CLOCKWORK_ACTIVE) {
+            InteractionEvent.RIGHT_CLICK_BLOCK.register(RightClickBlock { player, hand, pos, face ->
+                DualLinkHandler.handler(player, hand, pos, face)
+            })
+        }
+
     }
 
     @JvmStatic
     fun initClient() {
+        if (CLOCKWORK_ACTIVE) {
+            ClientTickEvent.CLIENT_POST.register(ClientTickEvent.Client { DualLinkRenderer.tick() })
+        }
+
     }
 }

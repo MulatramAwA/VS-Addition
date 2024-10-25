@@ -7,7 +7,7 @@ import org.valkyrienskies.clockwork.content.contraptions.flap.FlapBearingBlockEn
 class CheatFlapBearingPeripheral(peripheralType: String, tileEntity: FlapBearingBlockEntity) : FlapBearingPeripheral(peripheralType,
     tileEntity
 ) {
-    @LuaFunction(mainThread = true)
+    @LuaFunction
     override fun setAngle(angle: Double): Boolean {
         if (tileEntity.isRunning) {
             (this.tileEntity as FlapBearingBlockEntityMixinDuck).lockedFlapAngle = angle.toFloat()

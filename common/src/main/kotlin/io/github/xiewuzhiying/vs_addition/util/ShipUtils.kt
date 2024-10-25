@@ -105,14 +105,15 @@ object ShipUtils {
 
         val clipAABB: AABBdc = AABBd(ctx.from.toJOML(), ctx.to.toJOML()).correctBounds()
 
-        val originalAabb = if (ctx.entity != null) {
+        val entity = ctx.entity
+        val originalAabb = if (entity != null) {
             AABB(
-                ctx.entity.boundingBox.minX,
-                ctx.entity.boundingBox.minY,
-                ctx.entity.boundingBox.minZ,
-                ctx.entity.boundingBox.maxX,
-                ctx.entity.boundingBox.maxY,
-                ctx.entity.boundingBox.maxZ
+                entity.boundingBox.minX,
+                entity.boundingBox.minY,
+                entity.boundingBox.minZ,
+                entity.boundingBox.maxX,
+                entity.boundingBox.maxY,
+                entity.boundingBox.maxZ
             )
         } else {
             null
@@ -120,7 +121,7 @@ object ShipUtils {
 
         // Iterate every ship, find do the raycast in ship space,
         // choose the raycast with the lowest distance to the start position.
-        for (ship in shipObjectWorld.loadedShips.getIntersecting(clipAABB)) {
+        for (ship in this.getLoadedShipsIntersecting(clipAABB)) {
             // Skip skipShip
             if (skipShips != null && skipShips.contains(ship.id)) {
                 continue
@@ -128,10 +129,10 @@ object ShipUtils {
             val worldToShip = (ship as? ClientShip)?.renderTransform?.worldToShip ?: ship.worldToShip
             val shipToWorld = (ship as? ClientShip)?.renderTransform?.shipToWorld ?: ship.shipToWorld
 
-            if (ctx.entity != null) {
-                ctx.entity.boundingBox = ctx.entity.boundingBox.scale(1 / worldToShip.getScale(Vector3d()).z)
+            if (entity != null) {
+                entity.boundingBox = entity.boundingBox.scale(1 / worldToShip.getScale(Vector3d()).z)
             }
-            val ctx2 = ClipContext(worldToShip.transformPosition(ctx.from.toJOML()).toMinecraft(), worldToShip.transformPosition(ctx.to.toJOML()).toMinecraft(), ctx.block, ctx.fluid, ctx.entity)
+            val ctx2 = ClipContext(worldToShip.transformPosition(ctx.from.toJOML()).toMinecraft(), worldToShip.transformPosition(ctx.to.toJOML()).toMinecraft(), ctx.block, ctx.fluid, entity ?: ctx.entity)
 
             val shipHit = clipFunction(this, ctx2)
             val shipHitPos = shipToWorld.transformPosition(shipHit.location.toJOML()).toMinecraft()
@@ -144,8 +145,8 @@ object ShipUtils {
             }
         }
 
-        if (ctx.entity != null) {
-            ctx.entity.boundingBox = originalAabb!!
+        if (entity != null) {
+            entity.boundingBox = originalAabb!!
         }
 
         if (shouldTransformHitPos) {
