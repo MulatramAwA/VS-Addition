@@ -16,16 +16,19 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "io.github.xiewuzhiying.vs_addition.fabric.VSAdditionModFabric"
+      {
+        "adapter": "kotlin",
+        "value": "io.github.xiewuzhiying.vs_addition.fabric.VSAdditionModFabric"
+      }
     ],
     "client": [
-      "io.github.xiewuzhiying.vs_addition.fabric.VSAdditionModFabricClient"
-    ],
-    "preLaunch": [
-      "io.github.xiewuzhiying.vs_addition.fabric.ValkyrienPreLaunch"
+      {
+        "adapter": "kotlin",
+        "value": "io.github.xiewuzhiying.vs_addition.fabric.VSAdditionModFabricClient"
+      }
     ],
     "modmenu": [
-      "io.xiewuzhiying.vs_addition.fabric.compats.modmenu.VSAdditionModMenu"
+      "io.github.xiewuzhiying.vs_addition.fabric.compats.modmenu.VSAdditionModMenu"
     ],
     "mm:early_risers": [
       "io.github.xiewuzhiying.vs_addition.fabric.asm.EarlyRiser"

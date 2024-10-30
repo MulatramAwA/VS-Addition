@@ -10,7 +10,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.simibubi.create.content.kinetics.deployer.DeployerFakePlayer;
 import com.simibubi.create.content.kinetics.deployer.DeployerHandler;
 import io.github.xiewuzhiying.vs_addition.mixinducks.create.deployer.IDeployerBehavior;
-import io.github.xiewuzhiying.vs_addition.stuff.InteractiveConditionTester;
+import io.github.xiewuzhiying.vs_addition.stuff.conditiontester.InteractiveConditionTester;
 import io.github.xiewuzhiying.vs_addition.util.TransformUtilsKt;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;

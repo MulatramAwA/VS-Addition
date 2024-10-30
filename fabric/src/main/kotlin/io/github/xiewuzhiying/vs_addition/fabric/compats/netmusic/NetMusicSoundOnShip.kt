@@ -1,4 +1,4 @@
-package io.xiewuzhiying.vs_addition.fabric.compats.netmusic
+package io.github.xiewuzhiying.vs_addition.fabric.compats.netmusic
 
 import com.github.tartaricacid.netmusic.audio.NetMusicSound
 import net.minecraft.core.BlockPos

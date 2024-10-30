@@ -6,7 +6,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.simibubi.create.foundation.block.IBE;
 import io.github.xiewuzhiying.vs_addition.compats.create.content.decoration.copycat.CopycatMassHandler;
 import io.github.xiewuzhiying.vs_addition.mixinducks.create.copycat.CopycatBlockEntityMixinDuck;
-import io.github.xiewuzhiying.vs_addition.stuff.CopycatConditionTester;
+import io.github.xiewuzhiying.vs_addition.stuff.conditiontester.CopycatConditionTester;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.core.BlockPos;

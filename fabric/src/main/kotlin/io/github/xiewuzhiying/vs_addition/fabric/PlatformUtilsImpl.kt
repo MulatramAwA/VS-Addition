@@ -1,11 +1,12 @@
-package io.github.xiewuzhiying.vs_addition.forge
+package io.github.xiewuzhiying.vs_addition.fabric
 
+import net.fabricmc.fabric.api.entity.FakePlayer
 import net.minecraft.server.MinecraftServer
 import net.minecraft.world.entity.player.Player
-import net.minecraftforge.common.util.FakePlayer
-import net.minecraftforge.server.ServerLifecycleHooks
 
 object PlatformUtilsImpl {
+    var minecraft: MinecraftServer? = null
+
     @JvmStatic
     fun isFakePlayer(player: Player): Boolean {
         return player is FakePlayer
@@ -13,6 +14,6 @@ object PlatformUtilsImpl {
 
     @JvmStatic
     fun getMinecraftServer(): MinecraftServer {
-        return ServerLifecycleHooks.getCurrentServer() ?: throw IllegalStateException("Cannot get MinecraftServer!")
+        return minecraft ?: throw IllegalStateException("Cannot get MinecraftServer!")
     }
 }

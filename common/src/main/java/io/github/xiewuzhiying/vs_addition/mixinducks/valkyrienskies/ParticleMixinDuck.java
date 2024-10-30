@@ -6,6 +6,8 @@ import org.valkyrienskies.core.api.ships.ClientShip;
 public interface ParticleMixinDuck {
     Vector3d vs_addition$getOriginalPosition();
 
+    Vector3d vs_addition$getPosition();
+
     ClientShip vs_addition$getShip();
 
     Double vs_addition$getFirstTimeScale();

@@ -3,7 +3,7 @@ package io.github.xiewuzhiying.vs_addition.fabric.mixin.netmusic.client;
 import com.github.tartaricacid.netmusic.networking.message.MusicToClientMessage;
 import com.github.tartaricacid.netmusic.receiver.MusicToClientMessageReceiver;
 import io.github.xiewuzhiying.vs_addition.fabric.mixin.netmusic.MusicToClientMessageAccessor;
-import io.xiewuzhiying.vs_addition.fabric.compats.netmusic.NetMusicSoundOnShip;
+import io.github.xiewuzhiying.vs_addition.fabric.compats.netmusic.NetMusicSoundOnShip;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;

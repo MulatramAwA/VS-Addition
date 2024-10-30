@@ -11,7 +11,7 @@ import com.simibubi.create.content.kinetics.fan.processing.AllFanProcessingTypes
 import com.simibubi.create.content.kinetics.fan.processing.FanProcessingType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import io.github.xiewuzhiying.vs_addition.compats.create.content.kinetics.fan.AirCurrentUtils;
-import io.github.xiewuzhiying.vs_addition.stuff.EncasedFanConditionTester;
+import io.github.xiewuzhiying.vs_addition.stuff.conditiontester.EncasedFanConditionTester;
 import io.github.xiewuzhiying.vs_addition.util.ShipUtils;
 import io.github.xiewuzhiying.vs_addition.util.TransformUtilsKt;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;

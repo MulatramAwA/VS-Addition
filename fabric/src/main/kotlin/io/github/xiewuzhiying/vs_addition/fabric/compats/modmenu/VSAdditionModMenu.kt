@@ -1,4 +1,4 @@
-package io.xiewuzhiying.vs_addition.fabric.compats.modmenu
+package io.github.xiewuzhiying.vs_addition.fabric.compats.modmenu
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory
 import com.terraformersmc.modmenu.api.ModMenuApi

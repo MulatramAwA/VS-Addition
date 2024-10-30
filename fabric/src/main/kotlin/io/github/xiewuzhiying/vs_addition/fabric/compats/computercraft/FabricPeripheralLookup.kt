@@ -1,4 +1,4 @@
-package io.xiewuzhiying.vs_addition.fabric.compats.computercraft
+package io.github.xiewuzhiying.vs_addition.fabric.compats.computercraft
 
 import dan200.computercraft.api.peripheral.IPeripheral
 import io.github.xiewuzhiying.vs_addition.compats.computercraft.PeripheralCommon

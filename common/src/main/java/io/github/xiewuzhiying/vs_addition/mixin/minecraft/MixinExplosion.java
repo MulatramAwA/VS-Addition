@@ -5,7 +5,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import io.github.xiewuzhiying.vs_addition.stuff.ExplosionConditionTester;
+import io.github.xiewuzhiying.vs_addition.stuff.conditiontester.ExplosionConditionTester;
 import io.github.xiewuzhiying.vs_addition.util.ShipUtils;
 import io.github.xiewuzhiying.vs_addition.util.TransformUtilsKt;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;

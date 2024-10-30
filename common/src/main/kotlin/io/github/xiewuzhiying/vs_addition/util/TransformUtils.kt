@@ -80,6 +80,15 @@ val Vector3fc.toBlockPos: BlockPos
 val Vec3.toBlockPos: BlockPos
     get() = BlockPos(this.x().toInt(), this.y().toInt(), this.z().toInt());
 
+val Vector3dc.toVector3i: Vector3i
+    get() = Vector3i(this.x().toInt(), this.y().toInt(), this.z().toInt());
+
+val Vector3fc.toVector3i: Vector3i
+    get() = Vector3i(this.x().toInt(), this.y().toInt(), this.z().toInt());
+
+val Vec3.toVector3i: Vector3i
+    get() = Vector3i(this.x().toInt(), this.y().toInt(), this.z().toInt());
+
 val Vec3i.toVec3: Vec3
     get() = Vec3(this.x.toDouble(), this.y.toDouble(), this.z.toDouble());
 
