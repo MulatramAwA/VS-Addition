@@ -15,7 +15,12 @@ import org.valkyrienskies.mod.common.VSGameUtilsKt;
 @Mixin(Particle.class)
 public abstract class MixinParticle implements ParticleMixinDuck {
 
-    @Shadow @Final protected ClientLevel level;
+    @Shadow
+    @Final
+    protected ClientLevel level;
+    @Shadow protected double x;
+    @Shadow protected double y;
+    @Shadow protected double z;
     @Unique
     private Vector3d vs_addition$originalPosition = null;
 
@@ -27,8 +32,7 @@ public abstract class MixinParticle implements ParticleMixinDuck {
 
     @Inject(
             method = "<init>(Lnet/minecraft/client/multiplayer/ClientLevel;DDD)V",
-            at = @At("TAIL"),
-            remap = false
+            at = @At("TAIL")
     )
     private void checkShipCoords(final ClientLevel world, final double x, final double y, final double z,
                                  final CallbackInfo ci) {
@@ -81,5 +85,10 @@ public abstract class MixinParticle implements ParticleMixinDuck {
     @Override
     public void vs_addition$setFirstTimeScale(double scale) {
         this.vs_addition$FirstTimeScale = scale;
+    }
+
+    @Override
+    public Vector3d vs_addition$getPosition() {
+        return new Vector3d(this.x, this.y, this.z);
     }
 }

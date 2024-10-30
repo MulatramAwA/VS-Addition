@@ -8,15 +8,15 @@ import io.github.xiewuzhiying.vs_addition.VSAdditionMod
 import io.github.xiewuzhiying.vs_addition.VSAdditionMod.init
 import io.github.xiewuzhiying.vs_addition.VSAdditionMod.initClient
 import io.github.xiewuzhiying.vs_addition.compats.computercraft.PeripheralCommon.registerGenericPeripheralCommon
-import io.github.xiewuzhiying.vs_addition.compats.create.content.redstone.link.DualLinkRenderer
 import io.github.xiewuzhiying.vs_addition.forge.compats.computercraft.ForgePeripheralProvider
 import io.github.xiewuzhiying.vs_addition.forge.compats.computercraft.PeripheralForge.registerGenericPeripheralForge
 import io.github.xiewuzhiying.vs_addition.forge.compats.create.content.redstone.display_link.target.FramedSignDisplayTarget
+import io.github.xiewuzhiying.vs_addition.stuff.airpocket.FakeAirPocketClient
+import net.minecraft.client.Minecraft
 import net.minecraft.resources.ResourceLocation
 import net.minecraftforge.client.ConfigScreenHandler
-import net.minecraftforge.client.event.RenderBlockScreenEffectEvent
-import net.minecraftforge.event.TickEvent.ClientTickEvent
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock
+import net.minecraftforge.client.event.RenderLevelStageEvent
+import net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES
 import net.minecraftforge.eventbus.api.IEventBus
 import net.minecraftforge.fml.ModLoadingContext
 import net.minecraftforge.fml.common.Mod
@@ -31,15 +31,14 @@ import xfacthd.framedblocks.common.FBContent
 
 
 @Mod(VSAdditionMod.MOD_ID)
-class VSAdditionModForge {
+object VSAdditionModForge {
     init {
+        EventBuses.registerModEventBus(VSAdditionMod.MOD_ID, MOD_CONTEXT.getKEventBus())
         init()
 
         getModBus().addListener(this::clientSetup)
 
-        getModBus().addListener(this::serverSetup)
-
-        EventBuses.registerModEventBus(VSAdditionMod.MOD_ID, MOD_CONTEXT.getKEventBus())
+        getModBus().addListener(this::commonSetup)
 
         ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory::class.java) {
             ConfigScreenHandler.ConfigScreenFactory { _, parent ->
@@ -50,17 +49,15 @@ class VSAdditionModForge {
             }
         }
 
-        getForgeBus().addListener(this::clientTick)
-
-        getForgeBus().addListener(this::onRenderWorldLast)
+        getForgeBus().addListener(this::renderWorld)
     }
 
     private fun clientSetup(event: FMLClientSetupEvent) {
         initClient()
     }
 
-    private fun serverSetup(event: FMLCommonSetupEvent) {
-        if(VSAdditionMod.FRAMEDBLOCKS_ACTIVE && VSAdditionMod.CREATE_ACTIVE)
+    private fun commonSetup(event: FMLCommonSetupEvent) {
+        if (VSAdditionMod.FRAMEDBLOCKS_ACTIVE && VSAdditionMod.CREATE_ACTIVE)
             AllDisplayBehaviours.assignBlockEntity(
                 AllDisplayBehaviours.register(
                     ResourceLocation(
@@ -71,29 +68,24 @@ class VSAdditionModForge {
                 ), FBContent.BE_TYPE_FRAMED_SIGN.get()
             )
 
-        if(VSAdditionMod.CC_ACTIVE) {
+        if (VSAdditionMod.CC_ACTIVE) {
             registerGenericPeripheralCommon()
             registerGenericPeripheralForge()
             Peripherals.register(ForgePeripheralProvider);
         }
     }
 
-    private fun clientTick(event: ClientTickEvent?) {
-        if(event==null)
-            return
-        if(VSAdditionMod.CREATE_ACTIVE)
-            DualLinkRenderer.tick()
-    }
-
-
-    private fun onRenderWorldLast(event: RenderBlockScreenEffectEvent) {
-        if (event.overlayType.equals(RenderBlockScreenEffectEvent.OverlayType.WATER)) {
-            event.isCanceled = true
+    private fun renderWorld(event: RenderLevelStageEvent) {
+        if (VSAdditionConfig.COMMON.experimental.fakeAirPocket && event.stage == AFTER_BLOCK_ENTITIES) {
+            val mc = Minecraft.getInstance()
+            val bufferSource = mc.renderBuffers().bufferSource();
+            FakeAirPocketClient.render(event.poseStack, event.camera, bufferSource)
+            bufferSource.endBatch()
         }
     }
 
-    companion object {
-        fun getModBus(): IEventBus = MOD_BUS
-        fun getForgeBus(): IEventBus = FORGE_BUS
-    }
+    @JvmStatic
+    fun getModBus(): IEventBus = MOD_BUS
+    @JvmStatic
+    fun getForgeBus(): IEventBus = FORGE_BUS
 }

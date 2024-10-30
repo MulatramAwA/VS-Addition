@@ -8,7 +8,8 @@
     "create.hose_pulley.MixinFluidFillingBehaviour",
     "create.hose_pulley.MixinHosePulleyBlockEntity",
     "createaddition.MixinPortableEnergyInterfaceMovement",
-    "netmusic.MusicToClientMessageAccessor"
+    "netmusic.MusicToClientMessageAccessor",
+    "valkyrienskies.water.MixinEntity"
   ],
   "client": [
     "netmusic.client.MixinMusicToClientMessageReceiver",

@@ -2,19 +2,31 @@ package io.github.xiewuzhiying.vs_addition.mixin.valkyrienskies.client;
 
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import io.github.xiewuzhiying.vs_addition.mixinducks.valkyrienskies.ParticleMixinDuck;
+import io.github.xiewuzhiying.vs_addition.VSAdditionConfig;
+import io.github.xiewuzhiying.vs_addition.stuff.airpocket.FakeAirPocketClient;
+import io.github.xiewuzhiying.vs_addition.util.ShipUtils;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.particles.ParticleTypes;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4dc;
 import org.joml.Vector3d;
+import org.joml.primitives.AABBd;
+import org.joml.primitives.AABBdc;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.valkyrienskies.core.api.ships.ClientShip;
+import org.spongepowered.asm.mixin.Unique;
+import org.valkyrienskies.core.api.ships.LoadedShip;
+import org.valkyrienskies.core.api.ships.Ship;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 import org.valkyrienskies.mod.mixin.feature.transform_particles.MixinParticle;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Mixin(LevelRenderer.class)
 public abstract class MixinMixinLevelRenderer {
@@ -28,33 +40,37 @@ public abstract class MixinMixinLevelRenderer {
             method = "addParticleInternal(Lnet/minecraft/core/particles/ParticleOptions;ZZDDDDDD)Lnet/minecraft/client/particle/Particle;"
     )
     private Particle spawnParticleInWorld(ParticleOptions options, boolean force, boolean decreased, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, Operation<Particle> original) {
-        final ClientShip ship = VSGameUtilsKt.getShipObjectManagingPos(this.level, (int) x >> 4, (int) z >> 4);
-
-        if (ship == null) {
-            // vanilla behaviour
-            return original.call(options, force, decreased, x, y, z, xSpeed, ySpeed, zSpeed);
+        if (VSAdditionConfig.COMMON.getExperimental().getFakeAirPocket()) {
+            final ParticleType<?> type = options.getType();
+            if (waterLikeParticle.contains(type)) {
+                final Vector3d position = VSGameUtilsKt.toWorldCoordinates(this.level, x, y, z);
+                final Iterable<LoadedShip> ships = ShipUtils.getLoadedShipsIntersecting(this.level, new AABBd(position, new Vector3d(position.x + 1, position.y + 1, position.z + 1)));
+                final Iterator<LoadedShip> iterator = ships.iterator();
+                final Map<Long, List<AABBdc>> map = FakeAirPocketClient.INSTANCE.getMap();
+                while (iterator.hasNext()) {
+                    Ship ship = iterator.next();
+                    long shipId = ship.getId();
+                    final Iterable<AABBdc> aabbs = map.get(shipId);
+                    if (aabbs != null) {
+                        for (AABBdc aabb : aabbs) {
+                            if (aabb.containsPoint(ship.getWorldToShip().transformPosition(new Vector3d(position)))) {
+                                return null;
+                            }
+                        }
+                    }
+                }
+            }
         }
-
-        final Matrix4dc transform = ship.getRenderTransform().getShipToWorldMatrix();
-
-        // in-world position
-        final Vector3d p = transform.transformPosition(new Vector3d(x, y, z));
-
-        // in-world velocity
-        final Vector3d v = transform
-                // Rotate velocity wrt ship transform
-                .transformDirection(new Vector3d(xSpeed, ySpeed, zSpeed))
-                // Tack on the ships linear velocity (multiplied by 1/20 because particle velocity is given per tick)
-                .fma(0.05, ship.getVelocity());
-
-        // Return and re-call this method with new coords
-
-        Particle particle = original.call(options, force, decreased, p.x, p.y, p.z, v.x, v.y, v.z);
-        if (particle != null) {
-            ((ParticleMixinDuck)particle).vs_addition$setOriginalPosition(new Vector3d(x, y, z));
-            ((ParticleMixinDuck)particle).vs_addition$setShip(ship);
-            ((ParticleMixinDuck)particle).vs_addition$setFirstTimeScale(ship.getRenderTransform().getShipToWorld().getScale(new Vector3d()).z);
-        }
-        return particle;
+        return ShipUtils.inclFakeAirPocket(options, force, decreased, x, y, z, xSpeed, ySpeed, zSpeed, original::call, this.level);
     }
+
+    @Unique
+    private static Set<ParticleType<?>> waterLikeParticle =
+            Set.of(
+                    ParticleTypes.UNDERWATER,
+                    ParticleTypes.BUBBLE,
+                    ParticleTypes.BUBBLE_POP,
+                    ParticleTypes.BUBBLE_COLUMN_UP
+            );
+
 }

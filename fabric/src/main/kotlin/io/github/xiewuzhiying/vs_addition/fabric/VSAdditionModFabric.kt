@@ -6,8 +6,10 @@ import io.github.xiewuzhiying.vs_addition.VSAdditionMod.init
 import io.github.xiewuzhiying.vs_addition.VSAdditionMod.initClient
 import io.github.xiewuzhiying.vs_addition.compats.computercraft.PeripheralCommon.registerGenericPeripheralCommon
 import io.github.xiewuzhiying.vs_addition.fabric.compats.computercraft.FabricPeripheralLookup.peripheralProvider
+import io.github.xiewuzhiying.vs_addition.fabric.stuff.FakeRenderer
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.ModInitializer
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
@@ -33,6 +35,6 @@ class VSAdditionModFabric : ModInitializer {
 class VSAdditionModFabricClient : ClientModInitializer {
     override fun onInitializeClient() {
         initClient()
-        // WorldRenderEvents.BEFORE_DEBUG_RENDER.register(FakeRenderer())
+        WorldRenderEvents.BEFORE_DEBUG_RENDER.register(FakeRenderer())
     }
 }

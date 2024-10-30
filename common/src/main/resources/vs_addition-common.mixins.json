@@ -67,6 +67,7 @@
     "ftbchunks.client.MixinFTBChunksClient",
     "journeymap.client.MixinMiniMap",
     "kontraption.client.MixinKontraptionClientTickHandler",
+    "valkyrienskies.client.MixinCamera",
     "valkyrienskies.client.MixinMixinLevelRenderer",
     "valkyrienskies.client.MixinParticle",
     "vs_clockwork.client.flap_bearing.MixinFlapBearingRenderer",

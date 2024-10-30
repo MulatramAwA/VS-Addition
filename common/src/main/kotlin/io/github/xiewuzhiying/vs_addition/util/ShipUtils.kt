@@ -1,9 +1,14 @@
 package io.github.xiewuzhiying.vs_addition.util
 
 import io.github.xiewuzhiying.vs_addition.mixin.minecraft.HitResultAccessor
+import io.github.xiewuzhiying.vs_addition.mixinducks.valkyrienskies.ParticleMixinDuck
 import io.github.xiewuzhiying.vs_addition.mixinducks.valkyrienskies.ShipInertiaDataImplMixinDuck
+import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.client.particle.Particle
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
+import net.minecraft.core.Position
+import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.level.BlockGetter
@@ -24,6 +29,8 @@ import org.valkyrienskies.core.api.ships.ServerShip
 import org.valkyrienskies.core.api.ships.Ship
 import org.valkyrienskies.core.api.ships.properties.ShipId
 import org.valkyrienskies.mod.common.BlockStateInfo.get
+import org.valkyrienskies.mod.common.getShipManagingPos
+import org.valkyrienskies.mod.common.getShipObjectManagingPos
 import org.valkyrienskies.mod.common.shipObjectWorld
 import org.valkyrienskies.mod.common.util.DimensionIdProvider
 import org.valkyrienskies.mod.common.util.toJOML
@@ -57,6 +64,12 @@ object ShipUtils {
     @JvmStatic
     fun Level?.getLoadedShipsIntersecting(aabb: AABB): Iterable<LoadedShip> {
         return this.shipObjectWorld.loadedShips.getIntersecting(aabb.toJOML())
+    }
+
+    @JvmStatic
+    fun Level?.getShipManagingPos2(position: Any) : Ship? {
+        val pos = toVector3dc(position)
+        return this.getShipManagingPos(pos)
     }
 
     //form VS base
@@ -217,5 +230,50 @@ object ShipUtils {
             }
         }
         return closestEntity?.let { EntityHit(it, closestVec3) }
+    }
+
+    @JvmStatic
+    fun inclFakeAirPocket(
+        options: ParticleOptions,
+        force: Boolean,
+        decreased: Boolean,
+        x: Double,
+        y: Double,
+        z: Double,
+        xSpeed: Double,
+        ySpeed: Double,
+        zSpeed: Double,
+        original: (ParticleOptions, Boolean, Boolean, Double, Double, Double, Double, Double, Double) -> Particle?,
+        level: ClientLevel
+    ): Particle? {
+        val ship = level.getShipObjectManagingPos(x.toInt() shr 4, z.toInt() shr 4)
+            ?: // vanilla behaviour
+            return original(options, force, decreased, x, y, z, xSpeed, ySpeed, zSpeed)
+
+        val transform = ship.renderTransform.shipToWorld
+
+        // in-world position
+        val p = transform.transformPosition(Vector3d(x, y, z))
+
+        // in-world velocity
+        val v = transform // Rotate velocity wrt ship transform
+            .transformDirection(
+                Vector3d(
+                    xSpeed,
+                    ySpeed,
+                    zSpeed
+                )
+            ) // Tack on the ships linear velocity (multiplied by 1/20 because particle velocity is given per tick)
+            .fma(0.05, ship.velocity)
+
+        // Return and re-call this method with new coords
+        val particle: Particle? = original(options, force, decreased, p.x, p.y, p.z, v.x, v.y, v.z)
+        if (particle != null) {
+            particle as ParticleMixinDuck
+            particle.`vs_addition$setOriginalPosition`(Vector3d(x, y, z))
+            particle.`vs_addition$setShip`(ship)
+            particle.`vs_addition$setFirstTimeScale`(ship.renderTransform.shipToWorld.getScale(Vector3d()).z)
+        }
+        return particle
     }
 }

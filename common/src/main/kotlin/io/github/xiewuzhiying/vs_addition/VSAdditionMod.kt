@@ -1,13 +1,18 @@
 package io.github.xiewuzhiying.vs_addition
 
+import dev.architectury.event.events.client.ClientCommandRegistrationEvent
 import dev.architectury.event.events.client.ClientTickEvent
+import dev.architectury.event.events.common.CommandRegistrationEvent
 import dev.architectury.event.events.common.EntityEvent
 import dev.architectury.event.events.common.InteractionEvent
 import dev.architectury.event.events.common.InteractionEvent.RightClickBlock
 import dev.architectury.platform.Platform
 import io.github.xiewuzhiying.vs_addition.compats.create.content.redstone.link.DualLinkHandler
 import io.github.xiewuzhiying.vs_addition.compats.create.content.redstone.link.DualLinkRenderer
+import io.github.xiewuzhiying.vs_addition.networking.VSAdditionNetworking
 import io.github.xiewuzhiying.vs_addition.stuff.EntityFreshCaller
+import io.github.xiewuzhiying.vs_addition.stuff.airpocket.FakeAirPocket
+import io.github.xiewuzhiying.vs_addition.stuff.airpocket.FakeAirPocketClient
 import org.valkyrienskies.core.impl.config.VSConfigClass
 
 object VSAdditionMod {
@@ -43,7 +48,8 @@ object VSAdditionMod {
                 DualLinkHandler.handler(player, hand, pos, face)
             })
         }
-
+        VSAdditionNetworking.register()
+        CommandRegistrationEvent.EVENT.register { dispatcher, registry, selection -> FakeAirPocket.registerCommands(dispatcher, registry, selection) }
     }
 
     @JvmStatic
@@ -51,6 +57,6 @@ object VSAdditionMod {
         if (CLOCKWORK_ACTIVE) {
             ClientTickEvent.CLIENT_POST.register(ClientTickEvent.Client { DualLinkRenderer.tick() })
         }
-
+        ClientCommandRegistrationEvent.EVENT.register { dispatcher, registry -> FakeAirPocketClient.registerCommands(dispatcher, registry) }
     }
 }

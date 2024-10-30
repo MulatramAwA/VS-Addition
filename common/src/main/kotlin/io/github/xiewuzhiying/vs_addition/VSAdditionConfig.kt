@@ -122,7 +122,12 @@ object VSAdditionConfig {
     }
 
     class Common {
+        val experimental = EXPERIMENTAL()
         @JsonSchema(description = "Disable Create Interactive deployer mixin to use VS Addition's")
         var insteadCreateInteractiveDeployer = true
+        class EXPERIMENTAL {
+            @JsonSchema(description = "FAKE")
+            var fakeAirPocket = false
+        }
     }
 }

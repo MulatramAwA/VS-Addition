@@ -21,7 +21,8 @@
     "tallyho.MixinBearingController",
     "tallyho.MixinClockworkPeripheralProvider",
     "tallyho.MixinPhysBearingBlockEntity",
-    "tallyho.MixinTallyhoMod"
+    "tallyho.MixinTallyhoMod",
+    "valkyrienskies.water.MixinEntity"
   ],
   "client": [
     "embeddium.client.MixinDefaultChunkRenderer",
