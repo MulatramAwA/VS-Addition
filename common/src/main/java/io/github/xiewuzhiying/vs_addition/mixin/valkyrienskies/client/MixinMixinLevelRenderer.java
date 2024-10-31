@@ -14,6 +14,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
@@ -21,6 +22,7 @@ import org.valkyrienskies.mod.mixin.feature.transform_particles.MixinParticle;
 
 import java.util.Set;
 
+@Pseudo
 @Mixin(LevelRenderer.class)
 public abstract class MixinMixinLevelRenderer {
     @Shadow @Nullable private ClientLevel level;

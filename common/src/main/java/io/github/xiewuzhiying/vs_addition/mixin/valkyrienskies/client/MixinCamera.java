@@ -8,9 +8,11 @@ import net.minecraft.client.Camera;
 import net.minecraft.world.level.material.FogType;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
 import org.valkyrienskies.mod.common.util.VectorConversionsMCKt;
 
+@Pseudo
 @Mixin(Camera.class)
 public abstract class MixinCamera {
     @Shadow private Vec3 position;
@@ -19,7 +21,7 @@ public abstract class MixinCamera {
             method = "getFluidInCamera"
     )
     private FogType inclFakeAirPocket(Operation<FogType> original) {
-        if (VSAdditionConfig.COMMON.getExperimental().getFakeAirPocket()) {
+        if (VSAdditionConfig.COMMON.getExperimental().getFakeAirPocket() && VSAdditionConfig.CLIENT.getExperimental().getRemoveFogInFakeAirPocket()) {
             if (FakeAirPocketClient.INSTANCE.checkIfPointInAirPocket(VectorConversionsMCKt.toJOML(this.position))) {
                 return FogType.NONE;
             }

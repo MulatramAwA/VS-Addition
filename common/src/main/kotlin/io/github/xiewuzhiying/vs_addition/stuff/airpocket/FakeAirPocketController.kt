@@ -4,10 +4,8 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect
 import io.github.xiewuzhiying.vs_addition.PlatformUtils
 import net.minecraft.server.level.ServerLevel
 import org.joml.primitives.AABBdc
-import org.valkyrienskies.core.api.ships.ServerShip
-import org.valkyrienskies.core.api.ships.getAttachment
+import org.valkyrienskies.core.api.ships.*
 import org.valkyrienskies.core.api.ships.properties.ShipId
-import org.valkyrienskies.core.api.ships.saveAttachment
 import org.valkyrienskies.core.apigame.world.properties.DimensionId
 import org.valkyrienskies.mod.common.dimensionId
 import org.valkyrienskies.mod.common.getLevelFromDimensionId

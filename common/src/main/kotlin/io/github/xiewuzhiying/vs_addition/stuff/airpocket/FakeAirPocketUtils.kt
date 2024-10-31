@@ -6,8 +6,6 @@ import kotlin.math.atan2
 
 const val WATER_OFFSET : Double = 8.0 / 9.0
 
-const val SEA_LEVEL : Double = 62.0 + WATER_OFFSET
-
 const val ZFIGHT : Double = 0.002
 
 fun intersectEdgeWithPlane(edge: Edged, plane: Planed): Vector3d? {

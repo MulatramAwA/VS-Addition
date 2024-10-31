@@ -53,7 +53,7 @@ public abstract class MixinEntity {
 
     @Shadow protected boolean wasEyeInWater;
     @Shadow protected boolean wasTouchingWater;
-    @Shadow private FluidType forgeFluidTypeOnEyes;
+    @Shadow(remap = false) private FluidType forgeFluidTypeOnEyes;
     @Unique
     private static EntityPolygonCollider collider = null;
     @Unique

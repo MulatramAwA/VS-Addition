@@ -15,6 +15,22 @@ object VSAdditionConfig {
     class Client {
         @JsonSchema(description = "Enable mechanical arm item remove unavailable interaction point")
         var enablePointRemoval = true
+
+        val experimental = EXPERIMENTAL()
+
+        class EXPERIMENTAL {
+            @JsonSchema(description = "Remove under water fog when the camera is in fake air pocket.")
+            var removeFogInFakeAirPocket = false
+
+            @JsonSchema(description = "Cull water surface when it's in fake air pocket.")
+            var cullWaterSurfaceInFakeAirPocket = true
+
+            @JsonSchema(description = "Cull water surface when it's in fake air pocket.")
+            var seaLevel : Double = 62.0
+
+            @JsonSchema(description = "High light fake air pocket aabb.")
+            var highLightFakedAirPocket = false
+        }
     }
 
     class Server {

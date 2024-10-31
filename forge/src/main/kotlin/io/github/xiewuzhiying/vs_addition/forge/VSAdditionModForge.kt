@@ -17,6 +17,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraftforge.client.ConfigScreenHandler
 import net.minecraftforge.client.event.RenderLevelStageEvent
 import net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES
+import net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_PARTICLES
 import net.minecraftforge.eventbus.api.IEventBus
 import net.minecraftforge.fml.ModLoadingContext
 import net.minecraftforge.fml.common.Mod
@@ -48,12 +49,11 @@ object VSAdditionModForge {
                 )
             }
         }
-
-        getForgeBus().addListener(this::renderWorld)
     }
 
     private fun clientSetup(event: FMLClientSetupEvent) {
         initClient()
+        getForgeBus().addListener(this::renderWorld)
     }
 
     private fun commonSetup(event: FMLCommonSetupEvent) {
@@ -76,10 +76,16 @@ object VSAdditionModForge {
     }
 
     private fun renderWorld(event: RenderLevelStageEvent) {
-        if (VSAdditionConfig.COMMON.experimental.fakeAirPocket && event.stage == AFTER_BLOCK_ENTITIES) {
+        if (!VSAdditionConfig.COMMON.experimental.fakeAirPocket) return
+        if (VSAdditionConfig.CLIENT.experimental.cullWaterSurfaceInFakeAirPocket && event.stage == AFTER_BLOCK_ENTITIES) {
             val mc = Minecraft.getInstance()
             val bufferSource = mc.renderBuffers().bufferSource();
             FakeAirPocketClient.render(event.poseStack, event.camera, bufferSource)
+            bufferSource.endBatch()
+        } else if (VSAdditionConfig.CLIENT.experimental.highLightFakedAirPocket && event.stage == AFTER_PARTICLES) {
+            val mc = Minecraft.getInstance()
+            val bufferSource = mc.renderBuffers().bufferSource();
+            FakeAirPocketClient.renderHighLight(event.poseStack, event.camera, bufferSource)
             bufferSource.endBatch()
         }
     }

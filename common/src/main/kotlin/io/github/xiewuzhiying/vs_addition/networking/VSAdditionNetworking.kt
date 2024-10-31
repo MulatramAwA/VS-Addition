@@ -8,7 +8,6 @@ import io.github.xiewuzhiying.vs_addition.stuff.airpocket.FakeAirPocketControlle
 import io.netty.buffer.Unpooled
 import io.netty.util.collection.LongObjectHashMap
 import net.minecraft.network.FriendlyByteBuf
-import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerLevel
 import org.joml.Vector3d
@@ -24,20 +23,7 @@ object VSAdditionNetworking {
     val REQUEST_FAKE_AIR_POCKET_BY_ID : ResourceLocation = ResourceLocation(VSAdditionMod.MOD_ID, "request_air_pocket")
     val REQUEST_ALL_FAKE_AIR_POCKET : ResourceLocation = ResourceLocation(VSAdditionMod.MOD_ID, "request_all_air_pocket")
 
-    fun register() {
-        NetworkManager.registerReceiver(NetworkManager.Side.S2C, UPDATE_FAKE_AIR_POCKET)
-        { buf: FriendlyByteBuf, ctx: NetworkManager.PacketContext ->
-            val shipId = buf.readLong()
-            val pocketId = buf.readLong()
-            val level = ctx.player.level()
-            val ship = level.shipObjectWorld.loadedShips.getById(shipId) ?: return@registerReceiver
-            ship as ClientShip
-            ctx.player.sendSystemMessage(Component.literal("Received UPDATE_FAKE_AIR_POCKET Server Packet! ShipID: $shipId PocketID: $pocketId"))
-            val buf2 = FriendlyByteBuf(Unpooled.buffer())
-            buf2.writeLong(shipId)
-            buf2.writeLong(pocketId)
-            NetworkManager.sendToServer(REQUEST_FAKE_AIR_POCKET_BY_ID, buf2)
-        }
+    fun registerServer() {
         NetworkManager.registerReceiver(NetworkManager.Side.C2S, REQUEST_FAKE_AIR_POCKET_BY_ID)
         { buf: FriendlyByteBuf, ctx: NetworkManager.PacketContext ->
             val shipId = buf.readLong()
@@ -45,7 +31,6 @@ object VSAdditionNetworking {
             val level = ctx.player.level()
             val controller = FakeAirPocketController.getOrCreate(shipId, level as ServerLevel) ?: return@registerReceiver
             val pocket = controller.getAirPocket(pocketId) ?: return@registerReceiver
-            ctx.player.sendSystemMessage(Component.literal("Received REQUEST_FAKE_AIR_POCKET_BY_ID Client Packet! ShipID: $shipId PocketID: $pocketId"))
             val buf2 = FriendlyByteBuf(Unpooled.buffer());
 
             buf2.writeLong(shipId)
@@ -54,24 +39,12 @@ object VSAdditionNetworking {
             buf2.writeVec3d(Vector3d(pocket.maxX(), pocket.maxY(), pocket.maxZ()))
             NetworkManager.sendToPlayer(PlatformUtils.getMinecraftServer().playerList.getPlayer(ctx.player.uuid), REQUEST_FAKE_AIR_POCKET_BY_ID, buf2)
         }
-
-        NetworkManager.registerReceiver(NetworkManager.Side.S2C, REQUEST_FAKE_AIR_POCKET_BY_ID)
-        { buf: FriendlyByteBuf, ctx: NetworkManager.PacketContext ->
-            val shipId = buf.readLong()
-            val pocketId = buf.readLong()
-            val pos1 = buf.readVec3d()
-            val pos2 = buf.readVec3d()
-            val aabb = AABBd(pos1, pos2)
-            FakeAirPocketClient.addAirPocket(shipId, pocketId, aabb)
-            ctx.player.sendSystemMessage(Component.literal("Received REQUEST_FAKE_AIR_POCKET_BY_ID Server Packet! ShipID: $shipId PocketID: $pocketId"))
-        }
         NetworkManager.registerReceiver(NetworkManager.Side.C2S, REQUEST_ALL_FAKE_AIR_POCKET)
         { buf: FriendlyByteBuf, ctx: NetworkManager.PacketContext ->
             val shipId = buf.readLong()
             val level = ctx.player.level()
             val controller = FakeAirPocketController.getOrCreate(shipId, level as ServerLevel) ?: return@registerReceiver
             val pockets = controller.getAllAirPocket()
-            ctx.player.sendSystemMessage(Component.literal("Received REQUEST_ALL_FAKE_AIR_POCKET Client Packet! ShipId: $shipId"))
             val buf2 = FriendlyByteBuf(Unpooled.buffer());
             buf2.writeLong(shipId)
             buf2.writeInt(pockets.size)
@@ -83,7 +56,30 @@ object VSAdditionNetworking {
             }
             NetworkManager.sendToPlayer(PlatformUtils.getMinecraftServer().playerList.getPlayer(ctx.player.uuid), REQUEST_ALL_FAKE_AIR_POCKET, buf2)
         }
+    }
 
+    fun registerClient() {
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, UPDATE_FAKE_AIR_POCKET)
+        { buf: FriendlyByteBuf, ctx: NetworkManager.PacketContext ->
+            val shipId = buf.readLong()
+            val pocketId = buf.readLong()
+            val level = ctx.player.level()
+            val ship = level.shipObjectWorld.loadedShips.getById(shipId) ?: return@registerReceiver
+            ship as ClientShip
+            val buf2 = FriendlyByteBuf(Unpooled.buffer())
+            buf2.writeLong(shipId)
+            buf2.writeLong(pocketId)
+            NetworkManager.sendToServer(REQUEST_FAKE_AIR_POCKET_BY_ID, buf2)
+        }
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, REQUEST_FAKE_AIR_POCKET_BY_ID)
+        { buf: FriendlyByteBuf, ctx: NetworkManager.PacketContext ->
+            val shipId = buf.readLong()
+            val pocketId = buf.readLong()
+            val pos1 = buf.readVec3d()
+            val pos2 = buf.readVec3d()
+            val aabb = AABBd(pos1, pos2)
+            FakeAirPocketClient.setAirPocket(shipId, pocketId, aabb)
+        }
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, REQUEST_ALL_FAKE_AIR_POCKET)
         { buf: FriendlyByteBuf, ctx: NetworkManager.PacketContext ->
             val shipId = buf.readLong()
@@ -95,9 +91,7 @@ object VSAdditionNetworking {
                 val pos2 = buf.readVec3d()
                 pockets.put(id, AABBd(pos1, pos2))
             }
-            FakeAirPocketClient.addAirPockets(shipId, pockets)
-            ctx.player.sendSystemMessage(Component.literal("Received REQUEST_ALL_FAKE_AIR_POCKET Server Packet! ShipId: $shipId"))
+            FakeAirPocketClient.setAirPockets(shipId, pockets)
         }
     }
-
 }

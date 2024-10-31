@@ -22,6 +22,7 @@ import org.valkyrienskies.mod.common.util.toJOML
 import org.valkyrienskies.mod.common.util.toMinecraft
 import java.io.Serializable
 import java.lang.Math
+import kotlin.math.abs
 
 val Direction.directionToQuaterniond : Quaterniond
     get() =
@@ -91,6 +92,12 @@ val Vec3.toVector3i: Vector3i
 
 val Vec3i.toVec3: Vec3
     get() = Vec3(this.x.toDouble(), this.y.toDouble(), this.z.toDouble());
+
+val Vec3i.toVector3d: Vector3d
+    get() = Vector3d(this.x.toDouble(), this.y.toDouble(), this.z.toDouble());
+
+val Vec3i.toVector3i: Vector3i
+    get() = Vector3i(this.x, this.y, this.z);
 
 fun Vec3.toWorld(level: Level): Vec3 {
     val ship = level.getShipManagingPos(this)
@@ -199,5 +206,33 @@ fun toVector3dc(inputPos: Any) : Vector3dc {
         is Vector3fc -> Vector3d(inputPos.x().toDouble(), inputPos.y().toDouble(), inputPos.z().toDouble())
         is Vector3dc -> inputPos
         else -> throw IllegalArgumentException("Unsupported type: ${inputPos::class.simpleName}")
+    }
+}
+
+fun Vec3.toDirection(): Direction {
+    return when {
+        abs(this.x()) > abs(this.y()) && abs(this.x()) > abs(this.z()) -> {
+            if (this.x() > 0) Direction.EAST else Direction.WEST
+        }
+        abs(this.y()) > abs(this.x()) && abs(this.y()) > abs(this.z()) -> {
+            if (this.y() > 0) Direction.UP else Direction.DOWN
+        }
+        else -> {
+            if (this.z() > 0) Direction.SOUTH else Direction.NORTH
+        }
+    }
+}
+
+fun Vector3dc.toDirection(): Direction {
+    return when {
+        abs(this.x()) > abs(this.y()) && abs(this.x()) > abs(this.z()) -> {
+            if (this.x() > 0) Direction.EAST else Direction.WEST
+        }
+        abs(this.y()) > abs(this.x()) && abs(this.y()) > abs(this.z()) -> {
+            if (this.y() > 0) Direction.UP else Direction.DOWN
+        }
+        else -> {
+            if (this.z() > 0) Direction.SOUTH else Direction.NORTH
+        }
     }
 }

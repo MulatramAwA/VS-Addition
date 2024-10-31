@@ -17,19 +17,21 @@ import io.netty.util.collection.LongObjectHashMap
 import io.netty.util.collection.LongObjectMap
 import net.minecraft.client.Camera
 import net.minecraft.client.Minecraft
+import net.minecraft.client.renderer.LevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderStateShard
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.commands.CommandBuildContext
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.BlockHitResult
 import org.joml.Vector3d
 import org.joml.Vector3dc
 import org.joml.primitives.AABBd
 import org.joml.primitives.AABBdc
 import org.valkyrienskies.core.api.ships.LoadedShip
-import org.valkyrienskies.core.api.ships.ServerShip
 import org.valkyrienskies.core.api.ships.Ship
 import org.valkyrienskies.core.api.ships.properties.ShipId
 import org.valkyrienskies.core.api.ships.properties.ShipTransform
@@ -42,13 +44,13 @@ import org.valkyrienskies.mod.common.ValkyrienSkiesMod.vsCore
 import org.valkyrienskies.mod.common.util.toJOML
 
 object FakeAirPocketClient {
-    val map : LongObjectMap<LongObjectMap<AABBdc>> = LongObjectHashMap()
+    private val map : LongObjectMap<LongObjectMap<AABBdc>> = LongObjectHashMap()
 
-    fun addAirPocket(shipId: ShipId, pocketId: PocketId, aabb : AABBdc) {
+    fun setAirPocket(shipId: ShipId, pocketId: PocketId, aabb : AABBdc) {
         map[shipId]?.put(pocketId, aabb)
     }
 
-    fun addAirPockets(shipId: ShipId, pockets : LongObjectMap<AABBdc>) {
+    fun setAirPockets(shipId: ShipId, pockets : LongObjectMap<AABBdc>) {
         map[shipId] = pockets
     }
 
@@ -172,20 +174,40 @@ object FakeAirPocketClient {
         return collider!!
     }
 
+    fun tick() {
+
+    }
+
     private val WATER_MASK: RenderType.CompositeRenderType = RenderType.create(
         "water_mask_triangles",
         DefaultVertexFormat.POSITION,
         VertexFormat.Mode.TRIANGLES,
         256,
-        RenderType.CompositeState.builder().setShaderState(
-            RenderStateShard.RENDERTYPE_WATER_MASK_SHADER
-        ).setTextureState(RenderStateShard.NO_TEXTURE).setWriteMaskState(
-            RenderStateShard.DEPTH_WRITE
-        ).createCompositeState(false)
+        RenderType.CompositeState.builder()
+            .setShaderState(RenderStateShard.RENDERTYPE_WATER_MASK_SHADER)
+            .setTextureState(RenderStateShard.NO_TEXTURE)
+            .setWriteMaskState(RenderStateShard.DEPTH_WRITE)
+            .createCompositeState(false)
     )
 
+    private val WATER_TEXTURE = ResourceLocation("minecraft", "textures/block/water_overlay.png")
+
+    private val WATER_SURFACE: RenderType.CompositeRenderType = RenderType.create(
+        "water_surface",
+        DefaultVertexFormat.POSITION_TEX,
+        VertexFormat.Mode.TRIANGLES,
+        256,
+        RenderType.CompositeState.builder()
+            .setShaderState(RenderStateShard.POSITION_COLOR_TEX_SHADER)
+            .setTextureState(RenderStateShard.TextureStateShard(WATER_TEXTURE, false, false))
+            .setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
+            .createCompositeState(false)
+    )
+
+    @JvmStatic
     fun render(ms: PoseStack, camera: Camera, bufferSource: MultiBufferSource?) {
-        val consumer = bufferSource?.getBuffer(WATER_MASK) ?: return
+        if (!(VSAdditionConfig.COMMON.experimental.fakeAirPocket && VSAdditionConfig.CLIENT.experimental.cullWaterSurfaceInFakeAirPocket)) return
+        val waterMaskConsumer = bufferSource?.getBuffer(WATER_MASK) ?: return
         val cameraPosition = camera.position
         val shipClientWorld = ((Minecraft.getInstance() as IShipObjectWorldClientProvider).shipObjectWorld as ShipObjectClientWorld)
         val loadedShips = shipClientWorld.loadedShips
@@ -229,42 +251,16 @@ object FakeAirPocketClient {
                 /*vertices2.forEach {
                     debug("vertices2", "(${it.x()}, ${it.y()}, ${it.z()})")
                 }*/
-                renderPolygon(vertices2, consumer, ms, transform, cameraPosition.toJOML(), aabb.center(Vector3d()))
+                renderPolygon(ms, transform, cameraPosition.toJOML(), aabb.center(Vector3d()), vertices2, waterMaskConsumer)
 
                 ms.popPose()
             }
         }
     }
 
-    @JvmStatic
-    private var timer = 0
-
-    @JvmStatic
-    private fun debug(title: String, message: String) {
-        if (timer == 0) {
-            Minecraft.getInstance().level?.profiler?.push(title)
-            println(message)
-            Minecraft.getInstance().level?.profiler?.pop()
-        }
-    }
-
-    private fun renderPolygon(vertices: List<Vector3dc>, consumer: VertexConsumer, ms: PoseStack, transform: ShipTransform?, camera: Vector3dc, offset: Vector3dc) {
+    private fun renderPolygon(ms: PoseStack, transform: ShipTransform?, camera: Vector3dc, offset: Vector3dc, vertices: List<Vector3dc>, maskConsumer: VertexConsumer) {
         if (vertices.size < 3) return
 
-        ms.pushPose()
-        if (transform != null) {
-            VSClientGameUtils.transformRenderWithShip(transform, ms, offset.x(), offset.y(), offset.z(), camera.x(), camera.y() + ZFIGHT, camera.z())
-        } else {
-            ms.translate(offset.x() - camera.x(), offset.y() - (camera.y() + ZFIGHT), offset.z() - camera.z())
-        }
-        val matrix1 = ms.last().pose()
-        for (i in 1 until vertices.size - 1) {
-            consumer.vertex(matrix1, vertices[0].x().toFloat(), vertices[0].y().toFloat(), vertices[0].z().toFloat()).endVertex()
-            consumer.vertex(matrix1, vertices[i].x().toFloat(), vertices[i].y().toFloat(), vertices[i].z().toFloat()).endVertex()
-            consumer.vertex(matrix1, vertices[i + 1].x().toFloat(), vertices[i + 1].y().toFloat(), vertices[i + 1].z().toFloat()).endVertex()
-            //debug("renderPolygon", "(${vertices[i].x()}, ${vertices[i].y()}, ${vertices[i].z()})")
-        }
-        ms.popPose()
         ms.pushPose()
         if (transform != null) {
             VSClientGameUtils.transformRenderWithShip(transform, ms, offset.x(), offset.y(), offset.z(), camera.x(), camera.y(), camera.z())
@@ -273,11 +269,43 @@ object FakeAirPocketClient {
         }
         val matrix2 = ms.last().pose()
         for (i in 1 until vertices.size - 1) {
-            consumer.vertex(matrix2, vertices[0].x().toFloat(), vertices[0].y().toFloat(), vertices[0].z().toFloat()).endVertex()
-            consumer.vertex(matrix2, vertices[i + 1].x().toFloat(), vertices[i + 1].y().toFloat(), vertices[i + 1].z().toFloat()).endVertex()
-            consumer.vertex(matrix2, vertices[i].x().toFloat(), vertices[i].y().toFloat(), vertices[i].z().toFloat()).endVertex()
+            maskConsumer.vertex(matrix2, vertices[0].x().toFloat(), vertices[0].y().toFloat(), vertices[0].z().toFloat()).endVertex()
+            maskConsumer.vertex(matrix2, vertices[i + 1].x().toFloat(), vertices[i + 1].y().toFloat(), vertices[i + 1].z().toFloat()).endVertex()
+            maskConsumer.vertex(matrix2, vertices[i].x().toFloat(), vertices[i].y().toFloat(), vertices[i].z().toFloat()).endVertex()
         }
         ms.popPose()
+        ms.pushPose()
+        if (transform != null) {
+            VSClientGameUtils.transformRenderWithShip(transform, ms, offset.x(), offset.y(), offset.z(), camera.x(), camera.y() + ZFIGHT, camera.z())
+        } else {
+            ms.translate(offset.x() - camera.x(), offset.y() - (camera.y() + ZFIGHT), offset.z() - camera.z())
+        }
+        val matrix1 = ms.last().pose()
+        for (i in 1 until vertices.size - 1) {
+            maskConsumer.vertex(matrix1, vertices[0].x().toFloat(), vertices[0].y().toFloat(), vertices[0].z().toFloat()).endVertex()
+            maskConsumer.vertex(matrix1, vertices[i].x().toFloat(), vertices[i].y().toFloat(), vertices[i].z().toFloat()).endVertex()
+            maskConsumer.vertex(matrix1, vertices[i + 1].x().toFloat(), vertices[i + 1].y().toFloat(), vertices[i + 1].z().toFloat()).endVertex()
+            //debug("renderPolygon", "(${vertices[i].x()}, ${vertices[i].y()}, ${vertices[i].z()})")
+        }
+        ms.popPose()
+    }
+
+    fun renderHighLight(ms: PoseStack, camera: Camera, bufferSource: MultiBufferSource?) {
+        if (!(VSAdditionConfig.COMMON.experimental.fakeAirPocket && VSAdditionConfig.CLIENT.experimental.highLightFakedAirPocket) || bufferSource == null) return
+        val cameraPosition = camera.position
+        val shipClientWorld = ((Minecraft.getInstance() as IShipObjectWorldClientProvider).shipObjectWorld as ShipObjectClientWorld)
+        val loadedShips = shipClientWorld.loadedShips
+        map.entries.forEach { entry ->
+            val transform = loadedShips.getById(entry.key)?.renderTransform ?: return@forEach
+            entry.value.forEach { (pocketId, aabb) ->
+                val center = aabb.center(Vector3d())
+                val shipVoxelAABBAfterOffset = AABB(aabb.minX() - center.x(), aabb.minY() - center.y(), aabb.minZ() - center.z(), aabb.maxX() - center.x(), aabb.maxY() - center.y(), aabb.maxZ() - center.z())
+                ms.pushPose()
+                VSClientGameUtils.transformRenderWithShip(transform, ms, center.x(), center.y(), center.z(), cameraPosition.x(), cameraPosition.y(), cameraPosition.z())
+                LevelRenderer.renderLineBox(ms, bufferSource.getBuffer(RenderType.lines()), shipVoxelAABBAfterOffset, 0.0F, 0.0F, 1.0F, 1.0F);
+                ms.popPose()
+            }
+        }
     }
 
     fun registerCommands(dispatcher: CommandDispatcher<ClientCommandRegistrationEvent.ClientCommandSourceStack>, context: CommandBuildContext) {
@@ -315,5 +343,20 @@ object FakeAirPocketClient {
                     return@executes 1
                 }
         )
+    }
+
+    @JvmStatic
+    private var SEA_LEVEL = VSAdditionConfig.CLIENT.experimental.seaLevel + WATER_OFFSET
+
+    @JvmStatic
+    private var timer = 0
+
+    @JvmStatic
+    private fun debug(title: String, message: String) {
+        if (timer == 0) {
+            Minecraft.getInstance().level?.profiler?.push(title)
+            println(message)
+            Minecraft.getInstance().level?.profiler?.pop()
+        }
     }
 }

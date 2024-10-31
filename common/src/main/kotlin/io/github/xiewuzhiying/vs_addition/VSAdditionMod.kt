@@ -49,7 +49,7 @@ object VSAdditionMod {
                 DualLinkHandler.handler(player, hand, pos, face)
             })
         }
-        VSAdditionNetworking.register()
+        VSAdditionNetworking.registerServer()
         CommandRegistrationEvent.EVENT.register { dispatcher, registry, selection -> FakeAirPocket.registerCommands(dispatcher, registry, selection) }
     }
 
@@ -58,9 +58,12 @@ object VSAdditionMod {
         if (CLOCKWORK_ACTIVE) {
             ClientTickEvent.CLIENT_POST.register(ClientTickEvent.Client { DualLinkRenderer.tick() })
         }
+        VSAdditionNetworking.registerClient()
         ClientCommandRegistrationEvent.EVENT.register { dispatcher, registry -> FakeAirPocketClient.registerCommands(dispatcher, registry) }
         VSEvents.ShipLoadEventClient.on { event ->
-            FakeAirPocketClient.requestAllAirPockets(event.ship.id)
+            if (VSAdditionConfig.COMMON.experimental.fakeAirPocket) {
+                FakeAirPocketClient.requestAllAirPockets(event.ship.id)
+            }
         }
     }
 }
