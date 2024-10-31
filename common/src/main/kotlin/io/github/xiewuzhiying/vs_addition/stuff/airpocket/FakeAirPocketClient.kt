@@ -9,8 +9,12 @@ import com.mojang.brigadier.context.CommandContext
 import dev.architectury.event.events.client.ClientCommandRegistrationEvent
 import dev.architectury.networking.NetworkManager
 import io.github.xiewuzhiying.vs_addition.VSAdditionConfig
-import io.github.xiewuzhiying.vs_addition.networking.VSAdditionNetworking.FAKE_AIR_POCKET_PACKET_ID
+import io.github.xiewuzhiying.vs_addition.networking.VSAdditionNetworking.REQUEST_ALL_FAKE_AIR_POCKET
+import io.github.xiewuzhiying.vs_addition.networking.VSAdditionNetworking.REQUEST_FAKE_AIR_POCKET_BY_ID
+import io.github.xiewuzhiying.vs_addition.util.ShipUtils.getLoadedShipsIntersecting
 import io.netty.buffer.Unpooled
+import io.netty.util.collection.LongObjectHashMap
+import io.netty.util.collection.LongObjectMap
 import net.minecraft.client.Camera
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.MultiBufferSource
@@ -22,23 +26,150 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.phys.BlockHitResult
 import org.joml.Vector3d
 import org.joml.Vector3dc
+import org.joml.primitives.AABBd
 import org.joml.primitives.AABBdc
+import org.valkyrienskies.core.api.ships.LoadedShip
+import org.valkyrienskies.core.api.ships.ServerShip
+import org.valkyrienskies.core.api.ships.Ship
 import org.valkyrienskies.core.api.ships.properties.ShipId
 import org.valkyrienskies.core.api.ships.properties.ShipTransform
+import org.valkyrienskies.core.apigame.collision.ConvexPolygonc
+import org.valkyrienskies.core.apigame.collision.EntityPolygonCollider
 import org.valkyrienskies.core.impl.game.ships.ShipObjectClientWorld
 import org.valkyrienskies.mod.common.IShipObjectWorldClientProvider
 import org.valkyrienskies.mod.common.VSClientGameUtils
+import org.valkyrienskies.mod.common.ValkyrienSkiesMod.vsCore
 import org.valkyrienskies.mod.common.util.toJOML
 
 object FakeAirPocketClient {
-    val map : MutableMap<ShipId, MutableList<AABBdc>> = mutableMapOf()
+    val map : LongObjectMap<LongObjectMap<AABBdc>> = LongObjectHashMap()
 
-    fun addAirPocket(id: ShipId, aabb : AABBdc) {
-        map[id]?.add(aabb) ?: map.put(id, mutableListOf(aabb))
+    fun addAirPocket(shipId: ShipId, pocketId: PocketId, aabb : AABBdc) {
+        map[shipId]?.put(pocketId, aabb)
     }
 
-    fun addAirPockets(id: ShipId, aabbs : MutableList<AABBdc>) {
-        map[id] = aabbs
+    fun addAirPockets(shipId: ShipId, pockets : LongObjectMap<AABBdc>) {
+        map[shipId] = pockets
+    }
+
+    fun requestAirPocket(shipId: ShipId, pocketId : PocketId) {
+        val buf = FriendlyByteBuf(Unpooled.buffer())
+        buf.writeLong(shipId)
+        buf.writeLong(pocketId)
+        NetworkManager.sendToServer(REQUEST_FAKE_AIR_POCKET_BY_ID, buf)
+    }
+
+    fun requestAllAirPockets(shipId: ShipId) {
+        val buf = FriendlyByteBuf(Unpooled.buffer())
+        buf.writeLong(shipId)
+        NetworkManager.sendToServer(REQUEST_ALL_FAKE_AIR_POCKET, buf)
+    }
+
+    @JvmOverloads
+    fun checkIfPointInAirPocket(point: Vector3dc, checkRange: AABBdc? = null) : Boolean {
+        val level = Minecraft.getInstance().level
+        val ships: Iterable<LoadedShip> =  level.getLoadedShipsIntersecting(checkRange ?: AABBd(point, Vector3d(point.x() + 1, point.y() + 1, point.z() + 1)))
+        val iterator = ships.iterator()
+        while (iterator.hasNext()) {
+            val ship: Ship = iterator.next()
+            val shipId = ship.id
+            val pockets: LongObjectMap<AABBdc> = map[shipId] ?: continue
+            pockets.forEach { (_, pocket) ->
+                if (pocket.containsPoint(ship.worldToShip.transformPosition(point, Vector3d()))) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    @JvmOverloads
+    fun checkIfAABBInAirPocket(aabb: AABBdc, mustBeContained : Boolean = false, checkRange: AABBdc? = null) : Boolean {
+        val level = Minecraft.getInstance().level
+        val ships: Iterable<LoadedShip> =  level.getLoadedShipsIntersecting(checkRange ?: aabb)
+        val iterator = ships.iterator()
+        while (iterator.hasNext()) {
+            val ship: Ship = iterator.next()
+            val shipId = ship.id
+            val pockets: LongObjectMap<AABBdc> = map[shipId] ?: continue
+            var polygon: ConvexPolygonc? = null
+            pockets.forEach { (_, pocket) ->
+                if (polygon == null) polygon = getCollider().createPolygonFromAABB(aabb, ship.transform.worldToShip, ship.id)
+                if (!mustBeContained) {
+                    polygon!!.points.forEach { point ->
+                        if (pocket.containsPoint(ship.worldToShip.transformPosition(point, Vector3d()))) {
+                            return true
+                        }
+                    }
+                } else {
+                    val notContained = mutableListOf(false)
+                    polygon!!.points.forEach { point ->
+                        if (!pocket.containsPoint(ship.worldToShip.transformPosition(point, Vector3d()))) {
+                            notContained[0] = true
+                        }
+                    }
+                    if (!notContained[0]) {
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
+
+    @JvmOverloads
+    fun checkIfPointAndAABBInAirPocket(point: Vector3dc, aabb: AABBdc, mustBeContained : Boolean = false, checkRange: AABBdc? = null) : Pair<Boolean, Boolean> {
+        val level = Minecraft.getInstance().level
+        var pointBl = false
+        var aabbBl = false
+        val ships: Iterable<LoadedShip> =  level.getLoadedShipsIntersecting(checkRange ?: aabb)
+        val iterator = ships.iterator()
+        while (iterator.hasNext()) {
+            val ship: Ship = iterator.next()
+            val shipId = ship.id
+            val pockets: LongObjectMap<AABBdc> = map[shipId] ?: continue
+            var polygon: ConvexPolygonc? = null
+            pockets.forEach { (_, pocket) ->
+                if (!pointBl) {
+                    if (pocket.containsPoint(ship.worldToShip.transformPosition(point, Vector3d()))) {
+                        pointBl = true
+                    }
+                }
+                if (!aabbBl) {
+                    if (!mustBeContained) {
+                        if (polygon == null) polygon = getCollider().createPolygonFromAABB(aabb, ship.worldToShip, ship.id)
+                        polygon!!.points.forEach { point2 ->
+                            if (pocket.containsPoint(point2)) {
+                                aabbBl = true
+                            }
+                        }
+                    } else {
+                        if (polygon == null) polygon = getCollider().createPolygonFromAABB(aabb, ship.worldToShip, ship.id)
+                        val notContained: MutableList<Boolean> = mutableListOf(false)
+                        polygon!!.points.forEach { point2 ->
+                            if (!pocket.containsPoint(point2)) {
+                                notContained[0] = true
+                            }
+                        }
+                        aabbBl = !notContained[0]
+                    }
+                }
+                if (pointBl && aabbBl) {
+                    return Pair(true, true)
+                }
+            }
+        }
+        return Pair(pointBl, aabbBl)
+    }
+
+    private var collider : EntityPolygonCollider? = null
+
+    @JvmStatic
+    private fun getCollider(): EntityPolygonCollider {
+        if (collider == null) {
+            collider = vsCore.entityPolygonCollider
+        }
+        return collider!!
     }
 
     private val WATER_MASK: RenderType.CompositeRenderType = RenderType.create(
@@ -60,7 +191,7 @@ object FakeAirPocketClient {
         val loadedShips = shipClientWorld.loadedShips
         map.entries.forEach { entry ->
             val transform = loadedShips.getById(entry.key)?.renderTransform
-            entry.value.forEach { aabb ->
+            entry.value.forEach { (pocketId, aabb) ->
                 /*if (timer == 0) {
                     timer = 250
                 }
@@ -105,8 +236,10 @@ object FakeAirPocketClient {
         }
     }
 
+    @JvmStatic
     private var timer = 0
 
+    @JvmStatic
     private fun debug(title: String, message: String) {
         if (timer == 0) {
             Minecraft.getInstance().level?.profiler?.push(title)
@@ -115,7 +248,7 @@ object FakeAirPocketClient {
         }
     }
 
-    fun renderPolygon(vertices: List<Vector3dc>, consumer: VertexConsumer, ms: PoseStack, transform: ShipTransform?, camera: Vector3dc, offset: Vector3dc) {
+    private fun renderPolygon(vertices: List<Vector3dc>, consumer: VertexConsumer, ms: PoseStack, transform: ShipTransform?, camera: Vector3dc, offset: Vector3dc) {
         if (vertices.size < 3) return
 
         ms.pushPose()
@@ -162,7 +295,7 @@ object FakeAirPocketClient {
 
                     val buf = FriendlyByteBuf(Unpooled.buffer())
                     buf.writeLong(ship.id)
-                    NetworkManager.sendToServer(FAKE_AIR_POCKET_PACKET_ID, buf)
+                    NetworkManager.sendToServer(REQUEST_ALL_FAKE_AIR_POCKET, buf)
 
                     player.sendSystemMessage(Component.literal("Called /fresh-fake-air-pocket"))
                     return@executes 1

@@ -47,10 +47,9 @@ public abstract class MixinDeployerHandler {
     )
     private static Vec3 setRayOrigin(Vec3 original, @Local(argsOnly = true, ordinal = 0) DeployerFakePlayer player, @Local(argsOnly = true, ordinal = 0) Vec3 vec3, @Share("mode") LocalBooleanRef working_mode) {
         BlockEntity blockEntity = player.level().getBlockEntity(TransformUtilsKt.getToBlockPos(vec3));
-        if(blockEntity != null)
-            working_mode.set(((IDeployerBehavior)blockEntity).vs_addition$getWorkingMode().get() == IDeployerBehavior.WorkigMode.WITH_SHIP);
-        else
-            working_mode.set(false);
+        if (blockEntity instanceof IDeployerBehavior behavior) {
+            working_mode.set(behavior.vs_addition$getWorkingMode().get() == IDeployerBehavior.WorkigMode.WITH_SHIP);
+        }
         if(working_mode.get())
             return VSGameUtilsKt.toWorldCoordinates(player.level(), original);
         return original;

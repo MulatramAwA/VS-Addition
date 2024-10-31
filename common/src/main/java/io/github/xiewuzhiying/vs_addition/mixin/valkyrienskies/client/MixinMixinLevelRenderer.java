@@ -13,19 +13,12 @@ import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
-import org.joml.primitives.AABBd;
-import org.joml.primitives.AABBdc;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.valkyrienskies.core.api.ships.LoadedShip;
-import org.valkyrienskies.core.api.ships.Ship;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 import org.valkyrienskies.mod.mixin.feature.transform_particles.MixinParticle;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Mixin(LevelRenderer.class)
@@ -44,20 +37,8 @@ public abstract class MixinMixinLevelRenderer {
             final ParticleType<?> type = options.getType();
             if (waterLikeParticle.contains(type)) {
                 final Vector3d position = VSGameUtilsKt.toWorldCoordinates(this.level, x, y, z);
-                final Iterable<LoadedShip> ships = ShipUtils.getLoadedShipsIntersecting(this.level, new AABBd(position, new Vector3d(position.x + 1, position.y + 1, position.z + 1)));
-                final Iterator<LoadedShip> iterator = ships.iterator();
-                final Map<Long, List<AABBdc>> map = FakeAirPocketClient.INSTANCE.getMap();
-                while (iterator.hasNext()) {
-                    Ship ship = iterator.next();
-                    long shipId = ship.getId();
-                    final Iterable<AABBdc> aabbs = map.get(shipId);
-                    if (aabbs != null) {
-                        for (AABBdc aabb : aabbs) {
-                            if (aabb.containsPoint(ship.getWorldToShip().transformPosition(new Vector3d(position)))) {
-                                return null;
-                            }
-                        }
-                    }
+                if (FakeAirPocketClient.INSTANCE.checkIfPointInAirPocket(position)) {
+                    return null;
                 }
             }
         }

@@ -14,6 +14,7 @@ import io.github.xiewuzhiying.vs_addition.stuff.EntityFreshCaller
 import io.github.xiewuzhiying.vs_addition.stuff.airpocket.FakeAirPocket
 import io.github.xiewuzhiying.vs_addition.stuff.airpocket.FakeAirPocketClient
 import org.valkyrienskies.core.impl.config.VSConfigClass
+import org.valkyrienskies.core.impl.hooks.VSEvents
 
 object VSAdditionMod {
     const val MOD_ID = "vs_addition"
@@ -58,5 +59,8 @@ object VSAdditionMod {
             ClientTickEvent.CLIENT_POST.register(ClientTickEvent.Client { DualLinkRenderer.tick() })
         }
         ClientCommandRegistrationEvent.EVENT.register { dispatcher, registry -> FakeAirPocketClient.registerCommands(dispatcher, registry) }
+        VSEvents.ShipLoadEventClient.on { event ->
+            FakeAirPocketClient.requestAllAirPockets(event.ship.id)
+        }
     }
 }
