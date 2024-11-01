@@ -1,4 +1,4 @@
-package io.github.xiewuzhiying.vs_addition.mixin.xaeros_minimap.client;
+package io.github.xiewuzhiying.vs_addition.fabric.mixin.xaeros_minimap.client;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -20,7 +20,7 @@ import xaero.common.minimap.render.MinimapRenderer;
 
 @Pseudo
 @Restriction(
-        require = @Condition("xaerominimap")
+        require = @Condition("xaerominimapfair")
 )
 @Mixin(MinimapRenderer.class)
 public abstract class MixinMinimapRenderer {

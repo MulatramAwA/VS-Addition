@@ -22,7 +22,8 @@
     "tallyho.MixinClockworkPeripheralProvider",
     "tallyho.MixinPhysBearingBlockEntity",
     "tallyho.MixinTallyhoMod",
-    "valkyrienskies.water.MixinEntity"
+    "valkyrienskies.water.MixinEntity",
+    "xaeros_minimap.client.MixinMinimapRenderer"
   ],
   "client": [
     "embeddium.client.MixinDefaultChunkRenderer",

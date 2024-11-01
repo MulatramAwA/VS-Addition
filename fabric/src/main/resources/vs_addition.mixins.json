@@ -9,7 +9,8 @@
     "create.hose_pulley.MixinHosePulleyBlockEntity",
     "createaddition.MixinPortableEnergyInterfaceMovement",
     "netmusic.MusicToClientMessageAccessor",
-    "valkyrienskies.water.MixinEntity"
+    "valkyrienskies.water.MixinEntity",
+    "xaeros_minimap.client.MixinMinimapRenderer"
   ],
   "client": [
     "netmusic.client.MixinMusicToClientMessageReceiver",

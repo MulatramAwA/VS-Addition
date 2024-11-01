@@ -110,6 +110,9 @@ dependencies {
 
     // Net Music
     modImplementation("maven.modrinth:net-music:1.0.0")
+
+    //Xaero's minimap
+    modCompileOnly("maven.modrinth:xaeros-minimap-fair:FP24.2.0_Fabric_1.20")
 }
 
 processResources {

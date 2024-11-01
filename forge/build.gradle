@@ -132,6 +132,9 @@ dependencies {
 
     //Tallyho
     modCompileOnly files("jars/tallyho-3.0.8.jar")
+
+    //Xaero's minimap
+    modCompileOnly("maven.modrinth:xaeros-minimap-fair:FP24.2.0_Forge_1.20")
 }
 
 processResources {

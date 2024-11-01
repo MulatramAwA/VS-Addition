@@ -1,4 +1,4 @@
-package io.github.xiewuzhiying.vs_addition.mixin.xaeros_minimap.client;
+package io.github.xiewuzhiying.vs_addition.forge.mixin.xaeros_minimap.client;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -20,12 +20,12 @@ import xaero.common.minimap.render.MinimapRenderer;
 
 @Pseudo
 @Restriction(
-        require = @Condition("xaerominimap")
+        require = @Condition("xaerominimapfair")
 )
 @Mixin(MinimapRenderer.class)
 public abstract class MixinMinimapRenderer {
 
-    @Shadow protected Minecraft mc;
+    @Shadow(remap = false) protected Minecraft mc;
     @Unique
     private Matrix4dc vs_addition$latestMatrix4d = new Matrix4d();
     @Unique
