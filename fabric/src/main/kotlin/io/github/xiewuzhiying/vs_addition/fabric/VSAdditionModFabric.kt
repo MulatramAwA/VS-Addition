@@ -36,5 +36,6 @@ class VSAdditionModFabricClient : ClientModInitializer {
     override fun onInitializeClient() {
         initClient()
         WorldRenderEvents.BEFORE_DEBUG_RENDER.register(FakeRenderer())
+        WorldRenderEvents.LAST.register(FakeRenderer())
     }
 }

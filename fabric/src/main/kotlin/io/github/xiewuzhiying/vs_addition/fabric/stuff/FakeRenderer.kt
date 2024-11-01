@@ -10,6 +10,6 @@ class FakeRenderer : WorldRenderEvents.DebugRender, WorldRenderEvents.Last {
     }
 
     override fun onLast(context: WorldRenderContext) {
-        FakeAirPocketClient.render(context.matrixStack(), context.camera(), context.consumers())
+        FakeAirPocketClient.renderHighLight(context.matrixStack(), context.camera(), context.consumers())
     }
 }

@@ -30,6 +30,9 @@ object VSAdditionConfig {
 
             @JsonSchema(description = "High light fake air pocket aabb.")
             var highLightFakedAirPocket = false
+
+            @JsonSchema(description = "Remove bubble like particles in fake air pocket.")
+            var removeBubbleLikeParticlesInFakeAirPocket = false
         }
     }
 

@@ -1,7 +1,9 @@
 package io.github.xiewuzhiying.vs_addition.stuff.airpocket
 
 import com.mojang.brigadier.CommandDispatcher
+import com.mojang.brigadier.arguments.DoubleArgumentType
 import com.mojang.brigadier.arguments.LongArgumentType
+import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import dev.architectury.networking.NetworkManager
 import io.github.xiewuzhiying.vs_addition.VSAdditionConfig
@@ -9,12 +11,12 @@ import io.github.xiewuzhiying.vs_addition.networking.VSAdditionNetworking.REQUES
 import io.github.xiewuzhiying.vs_addition.util.ShipUtils.getLoadedShipsIntersecting
 import io.github.xiewuzhiying.vs_addition.util.ShipUtils.getShipManagingPos2
 import io.github.xiewuzhiying.vs_addition.util.toDirection
-import io.github.xiewuzhiying.vs_addition.util.toVector3d
 import io.netty.buffer.Unpooled
 import net.minecraft.commands.CommandBuildContext
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument
+import net.minecraft.core.Direction
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerLevel
@@ -26,7 +28,6 @@ import org.valkyrienskies.core.api.ships.LoadedShip
 import org.valkyrienskies.core.api.ships.ServerShip
 import org.valkyrienskies.core.apigame.collision.ConvexPolygonc
 import org.valkyrienskies.core.apigame.collision.EntityPolygonCollider
-import org.valkyrienskies.core.util.extend
 import org.valkyrienskies.core.util.writeVec3d
 import org.valkyrienskies.mod.common.ValkyrienSkiesMod.vsCore
 import org.valkyrienskies.mod.common.shipObjectWorld
@@ -212,35 +213,83 @@ object FakeAirPocket {
                             return@executes 1
                         }
                     )
-                )
-            )
-            .then(Commands.literal("extend")
-                .then(Commands.argument("shipId", LongArgumentType.longArg())
-                    .then(Commands.argument("pocketId", LongArgumentType.longArg())
+                    .then(Commands.argument("all", StringArgumentType.string())
                         .executes { context: CommandContext<CommandSourceStack> ->
-                            val player = context.source.player ?: return@executes 0
                             val source = context.source
                             val level = source.level
 
                             val shipId = LongArgumentType.getLong(context, "shipId")
-                            val ship = level.shipObjectWorld.allShips.getById(shipId) ?: return@executes 0
-                            val controller = FakeAirPocketController.getOrCreate(ship, level)
-                            val pocketId = LongArgumentType.getLong(context, "pocketId")
-                            val aabb = AABBd(controller.getAirPocket(pocketId) ?: return@executes 0)
-                            val view = player.getViewVector(1.0f).toJOML()
-                            ship.worldToShip.transformDirection(view)
-                            aabb.extend(view.toDirection().normal.toVector3d)
+                            val controller = FakeAirPocketController.getOrCreate(shipId, level) ?: return@executes 0
+                            if ("all" != (StringArgumentType.getString(context, "all") ?: return@executes 0)) return@executes 0
+                            controller.removeAllAirPocket()
+                            val pockets = controller.getAllAirPocket()
                             val buf = FriendlyByteBuf(Unpooled.buffer());
                             buf.writeLong(shipId)
-                            buf.writeInt(1)
-                            buf.writeLong(pocketId)
-                            buf.writeVec3d(Vector3d(aabb.minX(), aabb.minY(), aabb.minZ()))
-                            buf.writeVec3d(Vector3d(aabb.maxX(), aabb.maxY(), aabb.maxZ()))
+                            buf.writeInt(pockets.size)
+                            pockets.forEach {
+                                buf.writeLong(it.key)
+                                val pocket = it.value
+                                buf.writeVec3d(Vector3d(pocket.minX(), pocket.minY(), pocket.minZ()))
+                                buf.writeVec3d(Vector3d(pocket.maxX(), pocket.maxY(), pocket.maxZ()))
+                            }
                             level.players().forEach {
                                 NetworkManager.sendToPlayer(it, REQUEST_ALL_FAKE_AIR_POCKET, buf)
                             }
                             return@executes 1
                         }
+                    )
+                )
+            )
+            .then(Commands.literal("extend")
+                .then(Commands.argument("shipId", LongArgumentType.longArg())
+                    .then(Commands.argument("pocketId", LongArgumentType.longArg())
+                        .then(Commands.argument("distance", DoubleArgumentType.doubleArg())
+                            .executes { context: CommandContext<CommandSourceStack> ->
+                                val player = context.source.player ?: return@executes 0
+                                val source = context.source
+                                val level = source.level
+
+                                val shipId = LongArgumentType.getLong(context, "shipId")
+                                val ship = level.shipObjectWorld.allShips.getById(shipId) ?: return@executes 0
+                                val controller = FakeAirPocketController.getOrCreate(ship, level)
+                                val pocketId = LongArgumentType.getLong(context, "pocketId")
+                                val aabb = AABBd(controller.getAirPocket(pocketId) ?: return@executes 0)
+                                val distance = DoubleArgumentType.getDouble(context, "distance")
+                                val view = player.getViewVector(1.0f).toJOML()
+                                ship.worldToShip.transformDirection(view)
+                                when (view.toDirection()) {
+                                    Direction.UP -> {
+                                        aabb.maxY += distance
+                                    }
+                                    Direction.DOWN -> {
+                                        aabb.minY -= distance
+                                    }
+                                    Direction.EAST -> {
+                                        aabb.maxX += distance
+                                    }
+                                    Direction.WEST -> {
+                                        aabb.minX -= distance
+                                    }
+                                    Direction.SOUTH -> {
+                                        aabb.maxZ += distance
+                                    }
+                                    Direction.NORTH -> {
+                                        aabb.minZ -= distance
+                                    }
+                                }
+                                controller.setAirPocket(pocketId, aabb)
+                                val buf = FriendlyByteBuf(Unpooled.buffer());
+                                buf.writeLong(shipId)
+                                buf.writeInt(1)
+                                buf.writeLong(pocketId)
+                                buf.writeVec3d(Vector3d(aabb.minX(), aabb.minY(), aabb.minZ()))
+                                buf.writeVec3d(Vector3d(aabb.maxX(), aabb.maxY(), aabb.maxZ()))
+                                level.players().forEach {
+                                    NetworkManager.sendToPlayer(it, REQUEST_ALL_FAKE_AIR_POCKET, buf)
+                                }
+                                return@executes 1
+                            }
+                        )
                     )
                 )
             )

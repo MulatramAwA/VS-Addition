@@ -11,6 +11,7 @@ import dev.architectury.networking.NetworkManager
 import io.github.xiewuzhiying.vs_addition.VSAdditionConfig
 import io.github.xiewuzhiying.vs_addition.networking.VSAdditionNetworking.REQUEST_ALL_FAKE_AIR_POCKET
 import io.github.xiewuzhiying.vs_addition.networking.VSAdditionNetworking.REQUEST_FAKE_AIR_POCKET_BY_ID
+import io.github.xiewuzhiying.vs_addition.util.*
 import io.github.xiewuzhiying.vs_addition.util.ShipUtils.getLoadedShipsIntersecting
 import io.netty.buffer.Unpooled
 import io.netty.util.collection.LongObjectHashMap
@@ -24,13 +25,14 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.commands.CommandBuildContext
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.BlockHitResult
+import org.joml.Matrix4f
 import org.joml.Vector3d
 import org.joml.Vector3dc
 import org.joml.primitives.AABBd
 import org.joml.primitives.AABBdc
+import org.joml.primitives.Planed
 import org.valkyrienskies.core.api.ships.LoadedShip
 import org.valkyrienskies.core.api.ships.Ship
 import org.valkyrienskies.core.api.ships.properties.ShipId
@@ -42,9 +44,10 @@ import org.valkyrienskies.mod.common.IShipObjectWorldClientProvider
 import org.valkyrienskies.mod.common.VSClientGameUtils
 import org.valkyrienskies.mod.common.ValkyrienSkiesMod.vsCore
 import org.valkyrienskies.mod.common.util.toJOML
+import kotlin.math.atan2
 
 object FakeAirPocketClient {
-    private val map : LongObjectMap<LongObjectMap<AABBdc>> = LongObjectHashMap()
+    val map : LongObjectMap<LongObjectMap<AABBdc>> = LongObjectHashMap()
 
     fun setAirPocket(shipId: ShipId, pocketId: PocketId, aabb : AABBdc) {
         map[shipId]?.put(pocketId, aabb)
@@ -174,10 +177,6 @@ object FakeAirPocketClient {
         return collider!!
     }
 
-    fun tick() {
-
-    }
-
     private val WATER_MASK: RenderType.CompositeRenderType = RenderType.create(
         "water_mask_triangles",
         DefaultVertexFormat.POSITION,
@@ -190,105 +189,127 @@ object FakeAirPocketClient {
             .createCompositeState(false)
     )
 
-    private val WATER_TEXTURE = ResourceLocation("minecraft", "textures/block/water_overlay.png")
-
-    private val WATER_SURFACE: RenderType.CompositeRenderType = RenderType.create(
-        "water_surface",
-        DefaultVertexFormat.POSITION_TEX,
-        VertexFormat.Mode.TRIANGLES,
-        256,
-        RenderType.CompositeState.builder()
-            .setShaderState(RenderStateShard.POSITION_COLOR_TEX_SHADER)
-            .setTextureState(RenderStateShard.TextureStateShard(WATER_TEXTURE, false, false))
-            .setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
-            .createCompositeState(false)
-    )
-
     @JvmStatic
     fun render(ms: PoseStack, camera: Camera, bufferSource: MultiBufferSource?) {
         if (!(VSAdditionConfig.COMMON.experimental.fakeAirPocket && VSAdditionConfig.CLIENT.experimental.cullWaterSurfaceInFakeAirPocket)) return
         val waterMaskConsumer = bufferSource?.getBuffer(WATER_MASK) ?: return
-        val cameraPosition = camera.position
-        val shipClientWorld = ((Minecraft.getInstance() as IShipObjectWorldClientProvider).shipObjectWorld as ShipObjectClientWorld)
+        val shipClientWorld = ((Minecraft.getInstance() as? IShipObjectWorldClientProvider)?.shipObjectWorld as? ShipObjectClientWorld) ?: return
+        val cameraPosition = camera.position.toJOML()
         val loadedShips = shipClientWorld.loadedShips
-        map.entries.forEach { entry ->
-            val transform = loadedShips.getById(entry.key)?.renderTransform
-            entry.value.forEach { (pocketId, aabb) ->
-                /*if (timer == 0) {
-                    timer = 250
-                }
-                timer -= 1*/
-                ms.pushPose()
-                val extent = Vector3d()
-                aabb.extent(extent)
-                val k: Double = -extent.x()
-                val l: Double = -extent.y()
-                val m: Double = -extent.z()
-                val n: Double = extent.x()
-                val o: Double = extent.y()
-                val p: Double = extent.z()
-                val vertices : List<Vector3dc> = listOf(
-                    Vector3d(k, l, m),
-                    Vector3d(n, l, m),
-                    Vector3d(k, o, m),
-                    Vector3d(n, o, m),
-                    Vector3d(k, l, p),
-                    Vector3d(n, l, p),
-                    Vector3d(k, o, p),
-                    Vector3d(n, o, p)
-                )
-                val plane = if (transform != null) {
-                    Planed(transform.worldToShip.transformDirection(Vector3d(0.0, 1.0, 0.0)), transform.worldToShip.transformPosition(Vector3d(0.0, SEA_LEVEL, 0.0)).sub(aabb.center(Vector3d())))
-                } else {
-                    Planed(Vector3d(0.0, 1.0, 0.0), Vector3d(0.0, SEA_LEVEL, 0.0))
-                }
-                //debug("plane", "$plane")
-                val section = calculateSection(vertices, plane)
-                /*section.forEach {
-                    debug("section", "(${it.x()}, ${it.y()}, ${it.z()})")
-                }*/
-                val vertices2 = sortVertices(section, plane.normal())
-                /*vertices2.forEach {
-                    debug("vertices2", "(${it.x()}, ${it.y()}, ${it.z()})")
-                }*/
-                renderPolygon(ms, transform, cameraPosition.toJOML(), aabb.center(Vector3d()), vertices2, waterMaskConsumer)
+        map.entries.forEach ship@{ entry ->
+            val transform = loadedShips.getById(entry.key)?.renderTransform ?: return@ship
+            entry.value.forEach pocket@{ (pocketId, aabb) ->
+                val aabb2 = aabb.moveToOrigin()
+                val plane = Planed(transform.worldToShip.transformPosition(Vector3d(0.0, SEA_LEVEL, 0.0)).sub(aabb.center(Vector3d())), transform.worldToShip.transformDirection(Vector3d(0.0, 1.0, 0.0)))
 
-                ms.popPose()
+                val mask = mutableListOf<Vector3dc>()
+
+                if (aabb2.testPlane(plane)) {
+                    aabb2.toLineSegments().forEach { line ->
+                        val dest = Vector3d()
+                        if (line.intersect(plane, dest)) {
+                            mask.add(dest)
+                        }
+                    }
+                }
+
+                /*val section = aabb2.toPoints().filter { it.isBehindPlane(plane) }.toMutableList()
+                mask.forEach { section.add(it) }*/
+
+                val cameraPosition2 = transform.worldToShip.transformPosition(Vector3d(cameraPosition)).sub(aabb.center(Vector3d()))
+
+                /*aabb2.toPlanes()
+                    .mapNotNull { aabbPlane ->
+                        val list = section.filter { it.isOnPlane(aabbPlane) }
+                        if (list.size < 3) {
+                            return@mapNotNull null
+                        } else {
+                            return@mapNotNull Triple(list, aabbPlane.normal, aabbPlane)
+                        }
+                    }
+                    .forEach { face ->
+                        renderMask2(ms, transform, cameraPosition, aabb.center(Vector3d()), sortVertices(face.first, face.second), waterSurfaceConsumer, cameraPosition2.isInFrontOfPlane(face.third))
+                    }*/
+
+                renderMask(ms, transform, cameraPosition, aabb.center(Vector3d()), sortVertices(mask, plane.normal), waterMaskConsumer, cameraPosition2.isInFrontOfPlane(plane))
             }
         }
     }
 
-    private fun renderPolygon(ms: PoseStack, transform: ShipTransform?, camera: Vector3dc, offset: Vector3dc, vertices: List<Vector3dc>, maskConsumer: VertexConsumer) {
+    private fun renderMask(ms: PoseStack, transform: ShipTransform, camera: Vector3dc, offset: Vector3dc, vertices: List<Vector3dc>, maskConsumer: VertexConsumer, bl: Boolean) {
         if (vertices.size < 3) return
 
         ms.pushPose()
-        if (transform != null) {
-            VSClientGameUtils.transformRenderWithShip(transform, ms, offset.x(), offset.y(), offset.z(), camera.x(), camera.y(), camera.z())
-        } else {
-            ms.translate(offset.x() - camera.x(), offset.y() - camera.y(), offset.z() - camera.z())
-        }
-        val matrix2 = ms.last().pose()
-        for (i in 1 until vertices.size - 1) {
-            maskConsumer.vertex(matrix2, vertices[0].x().toFloat(), vertices[0].y().toFloat(), vertices[0].z().toFloat()).endVertex()
-            maskConsumer.vertex(matrix2, vertices[i + 1].x().toFloat(), vertices[i + 1].y().toFloat(), vertices[i + 1].z().toFloat()).endVertex()
-            maskConsumer.vertex(matrix2, vertices[i].x().toFloat(), vertices[i].y().toFloat(), vertices[i].z().toFloat()).endVertex()
-        }
+        VSClientGameUtils.transformRenderWithShip(
+            transform,
+            ms,
+            offset.x(),
+            offset.y(),
+            offset.z(),
+            camera.x(),
+            camera.y(),
+            camera.z()
+        )
+        renderTriangle(maskConsumer, ms.last().pose(), vertices, true)
         ms.popPose()
+
         ms.pushPose()
-        if (transform != null) {
-            VSClientGameUtils.transformRenderWithShip(transform, ms, offset.x(), offset.y(), offset.z(), camera.x(), camera.y() + ZFIGHT, camera.z())
-        } else {
-            ms.translate(offset.x() - camera.x(), offset.y() - (camera.y() + ZFIGHT), offset.z() - camera.z())
-        }
-        val matrix1 = ms.last().pose()
-        for (i in 1 until vertices.size - 1) {
-            maskConsumer.vertex(matrix1, vertices[0].x().toFloat(), vertices[0].y().toFloat(), vertices[0].z().toFloat()).endVertex()
-            maskConsumer.vertex(matrix1, vertices[i].x().toFloat(), vertices[i].y().toFloat(), vertices[i].z().toFloat()).endVertex()
-            maskConsumer.vertex(matrix1, vertices[i + 1].x().toFloat(), vertices[i + 1].y().toFloat(), vertices[i + 1].z().toFloat()).endVertex()
-            //debug("renderPolygon", "(${vertices[i].x()}, ${vertices[i].y()}, ${vertices[i].z()})")
-        }
+        VSClientGameUtils.transformRenderWithShip(
+            transform,
+            ms,
+            offset.x(),
+            offset.y(),
+            offset.z(),
+            camera.x(),
+            camera.y() + ZFIGHT,
+            camera.z()
+        )
+        renderTriangle(maskConsumer, ms.last().pose(), vertices, false)
         ms.popPose()
     }
+
+    private fun renderTriangle(consumer: VertexConsumer, matrix: Matrix4f, vertices: List<Vector3dc>, order: Boolean) {
+        for (i in 1 until vertices.size - 1) {
+            val (first, finally) = if (order) {
+                Pair(i+1, 0)
+            } else {
+                Pair(0, i+1)
+            }
+            consumer
+                .vertex(matrix, vertices[first].x().toFloat(), vertices[first].y().toFloat(), vertices[first].z().toFloat())
+                .uv(0f, 0f)
+                .endVertex()
+
+            consumer
+                .vertex(matrix, vertices[i].x().toFloat(), vertices[i].y().toFloat(), vertices[i].z().toFloat())
+                .uv(0f, 1f)
+                .endVertex()
+
+            consumer
+                .vertex(matrix, vertices[finally].x().toFloat(), vertices[finally].y().toFloat(), vertices[finally].z().toFloat())
+                .uv(1f, 0f)
+                .endVertex()
+        }
+    }
+
+    private fun sortVertices(vertices: List<Vector3dc>, planeNormal: Vector3dc): List<Vector3dc> {
+        if (vertices.size < 3) return vertices
+
+        val centroid = Vector3d()
+        vertices.forEach { centroid.add(it) }
+        centroid.div(vertices.size.toDouble())
+
+        val right = Vector3d(1.0, 0.0, 0.0).apply {
+            if (dot(planeNormal) > 0.999) set(0.0, 1.0, 0.0)
+        }.cross(planeNormal, Vector3d()).normalize()
+        val forward = Vector3d(right).cross(planeNormal).normalize()
+
+        return vertices.sortedBy { v ->
+            val offset = Vector3d(v).sub(centroid)
+            atan2(offset.dot(forward), offset.dot(right))
+        }
+    }
+
 
     fun renderHighLight(ms: PoseStack, camera: Camera, bufferSource: MultiBufferSource?) {
         if (!(VSAdditionConfig.COMMON.experimental.fakeAirPocket && VSAdditionConfig.CLIENT.experimental.highLightFakedAirPocket) || bufferSource == null) return
@@ -307,6 +328,8 @@ object FakeAirPocketClient {
             }
         }
     }
+
+
 
     fun registerCommands(dispatcher: CommandDispatcher<ClientCommandRegistrationEvent.ClientCommandSourceStack>, context: CommandBuildContext) {
         dispatcher.register(
@@ -344,6 +367,13 @@ object FakeAirPocketClient {
                 }
         )
     }
+
+
+
+
+    private const val WATER_OFFSET : Double = 8.0 / 9.0
+
+    private const val ZFIGHT : Double = 0.002
 
     @JvmStatic
     private var SEA_LEVEL = VSAdditionConfig.CLIENT.experimental.seaLevel + WATER_OFFSET

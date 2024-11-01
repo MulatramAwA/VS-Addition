@@ -18,7 +18,6 @@ import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
-import org.valkyrienskies.mod.mixin.feature.transform_particles.MixinParticle;
 
 import java.util.Set;
 
@@ -27,17 +26,13 @@ import java.util.Set;
 public abstract class MixinMixinLevelRenderer {
     @Shadow @Nullable private ClientLevel level;
 
-    /**
-     * Render particles in-world. The {@link MixinParticle} is not sufficient because this method includes a distance
-     * check, but this mixin is also not sufficient because not every particle is spawned using this method.
-     */
     @WrapMethod(
             method = "addParticleInternal(Lnet/minecraft/core/particles/ParticleOptions;ZZDDDDDD)Lnet/minecraft/client/particle/Particle;"
     )
     private Particle spawnParticleInWorld(ParticleOptions options, boolean force, boolean decreased, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, Operation<Particle> original) {
-        if (VSAdditionConfig.COMMON.getExperimental().getFakeAirPocket()) {
+        if (VSAdditionConfig.COMMON.getExperimental().getFakeAirPocket() && VSAdditionConfig.CLIENT.getExperimental().getRemoveBubbleLikeParticlesInFakeAirPocket()) {
             final ParticleType<?> type = options.getType();
-            if (waterLikeParticle.contains(type)) {
+            if (vs_addition$bubbleLikeParticle.contains(type)) {
                 final Vector3d position = VSGameUtilsKt.toWorldCoordinates(this.level, x, y, z);
                 if (FakeAirPocketClient.INSTANCE.checkIfPointInAirPocket(position)) {
                     return null;
@@ -48,7 +43,7 @@ public abstract class MixinMixinLevelRenderer {
     }
 
     @Unique
-    private static Set<ParticleType<?>> waterLikeParticle =
+    private static final Set<ParticleType<?>> vs_addition$bubbleLikeParticle =
             Set.of(
                     ParticleTypes.UNDERWATER,
                     ParticleTypes.BUBBLE,

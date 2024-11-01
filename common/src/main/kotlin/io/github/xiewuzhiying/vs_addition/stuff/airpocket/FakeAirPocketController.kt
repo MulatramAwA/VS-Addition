@@ -42,6 +42,14 @@ class FakeAirPocketController {
         this.map.remove(pocketId)
     }
 
+    fun removeAllAirPocket() {
+        this.map.clear()
+    }
+
+    fun setAirPocket(pocketId: PocketId, aabb: AABBdc) {
+        this.map[pocketId] = aabb
+    }
+
     companion object{
         fun getOrCreate(ship: ServerShip, level: DimensionId) =
             ship.getAttachment<FakeAirPocketController>()
