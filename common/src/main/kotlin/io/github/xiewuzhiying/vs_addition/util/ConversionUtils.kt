@@ -15,7 +15,6 @@ import net.minecraft.world.phys.shapes.CollisionContext
 import org.joml.*
 import org.valkyrienskies.core.api.ships.Ship
 import org.valkyrienskies.core.api.ships.properties.ShipId
-import org.valkyrienskies.core.apigame.world.ServerShipWorldCore
 import org.valkyrienskies.mod.common.*
 import org.valkyrienskies.mod.common.util.EntityDraggingInformation
 import org.valkyrienskies.mod.common.util.toJOML

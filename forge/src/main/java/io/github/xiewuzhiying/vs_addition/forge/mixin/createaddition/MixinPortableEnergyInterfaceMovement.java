@@ -12,7 +12,7 @@ import com.simibubi.create.content.contraptions.behaviour.MovementBehaviour;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
 import com.simibubi.create.foundation.utility.VecHelper;
 import io.github.xiewuzhiying.vs_addition.mixinducks.create.portable_interface.IPSIBehavior;
-import io.github.xiewuzhiying.vs_addition.util.TransformUtilsKt;
+import io.github.xiewuzhiying.vs_addition.util.ConversionUtilsKt;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Position;
@@ -180,7 +180,7 @@ public abstract class MixinPortableEnergyInterfaceMovement implements MovementBe
 
     @Unique
     public PortableEnergyInterfaceBlockEntity vs_addition$findPSI(Level level, Vector3d pos) {
-        BlockPos checkThis = new BlockPos(TransformUtilsKt.getToBlockPos(pos));
+        BlockPos checkThis = new BlockPos(ConversionUtilsKt.getToBlockPos(pos));
         if (level.getBlockEntity(checkThis) instanceof PortableEnergyInterfaceBlockEntity psi) {
             if(psi.isPowered() || ((IPSIBehavior)psi).vs_addition$getWorkingMode().get() == IPSIBehavior.WorkigMode.ORIGINAL)
                 return null;

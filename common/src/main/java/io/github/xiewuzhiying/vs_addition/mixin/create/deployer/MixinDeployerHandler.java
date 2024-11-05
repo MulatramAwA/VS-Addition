@@ -11,7 +11,7 @@ import com.simibubi.create.content.kinetics.deployer.DeployerFakePlayer;
 import com.simibubi.create.content.kinetics.deployer.DeployerHandler;
 import io.github.xiewuzhiying.vs_addition.mixinducks.create.deployer.IDeployerBehavior;
 import io.github.xiewuzhiying.vs_addition.stuff.conditiontester.InteractiveConditionTester;
-import io.github.xiewuzhiying.vs_addition.util.TransformUtilsKt;
+import io.github.xiewuzhiying.vs_addition.util.ConversionUtilsKt;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.core.BlockPos;
@@ -46,7 +46,7 @@ public abstract class MixinDeployerHandler {
             )
     )
     private static Vec3 setRayOrigin(Vec3 original, @Local(argsOnly = true, ordinal = 0) DeployerFakePlayer player, @Local(argsOnly = true, ordinal = 0) Vec3 vec3, @Share("mode") LocalBooleanRef working_mode) {
-        BlockEntity blockEntity = player.level().getBlockEntity(TransformUtilsKt.getToBlockPos(vec3));
+        BlockEntity blockEntity = player.level().getBlockEntity(ConversionUtilsKt.getToBlockPos(vec3));
         if (blockEntity instanceof IDeployerBehavior behavior) {
             working_mode.set(behavior.vs_addition$getWorkingMode().get() == IDeployerBehavior.WorkigMode.WITH_SHIP);
         }

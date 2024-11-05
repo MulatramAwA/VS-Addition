@@ -4,7 +4,7 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.simibubi.create.content.kinetics.fan.NozzleBlockEntity;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import io.github.xiewuzhiying.vs_addition.stuff.conditiontester.EncasedFanConditionTester;
-import io.github.xiewuzhiying.vs_addition.util.TransformUtilsKt;
+import io.github.xiewuzhiying.vs_addition.util.ConversionUtilsKt;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.core.BlockPos;
@@ -28,6 +28,6 @@ public abstract class MixinNozzleBlockEntity extends SmartBlockEntity {
     }
     @ModifyExpressionValue(method = {"tick","lazyTick","canSee"},at = @At(value = "INVOKE", target = "Lcom/simibubi/create/foundation/utility/VecHelper;getCenterOf(Lnet/minecraft/core/Vec3i;)Lnet/minecraft/world/phys/Vec3;"))
     private Vec3 transformToWorldPos(Vec3 original){
-        return TransformUtilsKt.toWorld(original, this.level);
+        return ConversionUtilsKt.toWorld(original, this.level);
     }
 }

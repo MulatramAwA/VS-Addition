@@ -7,7 +7,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import io.github.xiewuzhiying.vs_addition.stuff.conditiontester.ExplosionConditionTester;
 import io.github.xiewuzhiying.vs_addition.util.ShipUtils;
-import io.github.xiewuzhiying.vs_addition.util.TransformUtilsKt;
+import io.github.xiewuzhiying.vs_addition.util.ConversionUtilsKt;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.core.BlockPos;
@@ -104,7 +104,7 @@ public abstract class MixinExplosion {
             }
             final Matrix4dc worldToShip = pair.getLeft().getTransform().getWorldToShip();
             final Vector3d vec31 = worldToShip.transformPosition(new Vector3d(m, n, o));
-            final BlockPos blockPos = TransformUtilsKt.getToBlockPos(vec31);
+            final BlockPos blockPos = ConversionUtilsKt.getToBlockPos(vec31);
             final BlockState blockState = this.level.getBlockState(blockPos);
             final FluidState fluidState = this.level.getFluidState(blockPos);
 

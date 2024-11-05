@@ -2,7 +2,7 @@ package io.github.xiewuzhiying.vs_addition.mixin.minecraft;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import io.github.xiewuzhiying.vs_addition.util.TransformUtilsKt;
+import io.github.xiewuzhiying.vs_addition.util.ConversionUtilsKt;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Position;
 import net.minecraft.server.level.ServerLevel;
@@ -20,6 +20,6 @@ public abstract class MixinServerLevel {
             )
     )
     private boolean inclShips(BlockPos instance, Position position, double v, Operation<Boolean> original) {
-        return TransformUtilsKt.squaredDistanceBetweenInclShips((ServerLevel)(Object)this, instance, position) < Mth.square(v);
+        return ConversionUtilsKt.squaredDistanceBetweenInclShips((ServerLevel)(Object)this, instance, position) < Mth.square(v);
     }
 }
