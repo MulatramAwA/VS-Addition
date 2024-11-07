@@ -7,6 +7,7 @@ import net.minecraft.core.Direction
 import net.minecraft.core.Position
 import net.minecraft.core.Vec3i
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.util.Mth
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.Level
@@ -23,7 +24,7 @@ import java.io.Serializable
 import java.lang.Math
 import kotlin.math.abs
 
-val Direction.directionToQuaterniond : Quaterniond
+val Direction.toQuaterniond : Quaterniond
     get() =
         when (this) {
             Direction.UP -> Quaterniond()
@@ -54,8 +55,8 @@ val Direction.directionToQuaterniond : Quaterniond
             ).normalize()
         }
 
-val Direction.directionToQuaternionf : Quaternionf
-    get() = Quaternionf(this.directionToQuaterniond)
+val Direction.toQuaternionf : Quaternionf
+    get() = Quaternionf(this.toQuaterniond)
 
 fun Vec3.toShipyardCoordinates(ship: Ship): Vec3 {
     val vector3d = ship.worldToShip.transformPosition(this.toJOML())
@@ -63,40 +64,40 @@ fun Vec3.toShipyardCoordinates(ship: Ship): Vec3 {
 }
 
 val Vector3dc.toVec3i : Vec3i
-    get() = Vec3i(this.x().toInt(), this.y().toInt(), this.z().toInt())
+    get() = Vec3i(Mth.floor(this.x()), Mth.floor(this.y()), Mth.floor(this.z()))
 
 val Vector3fc.toVec3i : Vec3i
-    get() = Vec3i(this.x().toInt(), this.y().toInt(), this.z().toInt())
+    get() = Vec3i(Mth.floor(this.x()), Mth.floor(this.y()), Mth.floor(this.z()))
 
 val Vec3.toVec3i : Vec3i
-    get() = Vec3i(this.x().toInt(), this.y().toInt(), this.z().toInt())
+    get() = Vec3i(Mth.floor(this.x()), Mth.floor(this.y()), Mth.floor(this.z()))
 
 val Vector3dc.toBlockPos: BlockPos
-    get() = BlockPos(this.x().toInt(), this.y().toInt(), this.z().toInt());
+    get() = BlockPos(Mth.floor(this.x()), Mth.floor(this.y()), Mth.floor(this.z()))
 
 val Vector3fc.toBlockPos: BlockPos
-    get() = BlockPos(this.x().toInt(), this.y().toInt(), this.z().toInt());
+    get() = BlockPos(Mth.floor(this.x()), Mth.floor(this.y()), Mth.floor(this.z()))
 
 val Vec3.toBlockPos: BlockPos
-    get() = BlockPos(this.x().toInt(), this.y().toInt(), this.z().toInt());
+    get() = BlockPos(Mth.floor(this.x), Mth.floor(this.y), Mth.floor(this.z))
 
 val Vector3dc.toVector3i: Vector3i
-    get() = Vector3i(this.x().toInt(), this.y().toInt(), this.z().toInt());
+    get() = Vector3i(Mth.floor(this.x()), Mth.floor(this.y()), Mth.floor(this.z()))
 
 val Vector3fc.toVector3i: Vector3i
-    get() = Vector3i(this.x().toInt(), this.y().toInt(), this.z().toInt());
+    get() = Vector3i(Mth.floor(this.x()), Mth.floor(this.y()), Mth.floor(this.z()))
 
 val Vec3.toVector3i: Vector3i
-    get() = Vector3i(this.x().toInt(), this.y().toInt(), this.z().toInt());
+    get() = Vector3i(Mth.floor(this.x()), Mth.floor(this.y()), Mth.floor(this.z()))
 
 val Vec3i.toVec3: Vec3
-    get() = Vec3(this.x.toDouble(), this.y.toDouble(), this.z.toDouble());
+    get() = Vec3(this.x.toDouble(), this.y.toDouble(), this.z.toDouble())
 
 val Vec3i.toVector3d: Vector3d
-    get() = Vector3d(this.x.toDouble(), this.y.toDouble(), this.z.toDouble());
+    get() = Vector3d(this.x.toDouble(), this.y.toDouble(), this.z.toDouble())
 
 val Vec3i.toVector3i: Vector3i
-    get() = Vector3i(this.x, this.y, this.z);
+    get() = Vector3i(this.x, this.y, this.z)
 
 fun Vec3.toWorld(level: Level): Vec3 {
     val ship = level.getShipManagingPos(this)

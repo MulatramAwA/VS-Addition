@@ -4,7 +4,6 @@ import io.github.xiewuzhiying.vs_addition.mixin.minecraft.HitResultAccessor
 import io.github.xiewuzhiying.vs_addition.mixinducks.valkyrienskies.ShipInertiaDataImplMixinDuck
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
-import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.level.BlockGetter
@@ -218,4 +217,20 @@ fun Level.clipEntities(start: Vec3, end: Vec3, aabb: AABB, skipEntities: List<En
         }
     }
     return closestEntity?.let { EntityHit(it, closestVec3) }
+}
+
+fun Level.transformFromWorldToNearbyShipsAndWorld(aabb: AABBdc, cb: Consumer<AABBdc>) {
+    cb.accept(aabb)
+    val tmpAABB = AABBd()
+    getShipsIntersecting(aabb).forEach { ship ->
+        cb.accept(tmpAABB.set(aabb).transform(ship.worldToShip))
+    }
+}
+
+fun Level.transformFromWorldToNearbyLoadedShipsAndWorld(aabb: AABBdc, cb: Consumer<AABBdc>) {
+    cb.accept(aabb)
+    val tmpAABB = AABBd()
+    getLoadedShipsIntersecting(aabb).forEach { ship ->
+        cb.accept(tmpAABB.set(aabb).transform(ship.worldToShip))
+    }
 }
