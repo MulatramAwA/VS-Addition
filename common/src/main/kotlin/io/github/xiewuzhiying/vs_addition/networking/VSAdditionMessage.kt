@@ -3,6 +3,8 @@ package io.github.xiewuzhiying.vs_addition.networking
 import dev.architectury.networking.NetworkManager
 import io.github.xiewuzhiying.vs_addition.VSAdditionMod
 import io.github.xiewuzhiying.vs_addition.networking.airpocket.*
+import io.github.xiewuzhiying.vs_addition.networking.disable_entity_ship_collision.EntityShipCollisionDisablerS2CPacket
+import io.github.xiewuzhiying.vs_addition.networking.disable_entity_ship_collision.EntityShipCollisionDisablerS2CPacket.Companion.ENTITY_SHIP_COLLISION_DISABLER
 import net.minecraft.resources.ResourceLocation
 
 object VSAdditionMessage {
@@ -26,5 +28,6 @@ object VSAdditionMessage {
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, FAKE_AIR_POCKET_UPDATE, UpdatePocketsS2CPacket::receive)
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, FAKE_AIR_POCKET_SYNC_BY_ID, SyncSinglePocketS2CPacket::receive)
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, FAKE_AIR_POCKET_SYNC_ALL, SyncAllPocketsS2CPacket::receive)
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, ENTITY_SHIP_COLLISION_DISABLER, EntityShipCollisionDisablerS2CPacket::receive)
     }
 }

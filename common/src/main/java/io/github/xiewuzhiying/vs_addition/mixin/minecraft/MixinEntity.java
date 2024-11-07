@@ -1,15 +1,19 @@
 package io.github.xiewuzhiying.vs_addition.mixin.minecraft;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import io.github.xiewuzhiying.vs_addition.util.ShipUtils;
+import io.github.xiewuzhiying.vs_addition.stuff.EntityShipCollisionDisabler;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4d;
 import org.joml.Vector3d;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -17,14 +21,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.valkyrienskies.core.api.ships.Ship;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
+import static io.github.xiewuzhiying.vs_addition.util.ShipUtilsKt.getPosStandingOnFromShips;
+
 @Pseudo
 @Mixin(Entity.class)
-public abstract class MixinEntity {
+public abstract class MixinEntity implements EntityShipCollisionDisabler {
     @Shadow public abstract float getYRot();
 
     @Shadow public abstract void setYRot(float yRot);
 
-    @Shadow public Level level;
+    @Shadow private Level level;
 
     @Shadow public abstract Level level();
 
@@ -75,7 +81,30 @@ public abstract class MixinEntity {
             )
     )
     private BlockPos getPosStandingOnFromShipsLegacy(BlockPos original) {
-        final BlockPos pos = ShipUtils.getPosStandingOnFromShips(this.level, new Vector3d(this.getX(), this.getY() - 0.2, this.getZ()));
+        final BlockPos pos = getPosStandingOnFromShips(this.level, new Vector3d(this.getX(), this.getY() - 0.2, this.getZ()));
         return pos == null ? original : pos ;
+    }
+
+    @Unique
+    private LongSet vs_addition$disabledCollisionBodies = new LongOpenHashSet();
+
+    @Override
+    public LongSet getDisabledCollisionBodies() {
+        return vs_addition$disabledCollisionBodies;
+    }
+
+    @Override
+    public void setDisabledCollisionBodies(@NotNull LongSet disabledCollisionBodies) {
+        this.vs_addition$disabledCollisionBodies = disabledCollisionBodies;
+    }
+
+    @Override
+    public void addDisabledCollisionBody(long id) {
+        this.vs_addition$disabledCollisionBodies.add(id);
+    }
+
+    @Override
+    public void removeDisabledCollisionBody(long id) {
+        this.vs_addition$disabledCollisionBodies.remove(id);
     }
 }

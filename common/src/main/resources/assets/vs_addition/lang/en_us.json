@@ -1,5 +1,6 @@
 {
   "create.vs_addition.working_mode" : "Working Mode",
   "create.vs_addition.working_mode.original" : "Original behaviour",
-  "create.vs_addition.working_mode.with_ship" : "Another behavior for ships"
+  "create.vs_addition.working_mode.with_ship" : "Another behavior for ships",
+  "vs_addition.error.text1" : "An error occurred. Please report it at %s."
 }

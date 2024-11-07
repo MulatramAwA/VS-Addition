@@ -50,6 +50,7 @@
     "valkyrienskies.MixinShipInertiaDataImpl",
     "valkyrienskies.MixinVSCommands",
     "vs_clockwork.MixinDyedWing",
+    "vs_clockwork.MixinGrabTool",
     "vs_clockwork.fan.MixinEncasedFanBlockEntity",
     "vs_clockwork.fan.MixinEncasedFanCreateData",
     "vs_clockwork.fan.MixinEncasedFanData",

@@ -7,6 +7,6 @@ import me.fallenbreath.conditionalmixin.api.mixin.ConditionTester;
 public class InteractiveConditionTester implements ConditionTester {
     @Override
     public boolean isSatisfied(String s) {
-        return !VSAdditionConfig.COMMON.getInsteadCreateInteractiveDeployer() && Platform.isModLoaded("create_interactive");
+        return !VSAdditionConfig.COMMON.getCreate().getInsteadCreateInteractiveDeployer() && Platform.isModLoaded("create_interactive");
     }
 }

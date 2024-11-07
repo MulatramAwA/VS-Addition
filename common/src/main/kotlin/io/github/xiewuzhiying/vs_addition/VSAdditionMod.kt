@@ -14,6 +14,7 @@ import io.github.xiewuzhiying.vs_addition.networking.airpocket.SyncAllPocketsC2S
 import io.github.xiewuzhiying.vs_addition.stuff.EntityFreshCaller
 import io.github.xiewuzhiying.vs_addition.stuff.airpocket.FakeAirPocket
 import io.github.xiewuzhiying.vs_addition.stuff.airpocket.FakeAirPocketClient
+import io.github.xiewuzhiying.vs_addition.stuff.registerCommands
 import org.valkyrienskies.core.impl.config.VSConfigClass
 import org.valkyrienskies.core.impl.hooks.VSEvents
 
@@ -48,13 +49,13 @@ object VSAdditionMod {
 
         EntityEvent.ADD.register(EntityEvent.Add { entity, world -> EntityFreshCaller.freshEntityInShipyard(entity, world) } )
 
+        VSAdditionMessage.registerC2SPackets()
+
         if (CLOCKWORK_ACTIVE) {
             InteractionEvent.RIGHT_CLICK_BLOCK.register(RightClickBlock { player, hand, pos, face ->
                 DualLinkHandler.handler(player, hand, pos, face)
             })
         }
-
-        VSAdditionMessage.registerC2SPackets()
 
         CommandRegistrationEvent.EVENT.register { dispatcher, registry, selection ->
             FakeAirPocket.registerCommands(dispatcher, registry, selection)
@@ -66,11 +67,11 @@ object VSAdditionMod {
 
     @JvmStatic
     fun initClient() {
+        VSAdditionMessage.registerS2CPackets()
+
         if (CLOCKWORK_ACTIVE) {
             ClientTickEvent.CLIENT_POST.register(ClientTickEvent.Client { DualLinkRenderer.tick() })
         }
-
-        VSAdditionMessage.registerS2CPackets()
 
         ClientCommandRegistrationEvent.EVENT.register { dispatcher, registry ->
             FakeAirPocketClient.registerCommands(dispatcher, registry)

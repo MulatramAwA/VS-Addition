@@ -141,9 +141,22 @@ object VSAdditionConfig {
     }
 
     class Common {
+        val create = CREATE()
+
+        class CREATE {
+            @JsonSchema(description = "Disable Create Interactive deployer mixin to use VS Addition's")
+            var insteadCreateInteractiveDeployer = true
+        }
+
+        val clockwork = CLOCKWORK()
+
+        class CLOCKWORK {
+            @JsonSchema(description = "Gravitron will disable collision of grabbed ships against the user.")
+            var disableGrabbedShipCollision : Boolean = true
+        }
+
         val experimental = EXPERIMENTAL()
-        @JsonSchema(description = "Disable Create Interactive deployer mixin to use VS Addition's")
-        var insteadCreateInteractiveDeployer = true
+
         class EXPERIMENTAL {
             @JsonSchema(description = "FAKE")
             var fakeAirPocket = false
