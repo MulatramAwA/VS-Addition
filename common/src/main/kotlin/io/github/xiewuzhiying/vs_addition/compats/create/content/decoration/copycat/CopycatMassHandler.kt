@@ -5,8 +5,8 @@ import com.simibubi.create.foundation.utility.Lang
 import com.simibubi.create.foundation.utility.LangBuilder
 import com.simibubi.create.foundation.utility.LangNumberFormat
 import io.github.xiewuzhiying.vs_addition.VSAdditionMod
-import io.github.xiewuzhiying.vs_addition.util.ShipUtils
-import io.github.xiewuzhiying.vs_addition.util.ShipUtils.addMass
+import io.github.xiewuzhiying.vs_addition.util.addMass
+import io.github.xiewuzhiying.vs_addition.util.getMass
 import net.minecraft.ChatFormatting
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
@@ -66,7 +66,7 @@ open class CopycatMassHandler(val level: Level, val blockPos: BlockPos, val ship
         if (material == null || material == AllBlocks.COPYCAT_BASE.defaultState) {
             return 0.0
         }
-        return ShipUtils.getMass(material)
+        return material.getMass()
     }
 
     fun getAddedMass(): Double {

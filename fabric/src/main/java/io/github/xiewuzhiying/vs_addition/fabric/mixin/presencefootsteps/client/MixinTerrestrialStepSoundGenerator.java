@@ -4,7 +4,6 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import eu.ha3.presencefootsteps.world.Association;
 import eu.ha3.presencefootsteps.world.AssociationPool;
-import io.github.xiewuzhiying.vs_addition.util.ShipUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -14,6 +13,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+
+import static io.github.xiewuzhiying.vs_addition.util.ShipUtilsKt.getPosStandingOnFromShips;
 
 @Pseudo
 @Mixin(targets = "eu.ha3.presencefootsteps.sound.generator.TerrestrialStepSoundGenerator")
@@ -29,7 +30,7 @@ public abstract class MixinTerrestrialStepSoundGenerator {
     )
     private Association includeShips1(AssociationPool instance, BlockPos pos, String strategy, Operation<Association> original) {
         final Vec3 position = entity.position();
-        final BlockPos blockPos = ShipUtils.getPosStandingOnFromShips(entity.level(), new Vector3d(position.x, position.y - 1, position.z), 1);
+        final BlockPos blockPos = getPosStandingOnFromShips(entity.level(), new Vector3d(position.x, position.y - 1, position.z), 1);
         return original.call(
                 instance,
                 blockPos == null ? pos : blockPos,
@@ -48,7 +49,7 @@ public abstract class MixinTerrestrialStepSoundGenerator {
     )
     private Association includeShips2(AssociationPool instance, BlockPos pos, String strategy, Operation<Association> original) {
         final Vec3 position = entity.position();
-        final BlockPos blockPos = ShipUtils.getPosStandingOnFromShips(entity.level(), new Vector3d(position.x, position.y - 0.3 - (this.entity.onGround() ? 0.0 : 0.25), position.z), 1);
+        final BlockPos blockPos = getPosStandingOnFromShips(entity.level(), new Vector3d(position.x, position.y - 0.3 - (this.entity.onGround() ? 0.0 : 0.25), position.z), 1);
         return original.call(
                 instance,
                 blockPos == null ? pos : blockPos,

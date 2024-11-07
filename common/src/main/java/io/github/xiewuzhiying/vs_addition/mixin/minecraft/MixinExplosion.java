@@ -6,7 +6,6 @@ import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import io.github.xiewuzhiying.vs_addition.stuff.conditiontester.ExplosionConditionTester;
-import io.github.xiewuzhiying.vs_addition.util.ShipUtils;
 import io.github.xiewuzhiying.vs_addition.util.ConversionUtilsKt;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
@@ -33,6 +32,8 @@ import org.valkyrienskies.mod.common.config.VSGameConfig;
 import org.valkyrienskies.mod.common.util.GameTickForceApplier;
 
 import java.util.*;
+
+import static io.github.xiewuzhiying.vs_addition.util.ShipUtilsKt.getLoadedShipsIntersecting;
 
 
 @Pseudo
@@ -75,7 +76,7 @@ public abstract class MixinExplosion {
     )
     private void getShips(final CallbackInfo ci, @Share("ships") final LocalRef<Iterable<ImmutablePair<LoadedServerShip, GameTickForceApplier>>> pairs) {
         final List<ImmutablePair<LoadedServerShip, GameTickForceApplier>> list = new ArrayList<>();
-        ShipUtils.getLoadedShipsIntersecting(this.level, AABBdUtilKt.expand(new AABBd(this.x, this.y, this.z, this.x, this.y, this.z), this.radius)).forEach(ship -> {
+        getLoadedShipsIntersecting(this.level, AABBdUtilKt.expand(new AABBd(this.x, this.y, this.z, this.x, this.y, this.z), this.radius)).forEach(ship -> {
             if (ship instanceof LoadedServerShip serverShip) {
                 if (serverShip.getAttachment(GameTickForceApplier.class) == null) {
                     serverShip.setAttachment(GameTickForceApplier.class, new GameTickForceApplier());

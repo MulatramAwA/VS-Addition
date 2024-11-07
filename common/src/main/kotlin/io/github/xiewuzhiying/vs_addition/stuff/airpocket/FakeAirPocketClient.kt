@@ -12,7 +12,6 @@ import io.github.xiewuzhiying.vs_addition.VSAdditionConfig
 import io.github.xiewuzhiying.vs_addition.networking.VSAdditionNetworking.REQUEST_ALL_FAKE_AIR_POCKET
 import io.github.xiewuzhiying.vs_addition.networking.VSAdditionNetworking.REQUEST_FAKE_AIR_POCKET_BY_ID
 import io.github.xiewuzhiying.vs_addition.util.*
-import io.github.xiewuzhiying.vs_addition.util.ShipUtils.getLoadedShipsIntersecting
 import io.netty.buffer.Unpooled
 import io.netty.util.collection.LongObjectHashMap
 import io.netty.util.collection.LongObjectMap

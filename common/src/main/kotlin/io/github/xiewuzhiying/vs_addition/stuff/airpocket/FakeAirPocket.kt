@@ -8,8 +8,7 @@ import com.mojang.brigadier.context.CommandContext
 import dev.architectury.networking.NetworkManager
 import io.github.xiewuzhiying.vs_addition.VSAdditionConfig
 import io.github.xiewuzhiying.vs_addition.networking.VSAdditionNetworking.REQUEST_ALL_FAKE_AIR_POCKET
-import io.github.xiewuzhiying.vs_addition.util.ShipUtils.getLoadedShipsIntersecting
-import io.github.xiewuzhiying.vs_addition.util.ShipUtils.getShipManagingPos2
+import io.github.xiewuzhiying.vs_addition.util.getLoadedShipsIntersecting
 import io.github.xiewuzhiying.vs_addition.util.toDirection
 import io.netty.buffer.Unpooled
 import net.minecraft.commands.CommandBuildContext
@@ -30,6 +29,7 @@ import org.valkyrienskies.core.apigame.collision.ConvexPolygonc
 import org.valkyrienskies.core.apigame.collision.EntityPolygonCollider
 import org.valkyrienskies.core.util.writeVec3d
 import org.valkyrienskies.mod.common.ValkyrienSkiesMod.vsCore
+import org.valkyrienskies.mod.common.getShipManagingPos
 import org.valkyrienskies.mod.common.shipObjectWorld
 import org.valkyrienskies.mod.common.util.toJOML
 
@@ -145,16 +145,16 @@ object FakeAirPocket {
         dispatcher.register(Commands.literal("fake-air-pocket")
             .requires { source -> VSAdditionConfig.COMMON.experimental.fakeAirPocket && source.hasPermission(1) }
             .then(Commands.literal("add")
-                .then(Commands.argument("pos1", BlockPosArgument.blockPos())
-                        .then(Commands.argument("pos2", BlockPosArgument.blockPos())
+                .then(Commands.argument("blockPos1", BlockPosArgument.blockPos())
+                        .then(Commands.argument("blockPos2", BlockPosArgument.blockPos())
                                 .executes { context: CommandContext<CommandSourceStack> ->
                                     val source = context.source
                                     val level = source.level
 
-                                    val pos1 = BlockPosArgument.getBlockPos(context, "pos1")
-                                    val pos2 = BlockPosArgument.getBlockPos(context, "pos2")
-                                    val ship1 = level.getShipManagingPos2(pos1) as? ServerShip?
-                                    val ship2 = level.getShipManagingPos2(pos2) as? ServerShip?
+                                    val pos1 = BlockPosArgument.getBlockPos(context, "blockPos1")
+                                    val pos2 = BlockPosArgument.getBlockPos(context, "blockPos2")
+                                    val ship1 = level.getShipManagingPos(pos1)
+                                    val ship2 = level.getShipManagingPos(pos2)
                                     if (ship1 != ship2) {
                                         return@executes 0
                                     }

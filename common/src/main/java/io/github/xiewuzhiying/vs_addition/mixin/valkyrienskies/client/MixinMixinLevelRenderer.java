@@ -4,7 +4,6 @@ import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import io.github.xiewuzhiying.vs_addition.VSAdditionConfig;
 import io.github.xiewuzhiying.vs_addition.stuff.airpocket.FakeAirPocketClient;
-import io.github.xiewuzhiying.vs_addition.util.ShipUtils;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -22,7 +21,7 @@ import org.valkyrienskies.mod.common.VSGameUtilsKt;
 import java.util.Set;
 
 @Pseudo
-@Mixin(LevelRenderer.class)
+@Mixin(value = LevelRenderer.class, priority = 1200)
 public abstract class MixinMixinLevelRenderer {
     @Shadow @Nullable private ClientLevel level;
 
@@ -39,16 +38,15 @@ public abstract class MixinMixinLevelRenderer {
                 }
             }
         }
-        return ShipUtils.inclFakeAirPocket(options, force, decreased, x, y, z, xSpeed, ySpeed, zSpeed, original::call, this.level);
+        return original.call(options, force, decreased, x, y, z, xSpeed, ySpeed, zSpeed);
     }
 
     @Unique
-    private static final Set<ParticleType<?>> vs_addition$bubbleLikeParticle =
-            Set.of(
-                    ParticleTypes.UNDERWATER,
-                    ParticleTypes.BUBBLE,
-                    ParticleTypes.BUBBLE_POP,
-                    ParticleTypes.BUBBLE_COLUMN_UP
-            );
+    private static final Set<ParticleType<?>> vs_addition$bubbleLikeParticle = Set.of(
+            ParticleTypes.UNDERWATER,
+            ParticleTypes.BUBBLE,
+            ParticleTypes.BUBBLE_POP,
+            ParticleTypes.BUBBLE_COLUMN_UP
+    );
 
 }
