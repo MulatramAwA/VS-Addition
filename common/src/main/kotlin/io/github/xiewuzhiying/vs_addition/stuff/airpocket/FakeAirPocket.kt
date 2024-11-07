@@ -15,6 +15,7 @@ import net.minecraft.commands.CommandBuildContext
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument
+import net.minecraft.commands.arguments.coordinates.Vec3Argument
 import net.minecraft.core.Direction
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.chat.Component
@@ -184,6 +185,42 @@ object FakeAirPocket {
                                     return@executes 1
                                 }
                         )
+                )
+                .then(Commands.argument("vector1", Vec3Argument.vec3())
+                    .then(Commands.argument("vector2", Vec3Argument.vec3())
+                        .executes { context: CommandContext<CommandSourceStack> ->
+                            val source = context.source
+                            val level = source.level
+
+                            val pos1 = Vec3Argument.getVec3(context, "vector1")
+                            val pos2 = Vec3Argument.getVec3(context, "vector2")
+                            val ship1 = level.getShipManagingPos(pos1)
+                            val ship2 = level.getShipManagingPos(pos2)
+                            if (ship1 != ship2) {
+                                return@executes 0
+                            }
+                            val ship = ship1 ?: ship2 ?: return@executes 0
+                            val controller = FakeAirPocketController.getOrCreate(ship as ServerShip, level)
+                            val pocketId = controller.addAirPocket(AABBd(pos1.toJOML(), pos2.toJOML()).correctBounds())
+                            source.player?.sendSystemMessage(Component.literal("Add fake air pocket from (${pos1.x}, ${pos1.y}, ${pos1.z}) to (${pos2.x}, ${pos2.y}, ${pos2.z}), ShipID: ${ship.id}, PocketID: ${pocketId}"))
+                            val pockets = controller.getAllAirPocket()
+                            val buf = FriendlyByteBuf(Unpooled.buffer());
+                            buf.writeLong(ship.id)
+                            buf.writeInt(pockets.size)
+                            pockets.forEach {
+                                buf.writeLong(it.key)
+                                val pocket = it.value
+                                buf.writeVec3d(Vector3d(pocket.minX(), pocket.minY(), pocket.minZ()))
+                                buf.writeVec3d(Vector3d(pocket.maxX(), pocket.maxY(), pocket.maxZ()))
+                            }
+                            level.players().forEach {
+                                NetworkManager.sendToPlayer(it, REQUEST_ALL_FAKE_AIR_POCKET, buf)
+                            }
+                            source.player?.sendSystemMessage(Component.literal("Called /fake-air-pocket"))
+
+                            return@executes 1
+                        }
+                    )
                 )
             )
             .then(Commands.literal("remove")
