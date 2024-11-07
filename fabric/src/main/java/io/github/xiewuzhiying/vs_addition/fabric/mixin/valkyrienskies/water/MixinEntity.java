@@ -71,7 +71,7 @@ public abstract class MixinEntity {
             if (level != null) {
                 if (level instanceof ServerLevel serverLevel) {
                     final AABBdc aabb = VectorConversionsMCKt.toJOML(this.getBoundingBox());
-                    Pair<Boolean, Boolean> pair = FakeAirPocket.INSTANCE.checkIfPointAndAABBInAirPocket(new Vector3d(this.getX(), this.getEyeY() - 0.1111111119389534, this.getZ()), aabb, serverLevel, true, aabb);
+                    Pair<Boolean, Boolean> pair = FakeAirPocket.checkIfPointAndAABBInAirPocket(new Vector3d(this.getX(), this.getEyeY() - 0.1111111119389534, this.getZ()), aabb, serverLevel, true, aabb);
                     this.isEyeInFakeAirPocket = pair.getFirst();
                     this.isTouchFakeAirPocket = pair.getSecond();
                 } else {

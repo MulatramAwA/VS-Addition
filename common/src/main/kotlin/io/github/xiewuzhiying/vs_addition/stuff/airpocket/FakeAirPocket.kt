@@ -7,7 +7,9 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import dev.architectury.networking.NetworkManager
 import io.github.xiewuzhiying.vs_addition.VSAdditionConfig
-import io.github.xiewuzhiying.vs_addition.networking.VSAdditionNetworking.REQUEST_ALL_FAKE_AIR_POCKET
+import io.github.xiewuzhiying.vs_addition.networking.VSAdditionMessage.FAKE_AIR_POCKET_SYNC_ALL
+import io.github.xiewuzhiying.vs_addition.networking.airpocket.SyncAllPocketsS2CPacket
+import io.github.xiewuzhiying.vs_addition.networking.airpocket.SyncSinglePocketS2CPacket
 import io.github.xiewuzhiying.vs_addition.util.getLoadedShipsIntersecting
 import io.github.xiewuzhiying.vs_addition.util.toDirection
 import io.netty.buffer.Unpooled
@@ -37,6 +39,7 @@ import org.valkyrienskies.mod.common.util.toJOML
 
 object FakeAirPocket {
 
+    @JvmStatic
     @JvmOverloads
     fun checkIfPointInAirPocket(point: Vector3dc, level : ServerLevel, checkRange: AABBdc? = null) : Boolean {
         val ships: Iterable<LoadedShip> =  level.getLoadedShipsIntersecting(checkRange ?: AABBd(point, Vector3d(point.x() + 1, point.y() + 1, point.z() + 1)))
@@ -53,6 +56,7 @@ object FakeAirPocket {
         return false
     }
 
+    @JvmStatic
     @JvmOverloads
     fun checkIfAABBInAirPocket(aabb: AABBdc, level : ServerLevel, mustBeContained : Boolean = false, checkRange: AABBdc? = null) : Boolean {
         val ships: Iterable<LoadedShip> =  level.getLoadedShipsIntersecting(checkRange ?: aabb)
@@ -85,6 +89,7 @@ object FakeAirPocket {
         return false
     }
 
+    @JvmStatic
     @JvmOverloads
     fun checkIfPointAndAABBInAirPocket(point: Vector3dc, aabb: AABBdc, level : ServerLevel, mustBeContained : Boolean = false, checkRange: AABBdc? = null) : Pair<Boolean, Boolean> {
         var pointBl = false
@@ -142,6 +147,7 @@ object FakeAirPocket {
         return collider!!
     }
 
+    @JvmStatic
     fun registerCommands(dispatcher: CommandDispatcher<CommandSourceStack>, registry: CommandBuildContext, selection: Commands.CommandSelection) {
         dispatcher.register(Commands.literal("fake-air-pocket")
             .requires { source -> VSAdditionConfig.COMMON.experimental.fakeAirPocket && source.hasPermission(1) }
@@ -161,25 +167,14 @@ object FakeAirPocket {
                                     }
                                     val ship = ship1 ?: ship2 ?: return@executes 0
                                     val controller = FakeAirPocketController.getOrCreate(ship, level)
-                                    val pocketId = controller.addAirPocket(
-                                        AABBd(pos1.x.coerceAtMost(pos2.x).toDouble(), pos1.y.coerceAtMost(pos2.y).toDouble(), pos1.z.coerceAtMost(pos2.z).toDouble(),
+                                    val aabb = AABBd(pos1.x.coerceAtMost(pos2.x).toDouble(), pos1.y.coerceAtMost(pos2.y).toDouble(), pos1.z.coerceAtMost(pos2.z).toDouble(),
                                         pos1.x.coerceAtLeast(pos2.x) + 1.0, pos1.y.coerceAtLeast(pos2.y) + 1.0, pos1.z.coerceAtLeast(pos2.z) + 1.0)
                                         .correctBounds()
-                                    )
+                                    val pocketId = controller.addAirPocket(aabb)
                                     source.player?.sendSystemMessage(Component.literal("Add fake air pocket from (${pos1.x}, ${pos1.y}, ${pos1.z}) to (${pos2.x}, ${pos2.y}, ${pos2.z}), ShipID: ${ship.id}, PocketID: ${pocketId}"))
-                                    val pockets = controller.getAllAirPocket()
-                                    val buf = FriendlyByteBuf(Unpooled.buffer());
-                                    buf.writeLong(ship.id)
-                                    buf.writeInt(pockets.size)
-                                    pockets.forEach {
-                                        buf.writeLong(it.key)
-                                        val pocket = it.value
-                                        buf.writeVec3d(Vector3d(pocket.minX(), pocket.minY(), pocket.minZ()))
-                                        buf.writeVec3d(Vector3d(pocket.maxX(), pocket.maxY(), pocket.maxZ()))
-                                    }
-                                    level.players().forEach {
-                                        NetworkManager.sendToPlayer(it, REQUEST_ALL_FAKE_AIR_POCKET, buf)
-                                    }
+
+                                    SyncSinglePocketS2CPacket(ship.id, pocketId, aabb).sendToPlayers(level.players())
+
                                     source.player?.sendSystemMessage(Component.literal("Called /fake-air-pocket"))
 
                                     return@executes 1
@@ -201,21 +196,12 @@ object FakeAirPocket {
                             }
                             val ship = ship1 ?: ship2 ?: return@executes 0
                             val controller = FakeAirPocketController.getOrCreate(ship as ServerShip, level)
+                            val aabb = AABBd(pos1.toJOML(), pos2.toJOML()).correctBounds()
                             val pocketId = controller.addAirPocket(AABBd(pos1.toJOML(), pos2.toJOML()).correctBounds())
                             source.player?.sendSystemMessage(Component.literal("Add fake air pocket from (${pos1.x}, ${pos1.y}, ${pos1.z}) to (${pos2.x}, ${pos2.y}, ${pos2.z}), ShipID: ${ship.id}, PocketID: ${pocketId}"))
-                            val pockets = controller.getAllAirPocket()
-                            val buf = FriendlyByteBuf(Unpooled.buffer());
-                            buf.writeLong(ship.id)
-                            buf.writeInt(pockets.size)
-                            pockets.forEach {
-                                buf.writeLong(it.key)
-                                val pocket = it.value
-                                buf.writeVec3d(Vector3d(pocket.minX(), pocket.minY(), pocket.minZ()))
-                                buf.writeVec3d(Vector3d(pocket.maxX(), pocket.maxY(), pocket.maxZ()))
-                            }
-                            level.players().forEach {
-                                NetworkManager.sendToPlayer(it, REQUEST_ALL_FAKE_AIR_POCKET, buf)
-                            }
+
+                            SyncSinglePocketS2CPacket(ship.id, pocketId, aabb).sendToPlayers(level.players())
+
                             source.player?.sendSystemMessage(Component.literal("Called /fake-air-pocket"))
 
                             return@executes 1
@@ -234,19 +220,9 @@ object FakeAirPocket {
                             val controller = FakeAirPocketController.getOrCreate(shipId, level) ?: return@executes 0
                             val pocketId = LongArgumentType.getLong(context, "pocketId")
                             controller.removeAirPocket(pocketId)
-                            val pockets = controller.getAllAirPocket()
-                            val buf = FriendlyByteBuf(Unpooled.buffer());
-                            buf.writeLong(shipId)
-                            buf.writeInt(pockets.size)
-                            pockets.forEach {
-                                buf.writeLong(it.key)
-                                val pocket = it.value
-                                buf.writeVec3d(Vector3d(pocket.minX(), pocket.minY(), pocket.minZ()))
-                                buf.writeVec3d(Vector3d(pocket.maxX(), pocket.maxY(), pocket.maxZ()))
-                            }
-                            level.players().forEach {
-                                NetworkManager.sendToPlayer(it, REQUEST_ALL_FAKE_AIR_POCKET, buf)
-                            }
+
+                            SyncAllPocketsS2CPacket(shipId, controller.getAllAirPocket()).sendToPlayers(level.players())
+
                             return@executes 1
                         }
                     )
@@ -259,19 +235,9 @@ object FakeAirPocket {
                             val controller = FakeAirPocketController.getOrCreate(shipId, level) ?: return@executes 0
                             if ("all" != (StringArgumentType.getString(context, "all") ?: return@executes 0)) return@executes 0
                             controller.removeAllAirPocket()
-                            val pockets = controller.getAllAirPocket()
-                            val buf = FriendlyByteBuf(Unpooled.buffer());
-                            buf.writeLong(shipId)
-                            buf.writeInt(pockets.size)
-                            pockets.forEach {
-                                buf.writeLong(it.key)
-                                val pocket = it.value
-                                buf.writeVec3d(Vector3d(pocket.minX(), pocket.minY(), pocket.minZ()))
-                                buf.writeVec3d(Vector3d(pocket.maxX(), pocket.maxY(), pocket.maxZ()))
-                            }
-                            level.players().forEach {
-                                NetworkManager.sendToPlayer(it, REQUEST_ALL_FAKE_AIR_POCKET, buf)
-                            }
+
+                            SyncAllPocketsS2CPacket(shipId, controller.getAllAirPocket()).sendToPlayers(level.players())
+
                             return@executes 1
                         }
                     )
@@ -315,15 +281,9 @@ object FakeAirPocket {
                                     }
                                 }
                                 controller.setAirPocket(pocketId, aabb)
-                                val buf = FriendlyByteBuf(Unpooled.buffer());
-                                buf.writeLong(shipId)
-                                buf.writeInt(1)
-                                buf.writeLong(pocketId)
-                                buf.writeVec3d(Vector3d(aabb.minX(), aabb.minY(), aabb.minZ()))
-                                buf.writeVec3d(Vector3d(aabb.maxX(), aabb.maxY(), aabb.maxZ()))
-                                level.players().forEach {
-                                    NetworkManager.sendToPlayer(it, REQUEST_ALL_FAKE_AIR_POCKET, buf)
-                                }
+
+                                SyncAllPocketsS2CPacket(shipId, controller.getAllAirPocket()).sendToPlayers(level.players())
+
                                 return@executes 1
                             }
                         )

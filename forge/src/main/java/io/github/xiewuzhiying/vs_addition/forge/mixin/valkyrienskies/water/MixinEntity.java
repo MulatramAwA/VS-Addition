@@ -6,11 +6,9 @@ import io.github.xiewuzhiying.vs_addition.VSAdditionConfig;
 import io.github.xiewuzhiying.vs_addition.stuff.airpocket.FakeAirPocket;
 import io.github.xiewuzhiying.vs_addition.stuff.airpocket.FakeAirPocketClient;
 import kotlin.Pair;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.AABB;
@@ -73,7 +71,7 @@ public abstract class MixinEntity {
             if (level != null) {
                 if (level instanceof ServerLevel serverLevel) {
                     final AABBdc aabb = VectorConversionsMCKt.toJOML(this.getBoundingBox());
-                    Pair<Boolean, Boolean> pair = FakeAirPocket.INSTANCE.checkIfPointAndAABBInAirPocket(new Vector3d(this.getX(), this.getEyeY() - 0.1111111119389534, this.getZ()), aabb, serverLevel, true, aabb);
+                    Pair<Boolean, Boolean> pair = FakeAirPocket.checkIfPointAndAABBInAirPocket(new Vector3d(this.getX(), this.getEyeY() - 0.1111111119389534, this.getZ()), aabb, serverLevel, true, aabb);
                     this.isEyeInFakeAirPocket = pair.getFirst();
                     this.isTouchFakeAirPocket = pair.getSecond();
                 } else {

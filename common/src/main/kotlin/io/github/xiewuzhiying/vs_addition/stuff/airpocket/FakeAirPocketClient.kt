@@ -7,12 +7,9 @@ import com.mojang.blaze3d.vertex.VertexFormat
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.context.CommandContext
 import dev.architectury.event.events.client.ClientCommandRegistrationEvent
-import dev.architectury.networking.NetworkManager
 import io.github.xiewuzhiying.vs_addition.VSAdditionConfig
-import io.github.xiewuzhiying.vs_addition.networking.VSAdditionNetworking.REQUEST_ALL_FAKE_AIR_POCKET
-import io.github.xiewuzhiying.vs_addition.networking.VSAdditionNetworking.REQUEST_FAKE_AIR_POCKET_BY_ID
+import io.github.xiewuzhiying.vs_addition.networking.airpocket.SyncAllPocketsC2SPacket
 import io.github.xiewuzhiying.vs_addition.util.*
-import io.netty.buffer.Unpooled
 import io.netty.util.collection.LongObjectHashMap
 import io.netty.util.collection.LongObjectMap
 import net.minecraft.client.Camera
@@ -22,7 +19,6 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderStateShard
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.commands.CommandBuildContext
-import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.chat.Component
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.BlockHitResult
@@ -46,29 +42,20 @@ import org.valkyrienskies.mod.common.util.toJOML
 import kotlin.math.atan2
 
 object FakeAirPocketClient {
+    @JvmStatic
     val map : LongObjectMap<LongObjectMap<AABBdc>> = LongObjectHashMap()
 
+    @JvmStatic
     fun setAirPocket(shipId: ShipId, pocketId: PocketId, aabb : AABBdc) {
         map[shipId]?.put(pocketId, aabb)
     }
 
+    @JvmStatic
     fun setAirPockets(shipId: ShipId, pockets : LongObjectMap<AABBdc>) {
         map[shipId] = pockets
     }
 
-    fun requestAirPocket(shipId: ShipId, pocketId : PocketId) {
-        val buf = FriendlyByteBuf(Unpooled.buffer())
-        buf.writeLong(shipId)
-        buf.writeLong(pocketId)
-        NetworkManager.sendToServer(REQUEST_FAKE_AIR_POCKET_BY_ID, buf)
-    }
-
-    fun requestAllAirPockets(shipId: ShipId) {
-        val buf = FriendlyByteBuf(Unpooled.buffer())
-        buf.writeLong(shipId)
-        NetworkManager.sendToServer(REQUEST_ALL_FAKE_AIR_POCKET, buf)
-    }
-
+    @JvmStatic
     @JvmOverloads
     fun checkIfPointInAirPocket(point: Vector3dc, checkRange: AABBdc? = null) : Boolean {
         val level = Minecraft.getInstance().level
@@ -87,6 +74,7 @@ object FakeAirPocketClient {
         return false
     }
 
+    @JvmStatic
     @JvmOverloads
     fun checkIfAABBInAirPocket(aabb: AABBdc, mustBeContained : Boolean = false, checkRange: AABBdc? = null) : Boolean {
         val level = Minecraft.getInstance().level
@@ -121,6 +109,7 @@ object FakeAirPocketClient {
         return false
     }
 
+    @JvmStatic
     @JvmOverloads
     fun checkIfPointAndAABBInAirPocket(point: Vector3dc, aabb: AABBdc, mustBeContained : Boolean = false, checkRange: AABBdc? = null) : Pair<Boolean, Boolean> {
         val level = Minecraft.getInstance().level
@@ -328,8 +317,7 @@ object FakeAirPocketClient {
         }
     }
 
-
-
+    @JvmStatic
     fun registerCommands(dispatcher: CommandDispatcher<ClientCommandRegistrationEvent.ClientCommandSourceStack>, context: CommandBuildContext) {
         dispatcher.register(
             ClientCommandRegistrationEvent.literal("fresh-fake-air-pocket")
@@ -343,9 +331,7 @@ object FakeAirPocketClient {
                         ray.blockPos.y.toDouble(), ray.blockPos.z.toDouble()
                     ) ?: return@executes 0
 
-                    val buf = FriendlyByteBuf(Unpooled.buffer())
-                    buf.writeLong(ship.id)
-                    NetworkManager.sendToServer(REQUEST_ALL_FAKE_AIR_POCKET, buf)
+                    SyncAllPocketsC2SPacket(ship.id).sendToServer()
 
                     player.sendSystemMessage(Component.literal("Called /fresh-fake-air-pocket"))
                     return@executes 1

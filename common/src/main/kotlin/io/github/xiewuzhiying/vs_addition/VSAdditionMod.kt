@@ -9,7 +9,8 @@ import dev.architectury.event.events.common.InteractionEvent.RightClickBlock
 import dev.architectury.platform.Platform
 import io.github.xiewuzhiying.vs_addition.compats.create.content.redstone.link.DualLinkHandler
 import io.github.xiewuzhiying.vs_addition.compats.create.content.redstone.link.DualLinkRenderer
-import io.github.xiewuzhiying.vs_addition.networking.VSAdditionNetworking
+import io.github.xiewuzhiying.vs_addition.networking.VSAdditionMessage
+import io.github.xiewuzhiying.vs_addition.networking.airpocket.SyncAllPocketsC2SPacket
 import io.github.xiewuzhiying.vs_addition.stuff.EntityFreshCaller
 import io.github.xiewuzhiying.vs_addition.stuff.airpocket.FakeAirPocket
 import io.github.xiewuzhiying.vs_addition.stuff.airpocket.FakeAirPocketClient
@@ -29,6 +30,8 @@ object VSAdditionMod {
     @JvmStatic var FRAMEDBLOCKS_ACTIVE = false
     @JvmStatic var CBCMW_ACTIVE = false
 
+
+
     @JvmStatic
     fun init() {
         CREATE_ACTIVE = Platform.isModLoaded("create")
@@ -44,25 +47,38 @@ object VSAdditionMod {
         VSConfigClass.registerConfig("vs_addition", VSAdditionConfig::class.java)
 
         EntityEvent.ADD.register(EntityEvent.Add { entity, world -> EntityFreshCaller.freshEntityInShipyard(entity, world) } )
+
         if (CLOCKWORK_ACTIVE) {
             InteractionEvent.RIGHT_CLICK_BLOCK.register(RightClickBlock { player, hand, pos, face ->
                 DualLinkHandler.handler(player, hand, pos, face)
             })
         }
-        VSAdditionNetworking.registerServer()
-        CommandRegistrationEvent.EVENT.register { dispatcher, registry, selection -> FakeAirPocket.registerCommands(dispatcher, registry, selection) }
+
+        VSAdditionMessage.registerC2SPackets()
+
+        CommandRegistrationEvent.EVENT.register { dispatcher, registry, selection ->
+            FakeAirPocket.registerCommands(dispatcher, registry, selection)
+            registerCommands(dispatcher, registry, selection)
+        }
     }
+
+
 
     @JvmStatic
     fun initClient() {
         if (CLOCKWORK_ACTIVE) {
             ClientTickEvent.CLIENT_POST.register(ClientTickEvent.Client { DualLinkRenderer.tick() })
         }
-        VSAdditionNetworking.registerClient()
-        ClientCommandRegistrationEvent.EVENT.register { dispatcher, registry -> FakeAirPocketClient.registerCommands(dispatcher, registry) }
+
+        VSAdditionMessage.registerS2CPackets()
+
+        ClientCommandRegistrationEvent.EVENT.register { dispatcher, registry ->
+            FakeAirPocketClient.registerCommands(dispatcher, registry)
+        }
+
         VSEvents.ShipLoadEventClient.on { event ->
             if (VSAdditionConfig.COMMON.experimental.fakeAirPocket) {
-                FakeAirPocketClient.requestAllAirPockets(event.ship.id)
+                SyncAllPocketsC2SPacket(event.ship.id).sendToServer()
             }
         }
     }
