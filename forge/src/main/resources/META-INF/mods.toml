@@ -103,6 +103,16 @@ ignore=false
 modrinth="create-clockwork"
 curseforge="create-clockwork"
 
+[[dependencies.vs_addition]]
+modId = "valkyrien_mod"
+mandatory = false
+versionRange = "[0.1,)"
+ordering = "AFTER"
+side = "BOTH"
+[dependencies.vs_addition.mc-publish]
+ignore=false
+modrinth="vmod"
+
 [mc-publish]
 # This dependency declaration will be merged with everything written above.
 # It's useful if you want to provide information about dependency types not supported by Forge.
@@ -112,6 +122,5 @@ dependencies=[
     "kotlin-for-forge@>=4.10.0(required)",
     "architectury-api@>=9.0.0(embedded)",
     "create-clockwork@>=0.5.1(optional)",
-    "create-big-cannons@>=5.5.0(optional)",
-    "copycats@>=1.2.5(optional)"
+    "create-big-cannons@>=5.6.0(optional)"
 ]

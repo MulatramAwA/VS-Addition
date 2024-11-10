@@ -20,6 +20,7 @@ class SyncSinglePocketC2SPacket(private val shipId: ShipId, private val pocketId
     }
 
     companion object {
+        @JvmStatic
         fun receive(buf: FriendlyByteBuf, ctx: NetworkManager.PacketContext) {
             PlatformUtils.getMinecraftServer().playerList.getPlayer(ctx.player.uuid)?.let {
                 val shipId = buf.readLong()

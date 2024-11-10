@@ -10,6 +10,7 @@ import org.valkyrienskies.mod.common.shipObjectWorld
 class UpdatePocketsS2CPacket {
 
     companion object {
+        @JvmStatic
         fun receive(buf: FriendlyByteBuf, ctx: NetworkManager.PacketContext) {
             val shipId = buf.readLong()
             val pocketId = buf.readLong()

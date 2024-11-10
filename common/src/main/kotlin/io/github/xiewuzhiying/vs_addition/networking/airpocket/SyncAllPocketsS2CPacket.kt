@@ -39,6 +39,7 @@ class SyncAllPocketsS2CPacket(private val shipId: ShipId, private val pockets: M
     }
 
     companion object {
+        @JvmStatic
         fun receive(buf: FriendlyByteBuf, ctx: NetworkManager.PacketContext) {
             val shipId = buf.readLong()
             val size = buf.readInt()

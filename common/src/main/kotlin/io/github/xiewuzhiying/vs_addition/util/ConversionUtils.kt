@@ -15,6 +15,7 @@ import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.minecraft.world.phys.shapes.CollisionContext
 import org.joml.*
+import org.joml.primitives.AABBd
 import org.valkyrienskies.core.api.ships.Ship
 import org.valkyrienskies.core.api.ships.properties.ShipId
 import org.valkyrienskies.mod.common.*
@@ -237,3 +238,7 @@ fun Vector3dc.toDirection(): Direction {
 
 val AABB.copy : AABB
     get() = AABB(this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ)
+
+fun getAABBFromCenterAndExtent(center: Vector3dc, extent: Vector3dc) : AABBd {
+    return AABBd(center.x() - extent.x(), center.y() - extent.y(), center.z() - extent.z(), center.x() + extent.x(), center.y() + extent.y(), center.z() + extent.z())
+}

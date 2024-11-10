@@ -20,9 +20,9 @@ typealias PocketId = Long
     setterVisibility = JsonAutoDetect.Visibility.NONE
 )
 class FakeAirPocketController {
-    private var nextId : PocketId = 0
-    private var level : DimensionId = "minecraft:overworld"
-    private val map : MutableMap<PocketId, AABBdc> = mutableMapOf()
+    var nextId : PocketId = 0
+    var level : DimensionId = "minecraft:overworld"
+    val map : MutableMap<PocketId, AABBdc> = mutableMapOf()
 
     fun addAirPocket(aabb: AABBdc) : PocketId {
         val id = nextId++

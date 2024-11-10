@@ -35,6 +35,7 @@ class SyncSinglePocketS2CPacket(private val shipId: ShipId, private val pocketId
 
 
     companion object {
+        @JvmStatic
         fun receive(buf: FriendlyByteBuf, ctx: NetworkManager.PacketContext) {
             setAirPocket(buf.readLong(), buf.readLong(), buf.readAABBd())
         }

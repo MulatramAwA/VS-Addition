@@ -49,7 +49,8 @@
     "create": ">=0.5.1",
     "createbigcannons": ">=0.5.2",
     "computercraft": "*",
-    "vs_clockwork": ">=0.1"
+    "vs_clockwork": ">=0.1",
+    "valkyrien_mod": ">=0.1.1"
   },
   "custom": {
     "mc-publish": {
@@ -58,8 +59,7 @@
         "fabric-api@>=0.92.0+1.20.1(required)",
         "architectury-api@>=9.0.0(embedded)",
         "create-clockwork@>=0.5.1(optional)",
-        "create-big-cannons@>=5.5.0(optional)",
-        "copycats@>=1.2.5(optional)"
+        "create-big-cannons@>=5.6.0(optional)"
       ]
     }
   }
