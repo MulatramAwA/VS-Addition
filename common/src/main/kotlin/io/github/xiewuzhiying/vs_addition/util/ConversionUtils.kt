@@ -11,6 +11,7 @@ import net.minecraft.util.Mth
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.Level
+import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.minecraft.world.phys.shapes.CollisionContext
 import org.joml.*
@@ -164,8 +165,9 @@ var ClipContext.entity : Entity?
     get() = (this as ClipContextMixinDuck).entity
     set(value) { (this as ClipContextMixinDuck).entity = value}
 
-val ClipContext.collisionContext : CollisionContext
+var ClipContext.collisionContext : CollisionContext
     get() = (this as ClipContextMixinDuck).collisionContext
+    set(value) { (this as ClipContextMixinDuck).collisionContext = value }
 
 fun ClipContext.setForm(vec3: Vec3) {
     (this as ClipContextMixinDuck).setForm(vec3)
@@ -173,10 +175,6 @@ fun ClipContext.setForm(vec3: Vec3) {
 
 fun ClipContext.setTo(vec3: Vec3) {
     (this as ClipContextMixinDuck).setTo(vec3)
-}
-
-fun ClipContext.setCollisionContext(ctx: CollisionContext) {
-    (this as ClipContextMixinDuck).collisionContext = ctx
 }
 
 fun ServerLevel.getBodyId(pos: Any) : ShipId {
@@ -236,3 +234,6 @@ fun Vector3dc.toDirection(): Direction {
         }
     }
 }
+
+val AABB.copy : AABB
+    get() = AABB(this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ)

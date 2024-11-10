@@ -18,6 +18,7 @@
     "presencefootsteps.client.MixinPFSolver",
     "presencefootsteps.client.MixinTerrestrialStepSoundGenerator",
     "tacz.MixinBlockRayTrace",
+    "tacz.MixinProjectileExplosion",
     "tallyho.MixinBearingController",
     "tallyho.MixinClockworkPeripheralProvider",
     "tallyho.MixinPhysBearingBlockEntity",
