@@ -3,8 +3,8 @@ package io.github.xiewuzhiying.vs_addition.networking.airpocket
 import dev.architectury.networking.NetworkManager
 import io.github.xiewuzhiying.vs_addition.PlatformUtils
 import io.github.xiewuzhiying.vs_addition.networking.VSAdditionMessage.FAKE_AIR_POCKET_SYNC_BY_ID
-import io.github.xiewuzhiying.vs_addition.stuff.airpocket.FakeAirPocketController
-import io.github.xiewuzhiying.vs_addition.stuff.airpocket.PocketId
+import io.github.xiewuzhiying.vs_addition.context.airpocket.FakeAirPocketController
+import io.github.xiewuzhiying.vs_addition.context.airpocket.PocketId
 import io.netty.buffer.Unpooled
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.server.level.ServerLevel

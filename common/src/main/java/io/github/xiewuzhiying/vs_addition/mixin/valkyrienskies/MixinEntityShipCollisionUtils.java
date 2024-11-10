@@ -2,7 +2,7 @@ package io.github.xiewuzhiying.vs_addition.mixin.valkyrienskies;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
-import io.github.xiewuzhiying.vs_addition.stuff.EntityShipCollisionDisabler;
+import io.github.xiewuzhiying.vs_addition.context.EntityShipCollisionDisabler;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import kotlin.Pair;
 import net.minecraft.world.entity.Entity;

@@ -1,25 +1,21 @@
-package io.github.xiewuzhiying.vs_addition.stuff.airpocket
+package io.github.xiewuzhiying.vs_addition.context.airpocket
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.DoubleArgumentType
 import com.mojang.brigadier.arguments.LongArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
-import dev.architectury.networking.NetworkManager
 import io.github.xiewuzhiying.vs_addition.VSAdditionConfig
-import io.github.xiewuzhiying.vs_addition.networking.VSAdditionMessage.FAKE_AIR_POCKET_SYNC_ALL
 import io.github.xiewuzhiying.vs_addition.networking.airpocket.SyncAllPocketsS2CPacket
 import io.github.xiewuzhiying.vs_addition.networking.airpocket.SyncSinglePocketS2CPacket
 import io.github.xiewuzhiying.vs_addition.util.getLoadedShipsIntersecting
 import io.github.xiewuzhiying.vs_addition.util.toDirection
-import io.netty.buffer.Unpooled
 import net.minecraft.commands.CommandBuildContext
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument
 import net.minecraft.commands.arguments.coordinates.Vec3Argument
 import net.minecraft.core.Direction
-import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerLevel
 import org.joml.Vector3d
@@ -30,7 +26,6 @@ import org.valkyrienskies.core.api.ships.LoadedShip
 import org.valkyrienskies.core.api.ships.ServerShip
 import org.valkyrienskies.core.apigame.collision.ConvexPolygonc
 import org.valkyrienskies.core.apigame.collision.EntityPolygonCollider
-import org.valkyrienskies.core.util.writeVec3d
 import org.valkyrienskies.mod.common.ValkyrienSkiesMod.vsCore
 import org.valkyrienskies.mod.common.getShipManagingPos
 import org.valkyrienskies.mod.common.shipObjectWorld

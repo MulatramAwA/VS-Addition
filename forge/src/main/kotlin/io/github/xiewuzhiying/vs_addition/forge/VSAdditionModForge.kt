@@ -11,7 +11,7 @@ import io.github.xiewuzhiying.vs_addition.compats.computercraft.PeripheralCommon
 import io.github.xiewuzhiying.vs_addition.forge.compats.computercraft.ForgePeripheralProvider
 import io.github.xiewuzhiying.vs_addition.forge.compats.computercraft.PeripheralForge.registerGenericPeripheralForge
 import io.github.xiewuzhiying.vs_addition.forge.compats.create.content.redstone.display_link.target.FramedSignDisplayTarget
-import io.github.xiewuzhiying.vs_addition.stuff.airpocket.FakeAirPocketClient
+import io.github.xiewuzhiying.vs_addition.context.airpocket.FakeAirPocketClient
 import net.minecraft.client.Minecraft
 import net.minecraft.resources.ResourceLocation
 import net.minecraftforge.client.ConfigScreenHandler

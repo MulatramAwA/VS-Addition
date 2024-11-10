@@ -5,7 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.sugar.Local;
 import io.github.xiewuzhiying.vs_addition.VSAdditionConfig;
 import io.github.xiewuzhiying.vs_addition.networking.disable_entity_ship_collision.EntityShipCollisionDisablerS2CPacket;
-import io.github.xiewuzhiying.vs_addition.stuff.EntityShipCollisionDisabler;
+import io.github.xiewuzhiying.vs_addition.context.EntityShipCollisionDisabler;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
@@ -27,7 +27,7 @@ public abstract class MixinGrabTool {
         if (VSAdditionConfig.COMMON.getClockwork().getDisableGrabbedShipCollision() && player.level() instanceof ServerLevel serverLevel && player instanceof EntityShipCollisionDisabler disabler) {
             final long shipId = ship.getId();
             disabler.addDisabledCollisionBody(shipId);
-            new SetSingleShipS2CPacket(shipId, true, ObjectOpenHashSet.of(player)).sendToPlayers(serverLevel.players());
+            new EntityShipCollisionDisablerS2CPacket(shipId, true, ObjectOpenHashSet.of(player)).sendToPlayers(serverLevel.players());
         }
         original.call(player, ship, grabPosInShip);
     }

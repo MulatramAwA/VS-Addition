@@ -3,7 +3,7 @@ package io.github.xiewuzhiying.vs_addition.mixin.valkyrienskies.client;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import io.github.xiewuzhiying.vs_addition.VSAdditionConfig;
-import io.github.xiewuzhiying.vs_addition.stuff.airpocket.FakeAirPocketClient;
+import io.github.xiewuzhiying.vs_addition.context.airpocket.FakeAirPocketClient;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.LevelRenderer;

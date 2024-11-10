@@ -1,7 +1,7 @@
 package io.github.xiewuzhiying.vs_addition.compats.create.content.contraptions.chassis.sticker
 
-import io.github.xiewuzhiying.vs_addition.stuff.constraint.ConstraintGroup
-import io.github.xiewuzhiying.vs_addition.stuff.constraint.ConstraintManager
+import io.github.xiewuzhiying.vs_addition.context.constraint.ConstraintGroup
+import io.github.xiewuzhiying.vs_addition.context.constraint.ConstraintManager
 import io.github.xiewuzhiying.vs_addition.util.*
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction

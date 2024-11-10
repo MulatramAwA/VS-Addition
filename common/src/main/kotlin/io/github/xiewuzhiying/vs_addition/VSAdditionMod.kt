@@ -11,10 +11,10 @@ import io.github.xiewuzhiying.vs_addition.compats.create.content.redstone.link.D
 import io.github.xiewuzhiying.vs_addition.compats.create.content.redstone.link.DualLinkRenderer
 import io.github.xiewuzhiying.vs_addition.networking.VSAdditionMessage
 import io.github.xiewuzhiying.vs_addition.networking.airpocket.SyncAllPocketsC2SPacket
-import io.github.xiewuzhiying.vs_addition.stuff.EntityFreshCaller
-import io.github.xiewuzhiying.vs_addition.stuff.airpocket.FakeAirPocket
-import io.github.xiewuzhiying.vs_addition.stuff.airpocket.FakeAirPocketClient
-import io.github.xiewuzhiying.vs_addition.stuff.registerCommands
+import io.github.xiewuzhiying.vs_addition.context.EntityFreshCaller
+import io.github.xiewuzhiying.vs_addition.context.airpocket.FakeAirPocket
+import io.github.xiewuzhiying.vs_addition.context.airpocket.FakeAirPocketClient
+import io.github.xiewuzhiying.vs_addition.context.registerCommands
 import org.valkyrienskies.core.impl.config.VSConfigClass
 import org.valkyrienskies.core.impl.hooks.VSEvents
 

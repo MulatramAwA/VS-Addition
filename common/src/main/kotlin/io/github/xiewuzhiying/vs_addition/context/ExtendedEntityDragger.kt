@@ -1,4 +1,4 @@
-package io.github.xiewuzhiying.vs_addition.stuff
+package io.github.xiewuzhiying.vs_addition.context
 
 import io.github.xiewuzhiying.vs_addition.util.addedPitchRotLastTick
 import net.minecraft.server.level.ServerPlayer

@@ -1,7 +1,7 @@
 package io.github.xiewuzhiying.vs_addition.mixin.minecraft;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import io.github.xiewuzhiying.vs_addition.stuff.EntityShipCollisionDisabler;
+import io.github.xiewuzhiying.vs_addition.context.EntityShipCollisionDisabler;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;

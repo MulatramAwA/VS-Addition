@@ -1,4 +1,4 @@
-package io.github.xiewuzhiying.vs_addition.stuff
+package io.github.xiewuzhiying.vs_addition.context
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.BoolArgumentType

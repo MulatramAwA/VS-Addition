@@ -1,4 +1,4 @@
-package io.github.xiewuzhiying.vs_addition.stuff
+package io.github.xiewuzhiying.vs_addition.context
 
 import dev.architectury.event.EventResult
 import net.minecraft.world.entity.Entity

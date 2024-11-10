@@ -2,7 +2,7 @@ package io.github.xiewuzhiying.vs_addition.mixin.valkyrienskies;
 
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import io.github.xiewuzhiying.vs_addition.stuff.ExtendedEntityDragger;
+import io.github.xiewuzhiying.vs_addition.context.ExtendedEntityDragger;
 import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;

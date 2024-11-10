@@ -3,7 +3,7 @@ package io.github.xiewuzhiying.vs_addition.mixin.create.fan;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.simibubi.create.content.kinetics.fan.NozzleBlockEntity;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
-import io.github.xiewuzhiying.vs_addition.stuff.conditiontester.EncasedFanConditionTester;
+import io.github.xiewuzhiying.vs_addition.context.conditiontester.EncasedFanConditionTester;
 import io.github.xiewuzhiying.vs_addition.util.ConversionUtilsKt;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;

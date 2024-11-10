@@ -2,7 +2,7 @@ package io.github.xiewuzhiying.vs_addition.networking.disable_entity_ship_collis
 
 import dev.architectury.networking.NetworkManager
 import io.github.xiewuzhiying.vs_addition.VSAdditionMod
-import io.github.xiewuzhiying.vs_addition.stuff.EntityShipCollisionDisabler
+import io.github.xiewuzhiying.vs_addition.context.EntityShipCollisionDisabler
 import io.netty.buffer.Unpooled
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.resources.ResourceLocation

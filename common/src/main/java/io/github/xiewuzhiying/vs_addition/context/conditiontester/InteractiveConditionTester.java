@@ -1,4 +1,4 @@
-package io.github.xiewuzhiying.vs_addition.stuff.conditiontester;
+package io.github.xiewuzhiying.vs_addition.context.conditiontester;
 
 import dev.architectury.platform.Platform;
 import io.github.xiewuzhiying.vs_addition.VSAdditionConfig;

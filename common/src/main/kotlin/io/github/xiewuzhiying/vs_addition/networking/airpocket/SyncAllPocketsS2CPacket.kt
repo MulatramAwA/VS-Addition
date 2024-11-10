@@ -2,8 +2,8 @@ package io.github.xiewuzhiying.vs_addition.networking.airpocket
 
 import dev.architectury.networking.NetworkManager
 import io.github.xiewuzhiying.vs_addition.networking.VSAdditionMessage.FAKE_AIR_POCKET_SYNC_ALL
-import io.github.xiewuzhiying.vs_addition.stuff.airpocket.FakeAirPocketClient.setAirPockets
-import io.github.xiewuzhiying.vs_addition.stuff.airpocket.PocketId
+import io.github.xiewuzhiying.vs_addition.context.airpocket.FakeAirPocketClient.setAirPockets
+import io.github.xiewuzhiying.vs_addition.context.airpocket.PocketId
 import io.github.xiewuzhiying.vs_addition.util.readAABBd
 import io.github.xiewuzhiying.vs_addition.util.writeAABBdc
 import io.netty.buffer.Unpooled

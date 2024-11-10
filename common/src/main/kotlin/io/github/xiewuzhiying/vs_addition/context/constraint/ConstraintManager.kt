@@ -1,4 +1,4 @@
-package io.github.xiewuzhiying.vs_addition.stuff.constraint
+package io.github.xiewuzhiying.vs_addition.context.constraint
 
 import io.github.xiewuzhiying.vs_addition.VSAdditionMod
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap

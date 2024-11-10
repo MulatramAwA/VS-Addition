@@ -1,4 +1,4 @@
-package io.github.xiewuzhiying.vs_addition.stuff.airpocket
+package io.github.xiewuzhiying.vs_addition.context.airpocket
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import io.github.xiewuzhiying.vs_addition.PlatformUtils

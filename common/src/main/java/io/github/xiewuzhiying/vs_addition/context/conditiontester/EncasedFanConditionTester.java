@@ -1,4 +1,4 @@
-package io.github.xiewuzhiying.vs_addition.stuff.conditiontester;
+package io.github.xiewuzhiying.vs_addition.context.conditiontester;
 
 import io.github.xiewuzhiying.vs_addition.VSAdditionConfig;
 import me.fallenbreath.conditionalmixin.api.mixin.ConditionTester;

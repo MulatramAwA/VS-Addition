@@ -1,4 +1,4 @@
-package io.github.xiewuzhiying.vs_addition.stuff.airpocket
+package io.github.xiewuzhiying.vs_addition.context.airpocket
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.PoseStack

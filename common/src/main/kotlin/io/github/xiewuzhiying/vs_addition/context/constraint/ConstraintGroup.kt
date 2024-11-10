@@ -1,4 +1,4 @@
-package io.github.xiewuzhiying.vs_addition.stuff.constraint
+package io.github.xiewuzhiying.vs_addition.context.constraint
 
 import net.minecraft.nbt.CompoundTag
 import org.valkyrienskies.physics_api.ConstraintId
