@@ -4,6 +4,8 @@
   "compatibilityLevel": "JAVA_17",
   "plugin": "io.github.xiewuzhiying.vs_addition.forge.mixin.VSAdditionForgeMixinConfigPlugin",
   "mixins": [
+    "ballistix.MixinBlastAttractive",
+    "ballistix.MixinBlastRepulsive",
     "cbcmodernwarfare.CompactCannonMountBlockEntityAccessor",
     "cbcmodernwarfare.MixinCompactCannonMountPoint",
     "cbcmodernwarfare.MixinCreateCompat",

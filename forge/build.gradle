@@ -135,6 +135,9 @@ dependencies {
 
     //Xaero's minimap
     modCompileOnly("maven.modrinth:xaeros-minimap-fair:FP24.2.0_Forge_1.20")
+
+    // Ballistix
+    modCompileOnly("maven.modrinth:ballistix:1.20.1-0.7.0-4")
 }
 
 processResources {
