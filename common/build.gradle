@@ -29,7 +29,7 @@ dependencies {
     implementation("com.github.Chocohead:Fabric-ASM:v2.3")
 
     // Valkyrien Skies 2
-    modApi("org.valkyrienskies:valkyrienskies-120-common:${rootProject.vs2_version}")
+    modApi("org.valkyrienskies:valkyrienskies-120-common:${rootProject.vs2_version}") { transitive = false }
 
     // VS Core
     compileOnly("org.valkyrienskies.core:api:${rootProject.vs_core_version}")
