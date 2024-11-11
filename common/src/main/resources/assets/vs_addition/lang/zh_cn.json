@@ -2,5 +2,19 @@
   "create.vs_addition.working_mode" : "工作模式",
   "create.vs_addition.working_mode.original" : "原始行为",
   "create.vs_addition.working_mode.with_ship" : "为船只的另一种行为",
-  "vs_addition.error.text1" : "发生错误。请在此处汇报：%s."
+
+  "vs_addition.command.fake_air_pocket.add": "添加了一个从 (%1$s, %2$s, %3$s) 至 (%4$s, %5$s, %6$s) 的伪气室！\n 船舶ID：%7$s\n 气室ID：%8$s",
+  "vs_addition.command.fake_air_pocket.remove": "移除了伪气室！\n 船舶ID：%1$s\n 气室ID：%2$s",
+  "vs_addition.command.fake_air_pocket.extend": "在伪气室的%2$s侧延展了%1$s格！\n 船舶ID：%3$s\n 气室ID：%4$s",
+  "vs_addition.command.fake_air_pocket.get": "获取到了一个从 (%1$s, %2$s, %3$s) 至 (%4$s, %5$s, %6$s)的伪气室!\n 气室ID：%7$s",
+  "vs_addition.command.get_ship_id_and_slug": "船舶ID：%1$s\n 船舶Slug：%2$s",
+
+  "vs_addition.error.text1" : "发生错误。请在此处汇报：%s",
+
+  "direction.up": "上",
+  "direction.down": "下",
+  "direction.east": "东",
+  "direction.west": "西",
+  "direction.south": "南",
+  "direction.north": "北"
 }

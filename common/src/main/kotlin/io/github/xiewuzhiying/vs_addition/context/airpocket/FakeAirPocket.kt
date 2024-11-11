@@ -10,6 +10,7 @@ import io.github.xiewuzhiying.vs_addition.networking.airpocket.SyncAllPocketsS2C
 import io.github.xiewuzhiying.vs_addition.networking.airpocket.SyncSinglePocketS2CPacket
 import io.github.xiewuzhiying.vs_addition.util.getLoadedShipsIntersecting
 import io.github.xiewuzhiying.vs_addition.util.toDirection
+import io.github.xiewuzhiying.vs_addition.util.toTranslatable
 import net.minecraft.commands.CommandBuildContext
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands
@@ -166,11 +167,10 @@ object FakeAirPocket {
                                         pos1.x.coerceAtLeast(pos2.x) + 1.0, pos1.y.coerceAtLeast(pos2.y) + 1.0, pos1.z.coerceAtLeast(pos2.z) + 1.0)
                                         .correctBounds()
                                     val pocketId = controller.addAirPocket(aabb)
-                                    source.player?.sendSystemMessage(Component.literal("Add fake air pocket from (${pos1.x}, ${pos1.y}, ${pos1.z}) to (${pos2.x}, ${pos2.y}, ${pos2.z}), ShipID: ${ship.id}, PocketID: ${pocketId}"))
+
+                                    source.player?.sendSystemMessage(Component.translatable("vs_addition.command.fake_air_pocket.add", pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, ship.id, pocketId))
 
                                     SyncSinglePocketS2CPacket(ship.id, pocketId, aabb).sendToPlayers(level.players())
-
-                                    source.player?.sendSystemMessage(Component.literal("Called /fake-air-pocket"))
 
                                     return@executes 1
                                 }
@@ -193,11 +193,10 @@ object FakeAirPocket {
                             val controller = FakeAirPocketController.getOrCreate(ship as ServerShip, level)
                             val aabb = AABBd(pos1.toJOML(), pos2.toJOML()).correctBounds()
                             val pocketId = controller.addAirPocket(AABBd(pos1.toJOML(), pos2.toJOML()).correctBounds())
-                            source.player?.sendSystemMessage(Component.literal("Add fake air pocket from (${pos1.x}, ${pos1.y}, ${pos1.z}) to (${pos2.x}, ${pos2.y}, ${pos2.z}), ShipID: ${ship.id}, PocketID: ${pocketId}"))
+
+                            source.player?.sendSystemMessage(Component.translatable("vs_addition.command.fake_air_pocket.add", pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, ship.id, pocketId))
 
                             SyncSinglePocketS2CPacket(ship.id, pocketId, aabb).sendToPlayers(level.players())
-
-                            source.player?.sendSystemMessage(Component.literal("Called /fake-air-pocket"))
 
                             return@executes 1
                         }
@@ -215,6 +214,8 @@ object FakeAirPocket {
                             val controller = FakeAirPocketController.getOrCreate(shipId, level) ?: return@executes 0
                             val pocketId = LongArgumentType.getLong(context, "pocketId")
                             controller.removeAirPocket(pocketId)
+
+                            source.player?.sendSystemMessage(Component.translatable("vs_addition.command.fake_air_pocket.remove", shipId, pocketId))
 
                             SyncAllPocketsS2CPacket(shipId, controller.getAllAirPocket()).sendToPlayers(level.players())
 
@@ -255,7 +256,8 @@ object FakeAirPocket {
                                 val distance = DoubleArgumentType.getDouble(context, "distance")
                                 val view = player.getViewVector(1.0f).toJOML()
                                 ship.worldToShip.transformDirection(view)
-                                when (view.toDirection()) {
+                                val direction = view.toDirection()
+                                when (direction) {
                                     Direction.UP -> {
                                         aabb.maxY += distance
                                     }
@@ -276,6 +278,8 @@ object FakeAirPocket {
                                     }
                                 }
                                 controller.setAirPocket(pocketId, aabb)
+
+                                source.player?.sendSystemMessage(Component.translatable("vs_addition.command.fake_air_pocket.extend", distance, direction.toTranslatable, shipId, pocketId))
 
                                 SyncAllPocketsS2CPacket(shipId, controller.getAllAirPocket()).sendToPlayers(level.players())
 
@@ -298,7 +302,7 @@ object FakeAirPocket {
                         val pockets = controller.getAllAirPocket()
                         pockets.forEach { pocket ->
                             val aabb = pocket.value
-                            player.sendSystemMessage(Component.literal("Pocket ID: ${pocket.key} from (${aabb.minX()} ${aabb.minY()} ${aabb.minZ()}) to (${aabb.maxX()} ${aabb.maxY()} ${aabb.maxZ()})"))
+                            player.sendSystemMessage(Component.translatable("vs_addition.command.fake_air_pocket.get", aabb.minX(), aabb.minY(), aabb.minZ(), aabb.maxX(), aabb.maxY(), aabb.maxZ(), pocket.key))
                         }
                         return@executes 1
                     }

@@ -2,5 +2,19 @@
   "create.vs_addition.working_mode" : "Working Mode",
   "create.vs_addition.working_mode.original" : "Original behaviour",
   "create.vs_addition.working_mode.with_ship" : "Another behavior for ships",
-  "vs_addition.error.text1" : "An error occurred. Please report it at %s."
+
+  "vs_addition.command.fake_air_pocket.add": "Added a fake air pocket from (%1$s, %2$s, %3$s) to (%4$s, %5$s, %6$s)!\n Ship ID: %7$s\n Pocket ID: %8$s",
+  "vs_addition.command.fake_air_pocket.remove": "Removed the fake air pocket!\n Ship ID: %1$s\n Pocket ID: %2$s",
+  "vs_addition.command.fake_air_pocket.extend": "Extended the fake air pocket %1$s block(s) on the %2$s side!\n Ship ID: %3$s\n Pocket ID: %4$s",
+  "vs_addition.command.fake_air_pocket.get": "Got a fake air pocket from (%1$s, %2$s, %3$s) to (%4$s, %5$s, %6$s)!\n Pocket ID: %7$s",
+  "vs_addition.command.get_ship_id_and_slug": "Ship ID: %1$s\nShip Slug: %2$s",
+
+  "vs_addition.error.text1" : "An error occurred. Please report it at %s",
+
+  "direction.up": "Up",
+  "direction.down": "Down",
+  "direction.east": "East",
+  "direction.west": "West",
+  "direction.south": "South",
+  "direction.north": "North"
 }

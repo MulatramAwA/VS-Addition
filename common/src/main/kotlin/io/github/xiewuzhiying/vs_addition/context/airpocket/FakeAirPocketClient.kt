@@ -333,7 +333,6 @@ object FakeAirPocketClient {
 
                     SyncAllPocketsC2SPacket(ship.id).sendToServer()
 
-                    player.sendSystemMessage(Component.literal("Called /fresh-fake-air-pocket"))
                     return@executes 1
                 }
         )
@@ -347,7 +346,7 @@ object FakeAirPocketClient {
                     if (ray !is BlockHitResult) return@executes 0
                     val ship = VSClientGameUtils.getClientShip(ray.blockPos.x.toDouble(), ray.blockPos.y.toDouble(), ray.blockPos.z.toDouble()) ?: return@executes 0
 
-                    player.sendSystemMessage(Component.literal("ShipId: ${ship.id} ShipSlug ${ship.slug}"))
+                    player.sendSystemMessage(Component.translatable("vs_addition.command.get_ship_id_and_slug", ship.id, ship.slug))
                     return@executes 1
                 }
         )
