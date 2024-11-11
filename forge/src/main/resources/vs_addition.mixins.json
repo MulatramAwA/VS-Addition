@@ -23,6 +23,7 @@
     "tacz.MixinProjectileExplosion",
     "tallyho.MixinBearingController",
     "tallyho.MixinClockworkPeripheralProvider",
+    "tallyho.MixinCommonEvents",
     "tallyho.MixinPhysBearingBlockEntity",
     "tallyho.MixinTallyhoMod",
     "valkyrienskies.water.MixinEntity",
