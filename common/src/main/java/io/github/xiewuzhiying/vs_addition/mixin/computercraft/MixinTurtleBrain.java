@@ -40,8 +40,7 @@ public abstract class MixinTurtleBrain {
             method = "teleportTo(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)Z",
             at = @At(value = "HEAD"),
             index = 2,
-            argsOnly = true,
-            remap = false
+            argsOnly = true
     )
     private BlockPos ValkyrienSkies2$teleportToBlockPos(final BlockPos pos) {
         final TurtleBlockEntity currentOwner = getOwner();
