@@ -64,21 +64,13 @@ jobs:
           localPath: ./forge/jars/createbigcannons-5.6.0-dev-mc.1.20.1-forge-build.87.jar
           googleFileId: 1eaFIoPYUcroNHynGEgTK-gg5t1n_OHyl
 
-      - name: Download FTB Chunks
+      - name: Download Valkyrien Ship Schematics
         uses: Fork-on-the-Table-Collective/upload-to-download-from-gdrive@v2.0.0
         with:
           credentials: ${{ secrets.GSA_CREDENTIALS }}
           actionType: download
-          localPath: ./common/jars/ftb-chunks-fabric-2001.3.1.jar
-          googleFileId: 1syotEGMA2svNL2vaXp35yF7fD9NyDmZp
-
-      - name: Download Presence Footsteps Forge
-        uses: Fork-on-the-Table-Collective/upload-to-download-from-gdrive@v2.0.0
-        with:
-          credentials: ${{ secrets.GSA_CREDENTIALS }}
-          actionType: download
-          localPath: ./forge/jars/PresenceFootsteps-1.20.1-1.9.1-beta.1.jar
-          googleFileId: 1p-GREqHqYlaQsIJ7cjEydxJYgqSyHgBb
+          localPath: ./common/jars/valkyrien-ship-schematics-fabric-1.0.jar
+          googleFileId: 1hGQuv304eS5rO0VmR992T9WqmOTqHde2
 
       - name: Download Tallyho
         uses: Fork-on-the-Table-Collective/upload-to-download-from-gdrive@v2.0.0

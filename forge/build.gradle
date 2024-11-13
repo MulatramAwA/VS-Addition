@@ -128,7 +128,7 @@ dependencies {
     modCompileOnly("maven.modrinth:embeddiumplus:1.20.1-v1.2.13")
 
     // Presence Footsteps
-    modCompileOnly files("jars/PresenceFootsteps-1.20.1-1.9.1-beta.1.jar")
+    modCompileOnly("curse.maven:presence-footsteps-forge-433068:5015286")
 
     //Tallyho
     modCompileOnly files("jars/tallyho-3.0.8.jar")

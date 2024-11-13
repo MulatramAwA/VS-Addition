@@ -75,7 +75,7 @@ dependencies {
     modCompileOnly("maven.modrinth:journeymap:1.20.1-5.10.0-fabric")
 
     //FTB Chunks
-    modCompileOnly files("jars/ftb-chunks-fabric-2001.3.1.jar")
+    modCompileOnly("curse.maven:ftb-chunks-fabric-472657:5856502")
 
     //Kontraption
     modCompileOnly("maven.modrinth:kontraption:x3oh2lqe")
