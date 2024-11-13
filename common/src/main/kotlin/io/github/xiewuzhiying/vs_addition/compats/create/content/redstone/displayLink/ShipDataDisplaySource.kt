@@ -4,6 +4,8 @@ import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext
 import com.simibubi.create.content.redstone.displayLink.source.NumericSingleLineDisplaySource
 import com.simibubi.create.content.redstone.displayLink.target.DisplayTargetStats
 import io.github.xiewuzhiying.vs_addition.VSAdditionMod.MOD_ID
+import io.github.xiewuzhiying.vs_addition.util.centerJOMLD
+import io.github.xiewuzhiying.vs_addition.util.toVector3d
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
@@ -19,40 +21,31 @@ open class ShipDataDisplaySource : NumericSingleLineDisplaySource() {
         val source = context.sourcePos
         val level = context.level()
         val ship = level.getShipManagingPos(source)
-        if (ship != null) {
+        return if (ship != null) {
             when (context.sourceConfig().getInt("Mode")) {
-                0 -> {
-                    return Component.literal(ship.id.toString())
-                }
-                1 -> {
-                    return ship.slug?.let { Component.translatable(it) } ?: notShip
-                }
-                2 -> {
-                    return vector3dcToComponent(ship.velocity)
-                }
-                3 -> {
-                    return vector3dcToComponent(ship.omega)
-                }
-                4 -> {
-                    return vector3dcToComponent(ship.transform.positionInWorld)
-                }
-                5 -> {
-                    return vector3dcToComponent(ship.transform.positionInShip)
-                }
-                else -> {
-                    return notShip
-                }
+                0 -> { Component.literal(ship.id.toString()) }
+                1 -> { ship.slug?.let { Component.translatable(it) } ?: notShip }
+                2 -> { Component.literal(format(ship.velocity.length())) }
+                3 -> { vector3dcToComponent(ship.velocity) }
+                4 -> { Component.literal(format(ship.omega.length())) }
+                5 -> { vector3dcToComponent(ship.omega) }
+                6 -> { vector3dcToComponent(ship.transform.positionInWorld) }
+                7 -> { vector3dcToComponent(ship.transform.shipToWorld.transformPosition(source.centerJOMLD)) }
+                8 -> { vector3dcToComponent(ship.transform.positionInShip) }
+                9 -> { vector3dcToComponent(source.toVector3d) }
+                else -> { notShip }
             }
         } else {
-            return notShip
+            notShip
         }
     }
 
     private fun vector3dcToComponent(vector3dc: Vector3dc): MutableComponent {
-        val x = String.format("%.1f", vector3dc.x())
-        val y = String.format("%.1f", vector3dc.y())
-        val z = String.format("%.1f", vector3dc.z())
-        return Component.literal("$x $y $z")
+        return Component.literal("${format(vector3dc.x())} ${format(vector3dc.y())} ${format(vector3dc.z())}")
+    }
+
+    private fun format(double: Double) : String {
+        return String.format("%.1f", double)
     }
 
     override fun allowsLabeling(context: DisplayLinkContext): Boolean {

@@ -12,10 +12,14 @@
   "vs_addition.display_source.ship_data": "船舶数据",
   "vs_addition.display_source.ship_data.id": "船舶ID",
   "vs_addition.display_source.ship_data.slug": "船舶别名",
-  "vs_addition.display_source.ship_data.velocity": "当前船舶速度",
-  "vs_addition.display_source.ship_data.omega": "当前船舶角速度",
-  "vs_addition.display_source.ship_data.position_in_world": "船舶坐标（世界坐标系）",
-  "vs_addition.display_source.ship_data.position_in_ship": "船舶坐标（本地坐标系）",
+  "vs_addition.display_source.ship_data.velocity_modulus": "船舶速度（模长）",
+  "vs_addition.display_source.ship_data.velocity_components": "船舶速度（分量）",
+  "vs_addition.display_source.ship_data.omega_modulus": "船舶角速度（模长）",
+  "vs_addition.display_source.ship_data.omega_components": "船舶角速度（分量）",
+  "vs_addition.display_source.ship_data.mass_center_position_in_world": "船舶质心坐标（世界坐标系）",
+  "vs_addition.display_source.ship_data.source_block_position_in_world": "源方块坐标（世界坐标系）",
+  "vs_addition.display_source.ship_data.mass_center_position_in_ship": "船舶质心坐标（本地坐标系）",
+  "vs_addition.display_source.ship_data.source_block_position_in_ship": "源方块坐标（本地坐标系）",
   "vs_addition.display_source.ship_data.not_ship": "不是一艘船",
 
 
