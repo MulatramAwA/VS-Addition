@@ -19,16 +19,23 @@ public abstract class MixinShipDataDisplaySource extends NumericSingleLineDispla
             return;
         builder.addSelectionScrollInput(0, 120,
                 (si, l) -> si.forOptions(Arrays.asList(
-                        Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.id"),
-                        Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.slug"),
-                        Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.velocity_modulus"),
-                        Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.velocity_components"),
-                        Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.omega_modulus"),
-                        Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.omega_components"),
-                        Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.mass_center_position_in_world"),
-                        Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.source_block_position_in_world"),
-                        Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.mass_center_position_in_ship"),
-                        Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.source_block_position_in_ship")))
+                            Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.id"),
+                            Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.slug"),
+                            Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.velocity_modulus"),
+                            Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.velocity_modulus_km_h"),
+                            Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.velocity_components"),
+                            Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.omega_modulus"),
+                            Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.omega_components"),
+                            Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.mass_center_position_in_world"),
+                            Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.source_block_position_in_world"),
+                            Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.mass_center_position_in_ship"),
+                            Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.source_block_position_in_ship"),
+                            Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.roll_radians"),
+                            Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.roll_degrees"),
+                            Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.pitch_radians"),
+                            Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.pitch_degrees"),
+                            Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.yaw_radians"),
+                            Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data.yaw_degrees")))
                         .titled(Component.translatable(VSAdditionMod.MOD_ID + ".display_source.ship_data")), "Mode");
     }
 }
