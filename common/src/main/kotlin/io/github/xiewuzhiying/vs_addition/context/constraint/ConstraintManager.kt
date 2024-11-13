@@ -23,6 +23,7 @@ abstract class ConstraintManager(open val core: ServerShipWorldCore) {
     }
 
     fun removeAllConstraintGroups() {
+        this.onRemoveAllConstraintGroups(this.constraintGroups)
         this.constraintGroups.forEach { (id, group) ->
             this.onRemoveConstraintGroup(id, group)
         }
@@ -71,6 +72,10 @@ abstract class ConstraintManager(open val core: ServerShipWorldCore) {
     open fun onRemoveConstraintGroup(id: Int, group: ConstraintGroup) {
         this.removeConstraint(group.constraintId0)
         this.removeConstraint(group.constraintId1)
+    }
+
+    open fun onRemoveAllConstraintGroups(map: Int2ObjectOpenHashMap<ConstraintGroup>) {
+
     }
 
     companion object {

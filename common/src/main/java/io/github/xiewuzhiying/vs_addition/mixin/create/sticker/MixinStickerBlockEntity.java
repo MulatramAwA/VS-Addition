@@ -1,10 +1,8 @@
-package io.github.xiewuzhiying.vs_addition.mixin.create;
+package io.github.xiewuzhiying.vs_addition.mixin.create.sticker;
 
 import com.simibubi.create.content.contraptions.chassis.StickerBlockEntity;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import io.github.xiewuzhiying.vs_addition.compats.create.content.contraptions.chassis.sticker.StickerConstraintManager;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -127,20 +125,6 @@ public abstract class MixinStickerBlockEntity extends SmartBlockEntity {
     public boolean isAirOrFluid(BlockState state) {
         return state.isAir() || state.getFluidState() != Fluids.EMPTY.defaultFluidState();
     }
-
-    /**
-     * Safe wrapper for 'playSound', which is removed at runtime on fabric servers.
-     */
-    @Unique
-    public void playClientSound(boolean attach) {
-        if(this.level != null && this.level.isClientSide()) {
-            playSound(attach);
-        }
-    }
-
-    @Environment(EnvType.CLIENT)
-    @Shadow(remap = false)
-    public abstract void playSound(boolean attach);
 
     @Shadow(remap = false)
     public abstract boolean isBlockStateExtended();

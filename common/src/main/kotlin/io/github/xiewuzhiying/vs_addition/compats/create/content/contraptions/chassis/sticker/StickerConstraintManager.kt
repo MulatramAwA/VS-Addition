@@ -2,7 +2,9 @@ package io.github.xiewuzhiying.vs_addition.compats.create.content.contraptions.c
 
 import io.github.xiewuzhiying.vs_addition.context.constraint.ConstraintGroup
 import io.github.xiewuzhiying.vs_addition.context.constraint.ConstraintManager
+import io.github.xiewuzhiying.vs_addition.networking.create.sticker.StickerSoundPacketS2CPacket
 import io.github.xiewuzhiying.vs_addition.util.*
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
@@ -32,6 +34,7 @@ open class StickerConstraintManager(val level: ServerLevel, val ship: ServerShip
     open fun createStickerConstraint() {
         if (this.bodyId == null) return
         val checkPos = this.level.toWorldCoordinates(Vector3d(this.checkPos))
+        var shouldPlaySound = false
         this.level.transformFromWorldToNearbyLoadedShipsAndWorld(AABBd(checkPos, checkPos).expand(0.25)) { aabb ->
             val pos = aabb.center(Vector3d())
 
@@ -73,7 +76,15 @@ open class StickerConstraintManager(val level: ServerLevel, val ship: ServerShip
             )
 
             this.addConstraintGroup(StickerConstraintGroup(this.createConstraint(attachmentConstraint) ?: return@transformFromWorldToNearbyLoadedShipsAndWorld, this.createConstraint(fixOrientationConstraint) ?: return@transformFromWorldToNearbyLoadedShipsAndWorld, pos.toBlockPos))
+            shouldPlaySound = true
         }
+        if (shouldPlaySound) {
+            StickerSoundPacketS2CPacket(blockPos, true).sendToPlayers(level.players())
+        }
+    }
+
+    override fun onRemoveAllConstraintGroups(map: Int2ObjectOpenHashMap<ConstraintGroup>) {
+        StickerSoundPacketS2CPacket(blockPos, false).sendToPlayers(level.players())
     }
 
     open fun checkStickerConstraint() {
