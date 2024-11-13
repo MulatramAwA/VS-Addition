@@ -9,6 +9,15 @@
   "vs_addition.command.fake_air_pocket.get": "Got a fake air pocket from (%1$s, %2$s, %3$s) to (%4$s, %5$s, %6$s)!\n Pocket ID: %7$s",
   "vs_addition.command.get_ship_id_and_slug": "Ship ID: %1$s\nShip Slug: %2$s",
 
+  "vs_addition.display_source.ship_data": "Ship Data",
+  "vs_addition.display_source.ship_data.id": "Ship ID",
+  "vs_addition.display_source.ship_data.slug": "Ship Slug",
+  "vs_addition.display_source.ship_data.velocity": "Ship Velocity",
+  "vs_addition.display_source.ship_data.omega": "Ship Omega",
+  "vs_addition.display_source.ship_data.position_in_world": "Ship Position (World Coordinates)",
+  "vs_addition.display_source.ship_data.position_in_ship": "Ship Position (Local Coordinates)",
+  "vs_addition.display_source.ship_data.not_ship": "Not a ship",
+
   "vs_addition.error.text1" : "An error occurred. Please report it at %s",
 
   "direction.up": "Up",

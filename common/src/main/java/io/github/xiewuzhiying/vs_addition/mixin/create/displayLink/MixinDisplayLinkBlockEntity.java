@@ -1,4 +1,4 @@
-package io.github.xiewuzhiying.vs_addition.mixin.create.display_link;
+package io.github.xiewuzhiying.vs_addition.mixin.create.displayLink;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;

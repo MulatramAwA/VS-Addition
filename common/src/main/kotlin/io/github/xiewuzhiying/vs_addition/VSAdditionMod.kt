@@ -1,5 +1,6 @@
 package io.github.xiewuzhiying.vs_addition
 
+import com.simibubi.create.content.redstone.displayLink.AllDisplayBehaviours
 import dev.architectury.event.events.client.ClientCommandRegistrationEvent
 import dev.architectury.event.events.client.ClientTickEvent
 import dev.architectury.event.events.common.CommandRegistrationEvent
@@ -7,15 +8,16 @@ import dev.architectury.event.events.common.EntityEvent
 import dev.architectury.event.events.common.InteractionEvent
 import dev.architectury.event.events.common.InteractionEvent.RightClickBlock
 import dev.architectury.platform.Platform
+import io.github.xiewuzhiying.vs_addition.compats.create.content.redstone.displayLink.ShipDataDisplaySource
 import io.github.xiewuzhiying.vs_addition.compats.create.content.redstone.link.DualLinkHandler
 import io.github.xiewuzhiying.vs_addition.compats.create.content.redstone.link.DualLinkRenderer
 import io.github.xiewuzhiying.vs_addition.compats.vmod.schem.VSAdditionSchemCompat
-import io.github.xiewuzhiying.vs_addition.networking.VSAdditionMessage
-import io.github.xiewuzhiying.vs_addition.networking.airpocket.SyncAllPocketsC2SPacket
 import io.github.xiewuzhiying.vs_addition.context.EntityFreshCaller
 import io.github.xiewuzhiying.vs_addition.context.airpocket.FakeAirPocket
 import io.github.xiewuzhiying.vs_addition.context.airpocket.FakeAirPocketClient
 import io.github.xiewuzhiying.vs_addition.context.registerCommands
+import io.github.xiewuzhiying.vs_addition.networking.VSAdditionMessage
+import io.github.xiewuzhiying.vs_addition.networking.airpocket.SyncAllPocketsC2SPacket
 import net.spaceeye.vmod.compat.schem.SchemCompatObj
 import org.valkyrienskies.core.impl.config.VSConfigClass
 import org.valkyrienskies.core.impl.hooks.VSEvents
@@ -58,6 +60,13 @@ object VSAdditionMod {
         CommandRegistrationEvent.EVENT.register { dispatcher, registry, selection ->
             FakeAirPocket.registerCommands(dispatcher, registry, selection)
             registerCommands(dispatcher, registry, selection)
+        }
+
+        if (CREATE_ACTIVE) {
+            AllDisplayBehaviours.register(
+                ShipDataDisplaySource.id,
+                ShipDataDisplaySource()
+            )
         }
 
         if (CLOCKWORK_ACTIVE) {

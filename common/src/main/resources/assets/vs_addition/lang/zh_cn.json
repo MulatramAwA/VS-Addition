@@ -9,6 +9,16 @@
   "vs_addition.command.fake_air_pocket.get": "获取到了一个从 (%1$s, %2$s, %3$s) 至 (%4$s, %5$s, %6$s)的伪气室!\n 气室ID：%7$s",
   "vs_addition.command.get_ship_id_and_slug": "船舶ID：%1$s\n 船舶Slug：%2$s",
 
+  "vs_addition.display_source.ship_data": "船舶数据",
+  "vs_addition.display_source.ship_data.id": "船舶ID",
+  "vs_addition.display_source.ship_data.slug": "船舶别名",
+  "vs_addition.display_source.ship_data.velocity": "当前船舶速度",
+  "vs_addition.display_source.ship_data.omega": "当前船舶角速度",
+  "vs_addition.display_source.ship_data.position_in_world": "船舶坐标（世界坐标系）",
+  "vs_addition.display_source.ship_data.position_in_ship": "船舶坐标（本地坐标系）",
+  "vs_addition.display_source.ship_data.not_ship": "不是一艘船",
+
+
   "vs_addition.error.text1" : "发生错误。请在此处汇报：%s",
 
   "direction.up": "上",
