@@ -1,5 +1,6 @@
 package io.github.xiewuzhiying.vs_addition.context.airpocket
 
+import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
@@ -14,10 +15,9 @@ import io.netty.util.collection.LongObjectHashMap
 import io.netty.util.collection.LongObjectMap
 import net.minecraft.client.Camera
 import net.minecraft.client.Minecraft
-import net.minecraft.client.renderer.LevelRenderer
-import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.client.renderer.RenderStateShard
-import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.renderer.*
+import net.minecraft.client.renderer.texture.OverlayTexture
+import net.minecraft.client.resources.model.ModelBakery
 import net.minecraft.commands.CommandBuildContext
 import net.minecraft.network.chat.Component
 import net.minecraft.world.phys.AABB
@@ -177,10 +177,22 @@ object FakeAirPocketClient {
             .createCompositeState(false)
     )
 
+    /*private val WATER_SURFACE: RenderType.CompositeRenderType = RenderType.create(
+        "water_surface_triangles",
+        DefaultVertexFormat.BLOCK,
+        VertexFormat.Mode.TRIANGLES,
+        2097152,
+        true,
+        true,
+        RenderType.translucentState(RenderStateShard.RENDERTYPE_TRANSLUCENT_SHADER)
+    )*/
+
     @JvmStatic
     fun render(ms: PoseStack, camera: Camera, bufferSource: MultiBufferSource?) {
         if (!(VSAdditionConfig.COMMON.experimental.fakeAirPocket && VSAdditionConfig.CLIENT.experimental.cullWaterSurfaceInFakeAirPocket)) return
         val waterMaskConsumer = bufferSource?.getBuffer(WATER_MASK) ?: return
+        /*val waterFaceConsumer = bufferSource.getBuffer(WATER_SURFACE)
+        val mc = Minecraft.getInstance()*/
         val shipClientWorld = ((Minecraft.getInstance() as? IShipObjectWorldClientProvider)?.shipObjectWorld as? ShipObjectClientWorld) ?: return
         val cameraPosition = camera.position.toJOML()
         val loadedShips = shipClientWorld.loadedShips
@@ -201,8 +213,8 @@ object FakeAirPocketClient {
                     }
                 }
 
-                /*val section = aabb2.toPoints().filter { it.isBehindPlane(plane) }.toMutableList()
-                mask.forEach { section.add(it) }*/
+                val section = aabb2.toPoints().filter { it.isBehindPlane(plane) }.toMutableList()
+                mask.forEach { section.add(it) }
 
                 val cameraPosition2 = transform.worldToShip.transformPosition(Vector3d(cameraPosition)).sub(aabb.center(Vector3d()))
 
@@ -216,13 +228,45 @@ object FakeAirPocketClient {
                         }
                     }
                     .forEach { face ->
-                        renderMask2(ms, transform, cameraPosition, aabb.center(Vector3d()), sortVertices(face.first, face.second), waterSurfaceConsumer, cameraPosition2.isInFrontOfPlane(face.third))
+                        val center = aabb.center(Vector3d())
+                        renderWaterSurface(waterFaceConsumer, ms, transform, cameraPosition, center, sortVertices(face.first, face.second), cameraPosition2.isInFrontOfPlane(face.third), BiomeColors.getAverageWaterColor(mc.level, center.toBlockPos))
                     }*/
 
                 renderMask(ms, transform, cameraPosition, aabb.center(Vector3d()), sortVertices(mask, plane.normal), waterMaskConsumer, cameraPosition2.isInFrontOfPlane(plane))
             }
         }
     }
+
+    /*val textureAtlasSprite = ModelBakery.WATER_FLOW.sprite()
+    val u1 = textureAtlasSprite.getU(0.0)
+    val u2 = textureAtlasSprite.getU(16.0)
+    val v1 = textureAtlasSprite.getV(0.0)
+    val v2 = textureAtlasSprite.getV(16.0)
+
+    fun renderWaterSurface(waterFaceConsumer: VertexConsumer, ms: PoseStack, transform: ShipTransform, camera: Vector3dc, offset: Vector3dc, vertices: List<Vector3dc>, bl: Boolean, color: Int) {
+        ms.pushPose()
+        VSClientGameUtils.transformRenderWithShip(
+            transform,
+            ms,
+            offset.x(),
+            offset.y(),
+            offset.z(),
+            camera.x(),
+            camera.y(),
+            camera.z()
+        )
+
+        val matrix4f: Matrix4f = ms.last().pose()
+
+        RenderSystem.setShaderTexture(0, textureAtlasSprite.atlasLocation())
+        RenderSystem.setShader { GameRenderer.getRendertypeTranslucentShader() }
+        *//*RenderSystem.enableBlend()
+        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)*//*
+        RenderSystem.enableDepthTest()
+
+        renderTriangle2(waterFaceConsumer, matrix4f, vertices, bl, color)
+        ms.popPose()
+    }*/
 
     private fun renderMask(ms: PoseStack, transform: ShipTransform, camera: Vector3dc, offset: Vector3dc, vertices: List<Vector3dc>, maskConsumer: VertexConsumer, bl: Boolean) {
         if (vertices.size < 3) return
@@ -235,24 +279,10 @@ object FakeAirPocketClient {
             offset.y(),
             offset.z(),
             camera.x(),
-            camera.y(),
+            camera.y() + if (bl) 0.0 else ZFIGHT,
             camera.z()
         )
-        renderTriangle(maskConsumer, ms.last().pose(), vertices, true)
-        ms.popPose()
-
-        ms.pushPose()
-        VSClientGameUtils.transformRenderWithShip(
-            transform,
-            ms,
-            offset.x(),
-            offset.y(),
-            offset.z(),
-            camera.x(),
-            camera.y() + ZFIGHT,
-            camera.z()
-        )
-        renderTriangle(maskConsumer, ms.last().pose(), vertices, false)
+        renderTriangle(maskConsumer, ms.last().pose(), vertices, bl)
         ms.popPose()
     }
 
@@ -265,20 +295,56 @@ object FakeAirPocketClient {
             }
             consumer
                 .vertex(matrix, vertices[first].x().toFloat(), vertices[first].y().toFloat(), vertices[first].z().toFloat())
-                .uv(0f, 0f)
                 .endVertex()
 
             consumer
                 .vertex(matrix, vertices[i].x().toFloat(), vertices[i].y().toFloat(), vertices[i].z().toFloat())
-                .uv(0f, 1f)
                 .endVertex()
 
             consumer
                 .vertex(matrix, vertices[finally].x().toFloat(), vertices[finally].y().toFloat(), vertices[finally].z().toFloat())
-                .uv(1f, 0f)
                 .endVertex()
         }
     }
+
+    /*private fun renderTriangle2(consumer: VertexConsumer, matrix: Matrix4f, vertices: List<Vector3dc>, order: Boolean, color: Int) {
+        val r: Float = (color shr 16 and 255).toFloat() / 255.0f
+        val g: Float = (color shr 8 and 255).toFloat() / 255.0f
+        val b: Float = (color and 255).toFloat() / 255.0f
+        for (i in 1 until vertices.size - 1) {
+            val (first, finally) = if (order) {
+                Pair(i+1, 0)
+            } else {
+                Pair(0, i+1)
+            }
+            consumer
+                .vertex(matrix, vertices[first].x().toFloat(), vertices[first].y().toFloat(), vertices[first].z().toFloat())
+                .uv(u1, v1)
+                .color(r, g, b, 1f)
+                .uv2(LightTexture.FULL_BRIGHT)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .normal(0f, 1f, 0f)
+                .endVertex()
+
+            consumer
+                .vertex(matrix, vertices[i].x().toFloat(), vertices[i].y().toFloat(), vertices[i].z().toFloat())
+                .uv(u1, v2)
+                .color(r, g, b, 1f)
+                .uv2(LightTexture.FULL_BRIGHT)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .normal(0f, 1f, 0f)
+                .endVertex()
+
+            consumer
+                .vertex(matrix, vertices[finally].x().toFloat(), vertices[finally].y().toFloat(), vertices[finally].z().toFloat())
+                .uv(u2, v1)
+                .color(r, g, b, 1f)
+                .uv2(LightTexture.FULL_BRIGHT)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .normal(0f, 1f, 0f)
+                .endVertex()
+        }
+    }*/
 
     private fun sortVertices(vertices: List<Vector3dc>, planeNormal: Vector3dc): List<Vector3dc> {
         if (vertices.size < 3) return vertices

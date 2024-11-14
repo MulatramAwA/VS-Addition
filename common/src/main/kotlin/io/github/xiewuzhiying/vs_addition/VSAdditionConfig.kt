@@ -169,7 +169,7 @@ object VSAdditionConfig {
         val experimental = EXPERIMENTAL()
 
         class EXPERIMENTAL {
-            @JsonSchema(description = "FAKE")
+            @JsonSchema(description = "Enable fake air pocket. This feature may frequently change, potentially causing damage to your old save files. Please consider enabling it with caution.")
             var fakeAirPocket = false
         }
     }
