@@ -55,6 +55,20 @@ object VSAdditionConfig {
         @JsonSchema(description = "Disable some annoying console logs :)")
         var getEntitiesAabbSizeLimit = 1000.0
 
+        @JsonSchema(description = "Set of non-collider blocks on the ship that are excluded from collision detection.")
+        var nonColliderBlocks = setOf(
+            "minecraft:oak_leaves",
+            "minecraft:spruce_leaves",
+            "minecraft:birch_leaves",
+            "minecraft:jungle_leaves",
+            "minecraft:acacia_leaves",
+            "minecraft:dark_oak_leaves",
+            "minecraft:cherry_leaves",
+            "create:redstone_link"
+        )
+
+        var nonColliderBlocksPriority = 127
+
         val create = CREATE()
 
         class CREATE {

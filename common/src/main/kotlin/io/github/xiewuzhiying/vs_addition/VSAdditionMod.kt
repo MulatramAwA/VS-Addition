@@ -13,6 +13,7 @@ import io.github.xiewuzhiying.vs_addition.compats.create.content.redstone.link.D
 import io.github.xiewuzhiying.vs_addition.compats.create.content.redstone.link.DualLinkRenderer
 import io.github.xiewuzhiying.vs_addition.compats.vmod.schem.VSAdditionSchemCompat
 import io.github.xiewuzhiying.vs_addition.context.EntityFreshCaller
+import io.github.xiewuzhiying.vs_addition.context.NonColliderBlockStateProvider
 import io.github.xiewuzhiying.vs_addition.context.airpocket.FakeAirPocket
 import io.github.xiewuzhiying.vs_addition.context.airpocket.FakeAirPocketClient
 import io.github.xiewuzhiying.vs_addition.context.registerCommands
@@ -61,6 +62,8 @@ object VSAdditionMod {
             FakeAirPocket.registerCommands(dispatcher, registry, selection)
             registerCommands(dispatcher, registry, selection)
         }
+
+        NonColliderBlockStateProvider.register()
 
         if (CREATE_ACTIVE) {
             AllDisplayBehaviours.register(
