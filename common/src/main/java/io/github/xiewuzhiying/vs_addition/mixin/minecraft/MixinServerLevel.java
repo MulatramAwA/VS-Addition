@@ -21,6 +21,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.valkyrienskies.core.api.ships.ServerShip;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
+import java.util.Optional;
+
 @Mixin(ServerLevel.class)
 public abstract class MixinServerLevel {
     @WrapOperation(
@@ -39,7 +41,14 @@ public abstract class MixinServerLevel {
             at = @At("HEAD")
     )
     private void tickChunk(final LevelChunk chunk, final int randomTickSpeed, CallbackInfo ci, final @Share("isChunkInShipyard") LocalBooleanRef isChunkInShipyard) {
-        isChunkInShipyard.set(((LevelChunkMixinDuck)chunk).isInShipyard());
+        final Optional<Boolean> isInShipyard = ((LevelChunkMixinDuck)chunk).getIsInShipyard();
+        if (isInShipyard.isEmpty()) {
+            final boolean bl = VSGameUtilsKt.isChunkInShipyard((ServerLevel)(Object)this, chunk.getPos().x, chunk.getPos().z);
+            ((LevelChunkMixinDuck)chunk).setIsInShipyard(bl);
+            isChunkInShipyard.set(bl);
+        } else {
+            isChunkInShipyard.set(isInShipyard.get());
+        }
     }
 
     @WrapOperation(
