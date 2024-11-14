@@ -5,7 +5,6 @@
   "plugin": "io.github.xiewuzhiying.vs_addition.mixin.VSAdditionCommonMixinConfigPlugin",
   "mixins": [
     "computercraft.MixinComputerExecutor",
-    "computercraft.MixinComputerThread",
     "computercraft.MixinRedstoneAPI",
     "computercraft.MixinTurtleBrain",
     "computercraft.MixinTurtleMoveCommand",
@@ -15,7 +14,6 @@
     "copycats.MixinCCCopycatBlockEntity",
     "copycats.MixinCopycatBlocks",
     "create.MixinContraptionCollider",
-    "create.sticker.MixinStickerBlockEntity",
     "create.copycat.MixinCopycatBlock",
     "create.copycat.MixinCopycatBlockEntity",
     "create.deployer.MixinDeployerBlockEntity",
@@ -30,6 +28,7 @@
     "create.mechanical_arm.MixinArmInteractionPoint",
     "create.portable_interface.MixinPortableStorageInterfaceBlockEntity",
     "create.portable_interface.MixinPortableStorageInterfaceMovement",
+    "create.sticker.MixinStickerBlockEntity",
     "create.tree_fertilizer.MixinServerLevel",
     "create.tree_fertilizer.TreesDreamWorldAccssor",
     "createbigcannons.AbstractAutocannonBreechBlockEntityAccessor",

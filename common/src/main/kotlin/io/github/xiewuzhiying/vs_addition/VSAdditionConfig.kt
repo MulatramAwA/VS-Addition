@@ -50,9 +50,6 @@ object VSAdditionConfig {
         var defaultBlockHardness : Double = 1.0
 
         @JsonSchema(description = "Disable some annoying console logs :)")
-        var disableSomeWarnings = true
-
-        @JsonSchema(description = "Disable some annoying console logs :)")
         var getEntitiesAabbSizeLimit = 1000.0
 
         @JsonSchema(description = "Set of non-collider blocks on the ship that are excluded from collision detection.")
@@ -135,9 +132,6 @@ object VSAdditionConfig {
         class COMPUTERCRAFT {
             @JsonSchema(description = "Max size of Computer Craft event queue")
             var eventQueueMaxSize: Int = 256
-
-            @JsonSchema(description = "m")
-            var defaultMinPeriod: Long = 5L
 
             @JsonSchema(description = "Enable cheat functions on cannon mount peripheral")
             var enableCheatCannonMountPeripheral = false
