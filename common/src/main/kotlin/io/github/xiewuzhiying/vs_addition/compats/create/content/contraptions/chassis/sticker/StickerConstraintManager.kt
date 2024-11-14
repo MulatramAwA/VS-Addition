@@ -1,5 +1,6 @@
 package io.github.xiewuzhiying.vs_addition.compats.create.content.contraptions.chassis.sticker
 
+import io.github.xiewuzhiying.vs_addition.VSAdditionConfig
 import io.github.xiewuzhiying.vs_addition.context.constraint.ConstraintGroup
 import io.github.xiewuzhiying.vs_addition.context.constraint.ConstraintManager
 import io.github.xiewuzhiying.vs_addition.networking.create.sticker.StickerSoundPacketS2CPacket
@@ -66,13 +67,16 @@ open class StickerConstraintManager(val level: ServerLevel, val ship: ServerShip
                 }
             }
 
-            val attachmentConstraint = VSAttachmentConstraint(bodyId!!, otherId, 1e-10, localPos0, localPos1, 1e10, 0.0)
+            val compliance = VSAdditionConfig.SERVER.create.stickerCompliance
+            val maxForce = VSAdditionConfig.SERVER.create.stickerMaxForce
+
+            val attachmentConstraint = VSAttachmentConstraint(bodyId!!, otherId, compliance, localPos0, localPos1, maxForce, 0.0)
 
             val fixOrientationConstraint = VSFixedOrientationConstraint(
-                bodyId!!, otherId, 1e-10,
+                bodyId!!, otherId, compliance,
                 (ship?.transform?.shipToWorldRotation ?: Quaterniond()).invert(Quaterniond()),
                 (otherShip?.transform?.shipToWorldRotation ?: Quaterniond()).invert(Quaterniond()),
-                1e10
+                maxForce,
             )
 
             this.addConstraintGroup(StickerConstraintGroup(this.createConstraint(attachmentConstraint) ?: return@transformFromWorldToNearbyLoadedShipsAndWorld, this.createConstraint(fixOrientationConstraint) ?: return@transformFromWorldToNearbyLoadedShipsAndWorld, pos.toBlockPos))

@@ -70,10 +70,10 @@ object VSAdditionConfig {
 
         class CREATE {
             @JsonSchema(description = "Compliance of sticker's constraints")
-            var stickerCompliance : Double = 1e-128
+            var stickerCompliance : Double = 1e-10
 
             @JsonSchema(description = "Max Force of sticker's constraints")
-            var stickerMaxForce : Double = 1e300
+            var stickerMaxForce : Double = 1e10
 
             @JsonSchema(description = "Enable encased fan to work between ships")
             var encasedFanMixin : Boolean = false
