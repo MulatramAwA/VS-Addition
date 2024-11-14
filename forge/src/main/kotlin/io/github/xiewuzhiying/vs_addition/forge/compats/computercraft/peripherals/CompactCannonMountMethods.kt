@@ -7,6 +7,7 @@ import io.github.xiewuzhiying.vs_addition.VSAdditionMod
 import io.github.xiewuzhiying.vs_addition.forge.mixin.cbcmodernwarfare.CompactCannonMountBlockEntityAccessor
 import io.github.xiewuzhiying.vs_addition.mixinducks.createbigcannons.MountedAutocannonContraptionMixinDuck
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import rbasamoyai.createbigcannons.cannon_control.contraption.AbstractMountedCannonContraption
 import riftyboi.cbcmodernwarfare.cannon_control.compact_mount.CompactCannonMountBlockEntity
 
@@ -91,5 +92,10 @@ open class CompactCannonMountMethods : GenericPeripheral {
     @LuaFunction
     fun getMaxElevate(tileEntity: CompactCannonMountBlockEntity): Double? {
         return tileEntity.contraption?.maximumElevation()?.toDouble()
+    }
+
+    @LuaFunction
+    fun getDirection(tileEntity: CompactCannonMountBlockEntity): String {
+        return tileEntity.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING).toString()
     }
 }

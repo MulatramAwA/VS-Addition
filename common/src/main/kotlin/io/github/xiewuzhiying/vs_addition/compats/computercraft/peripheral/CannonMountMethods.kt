@@ -7,6 +7,7 @@ import io.github.xiewuzhiying.vs_addition.VSAdditionMod
 import io.github.xiewuzhiying.vs_addition.mixin.createbigcannons.CannonMountBlockEntityAccessor
 import io.github.xiewuzhiying.vs_addition.mixinducks.createbigcannons.MountedAutocannonContraptionMixinDuck
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import rbasamoyai.createbigcannons.cannon_control.cannon_mount.CannonMountBlockEntity
 import rbasamoyai.createbigcannons.cannon_control.contraption.AbstractMountedCannonContraption
 
@@ -92,5 +93,10 @@ open class CannonMountMethods : GenericPeripheral {
     @LuaFunction
     fun getMaxElevate(tileEntity: CannonMountBlockEntity): Double? {
         return tileEntity.contraption?.maximumElevation()?.toDouble()
+    }
+
+    @LuaFunction
+    fun getDirection(tileEntity: CannonMountBlockEntity): String {
+        return tileEntity.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING).toString()
     }
 }
