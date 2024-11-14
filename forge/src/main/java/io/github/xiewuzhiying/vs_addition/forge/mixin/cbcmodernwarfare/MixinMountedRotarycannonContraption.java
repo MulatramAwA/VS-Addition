@@ -33,7 +33,7 @@ public abstract class MixinMountedRotarycannonContraption implements MountedAuto
             )
     )
     public void shoot(AbstractAutocannonProjectile instance, double x, double y, double z, float velocity, float inaccuracy, Operation<Void> original, @Local(argsOnly = true) PitchOrientedContraptionEntity entity) {
-        CannonUtils.recoil(instance, x, y, z, velocity, inaccuracy, entity, VSAdditionConfig.SERVER.getCreateBigCannons().getRotaryCannonRecoilForce(), original::call);
+        CannonUtils.modify(instance, x, y, z, velocity, inaccuracy, entity, VSAdditionConfig.SERVER.getCreateBigCannons().getRotaryCannonRecoilForce(), original::call);
     }
 
     @ModifyExpressionValue(

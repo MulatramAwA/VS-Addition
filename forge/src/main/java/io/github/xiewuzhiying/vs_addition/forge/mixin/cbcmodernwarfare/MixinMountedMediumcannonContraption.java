@@ -23,6 +23,6 @@ public abstract class MixinMountedMediumcannonContraption{
             )
     )
     public void shoot(AbstractMediumcannonProjectile instance, double x, double y, double z, float velocity, float inaccuracy, Operation<Void> original, @Local(argsOnly = true) PitchOrientedContraptionEntity entity) {
-        CannonUtils.recoil(instance, x, y, z, velocity, inaccuracy, entity, VSAdditionConfig.SERVER.getCreateBigCannons().getMediumCannonRecoilForce(), original::call);
+        CannonUtils.modify(instance, x, y, z, velocity, inaccuracy, entity, VSAdditionConfig.SERVER.getCreateBigCannons().getMediumCannonRecoilForce(), original::call);
     }
 }

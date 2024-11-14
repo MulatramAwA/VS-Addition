@@ -85,6 +85,12 @@ object VSAdditionConfig {
         val createBigCannons = CREATEBIGCANNONS()
 
         class CREATEBIGCANNONS {
+            @JsonSchema(description = "Adds the ship's velocity vector to the initial velocity of the cannon's projectile")
+            var addShipVelocity: Boolean = true
+
+            @JsonSchema(description = "Enable cannon recoil feature")
+            var enableCannonRecoil: Boolean = true
+
             @JsonSchema(description = "The force of recoil produced by big cannon fire on a ship")
             var bigCannonRecoilForce: Double = 100000.0
 
@@ -94,14 +100,11 @@ object VSAdditionConfig {
             @JsonSchema(description = "The force of recoil produced by medium cannon fire on a ship")
             var mediumCannonRecoilForce: Double = 21600.0
 
-            @JsonSchema(description = "The force of recoil produced by medium cannon fire on a ship")
+            @JsonSchema(description = "The force of recoil produced by rotary cannon fire on a ship")
             var rotaryCannonRecoilForce: Double = 800.0
 
             @JsonSchema(description = "Custom autocannon breech fire rates")
             var customAutoCannonFireRates = listOf(120, 80, 60, 48, 40, 30, 24, 20, 15, 12, 10, 8, 6, 5, 4)
-
-            @JsonSchema(description = "I hope cannons will no longer destroy airplane cockpits")
-            var spreadMultiplier : Double = 1.0
         }
 
         val clockwork = CLOCKWORK()
