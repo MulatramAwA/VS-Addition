@@ -9,6 +9,8 @@
     "create.hose_pulley.MixinHosePulleyBlockEntity",
     "createaddition.MixinPortableEnergyInterfaceMovement",
     "netmusic.MusicToClientMessageAccessor",
+    "tacz.MixinBlockRayTrace",
+    "tacz.MixinProjectileExplosion",
     "valkyrienskies.water.MixinEntity",
     "xaeros_minimap.client.MixinMinimapRenderer"
   ],
@@ -17,6 +19,7 @@
     "presencefootsteps.client.MixinPFSolver",
     "presencefootsteps.client.MixinTerrestrialStepSoundGenerator",
     "sodium.client.MixinDefaultChunkRenderer",
+    "tacz.client.MixinBulletHoleParticle",
     "voxelmap.client.MixinGameVariableAccessShim"
   ],
   "injectors": {
