@@ -7,7 +7,7 @@ import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.simibubi.create.AllBlocks
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmBlockEntity
 import io.github.xiewuzhiying.vs_addition.context.airpocket.FakeAirPocketController
-import io.github.xiewuzhiying.vs_addition.mixin.create.mechanical_arm.ArmBlockEntityMixinAccessor
+import io.github.xiewuzhiying.vs_addition.mixin.create.kinetics.mechanicalArm.ArmBlockEntityMixinAccessor
 import io.github.xiewuzhiying.vs_addition.mixinducks.create.mechanical_arm.ArmInteractionPointMixinDuck
 import io.github.xiewuzhiying.vs_addition.util.getAABBFromCenterAndExtent
 import io.github.xiewuzhiying.vs_addition.util.getBodyId
