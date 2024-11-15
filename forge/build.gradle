@@ -62,7 +62,7 @@ dependencies {
     implementation(include("com.github.bawnorton.mixinsquared:mixinsquared-forge:${rootProject.mixin_squared}"))
 
     // Conditional Mixin
-    implementation(include("com.github.Fallen-Breath.conditional-mixin:conditional-mixin-forge:${rootProject.conditional_mixin}"))
+    implementation(include("me.fallenbreath:conditional-mixin-forge:${rootProject.conditional_mixin}"))
 
     // Forge Extended ASM
     implementation(include("com.github.BoonelDanForever:Forge-Extended-ASM:3.2.4"))

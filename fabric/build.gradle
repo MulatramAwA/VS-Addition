@@ -40,7 +40,7 @@ dependencies {
     implementation(include("com.github.bawnorton.mixinsquared:mixinsquared-fabric:${rootProject.mixin_squared}"))
 
     // Conditional Mixin
-    implementation(include("com.github.Fallen-Breath.conditional-mixin:conditional-mixin-fabric:${rootProject.conditional_mixin}"))
+    implementation(include("me.fallenbreath:conditional-mixin-fabric:${rootProject.conditional_mixin}"))
 
     // Fabric ASM
     implementation(include("com.github.Chocohead:Fabric-ASM:v2.3"))

@@ -64,6 +64,12 @@ subprojects {
         maven { url = "https://maven.tterrag.com/" } // Registrate, Forge Create and Flywheel
         maven { url = "https://maven.cafeteria.dev/releases" } // Fake Player API
         maven { url = "https://jitpack.io" } // Mixin Squared
+        maven {
+            url 'https://maven.fallenbreath.me/releases'
+            content {
+                includeGroup "me.fallenbreath"
+            }
+        }
     }
 
     dependencies {
