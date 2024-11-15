@@ -1,42 +1,40 @@
-package io.github.xiewuzhiying.vs_addition.forge.mixin.tacz;
+package io.github.xiewuzhiying.vs_addition.mixin.pointblank;
 
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.tacz.guns.util.block.ProjectileExplosion;
+import com.vicmatskiv.pointblank.explosion.CustomExplosion;
 import io.github.xiewuzhiying.vs_addition.util.ShipUtilsKt;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 
 import java.util.Collections;
 import java.util.List;
 
-@Mixin(ProjectileExplosion.class)
-public abstract class MixinProjectileExplosion{
+@Mixin(CustomExplosion.class)
+public abstract class MixinCustomExplosion {
+    @Shadow(remap = false) private double x;
 
-    @Mutable
-    @Shadow(remap = false) @Final private double x;
+    @Shadow(remap = false) private double y;
 
-    @Mutable
-    @Shadow(remap = false) @Final private double y;
+    @Shadow(remap = false) private double z;
 
-    @Mutable
-    @Shadow(remap = false) @Final private double z;
+    @Shadow(remap = false) private float radius;
 
-    @Shadow(remap = false) @Final private float radius;
+    @Shadow(remap = false) private Level level;
 
-    @Shadow(remap = false) @Final private Level level;
-
-    @Unique
-    private boolean noRayTrace = false;
+    @Unique private boolean noRayTrace = false;
 
     @WrapMethod(
-            method = "explode()V"
+            method = "explode()V",
+            remap = false
     )
     private void explode(Operation<Void> original) {
         ShipUtilsKt.explosionWrapper(

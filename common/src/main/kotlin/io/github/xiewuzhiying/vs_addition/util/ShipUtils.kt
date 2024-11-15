@@ -23,16 +23,22 @@ import org.valkyrienskies.core.api.ships.LoadedShip
 import org.valkyrienskies.core.api.ships.ServerShip
 import org.valkyrienskies.core.api.ships.Ship
 import org.valkyrienskies.core.api.ships.properties.ShipId
+import org.valkyrienskies.core.util.expand
 import org.valkyrienskies.mod.common.BlockStateInfo.get
+import org.valkyrienskies.mod.common.config.VSGameConfig
 import org.valkyrienskies.mod.common.getShipManagingPos
+import org.valkyrienskies.mod.common.getShipObjectManagingPos
 import org.valkyrienskies.mod.common.getShipsIntersecting
 import org.valkyrienskies.mod.common.shipObjectWorld
 import org.valkyrienskies.mod.common.util.DimensionIdProvider
+import org.valkyrienskies.mod.common.util.GameTickForceApplier
 import org.valkyrienskies.mod.common.util.toJOML
 import org.valkyrienskies.mod.common.util.toMinecraft
 import org.valkyrienskies.mod.util.scale
 import java.util.function.Consumer
+import kotlin.math.ceil
 import kotlin.math.floor
+import kotlin.math.max
 
 fun ServerShip?.addMass(mass: Double, pos: Any) {
     val vector = toVector3dc(pos)
@@ -232,5 +238,76 @@ fun Level.transformFromWorldToNearbyLoadedShipsAndWorld(aabb: AABBdc, cb: Consum
     val tmpAABB = AABBd()
     getLoadedShipsIntersecting(aabb).forEach { ship ->
         cb.accept(tmpAABB.set(aabb).transform(ship.worldToShip))
+    }
+}
+
+@JvmOverloads
+fun Level.explosionWrapper(explode: () -> Unit, getOriginalPos: () -> Vector3d, setPos: (Vector3dc) -> Unit, radius: Double, setNoRayTrace: ((Boolean) -> Unit)? = null, doExplodeForce: ((level: Level, pos: Vector3dc, radius: Double) -> Unit)? = null) : Unit {
+    explode()
+
+    val originalPos = getOriginalPos()
+
+    if (setNoRayTrace != null) { setNoRayTrace(true) }
+
+    val tmp = Vector3d()
+
+    this.getLoadedShipsIntersecting(AABBd(originalPos, originalPos).expand(radius)).forEach { ship ->
+        ship.transform.worldToShip.transformPosition(originalPos, tmp)
+        setPos(tmp)
+        explode()
+        if (doExplodeForce != null) { doExplodeForce(this, tmp, radius) }
+    }
+    if (setNoRayTrace != null) { setNoRayTrace(false) }
+
+    setPos(originalPos)
+}
+
+fun doExplodeForce(level: Level, originPos: Vector3dc, radius: Double) {
+    // Custom forces
+    val explodePos = BlockPos.containing(originPos.x(), originPos.y(), originPos.z())
+    val radius2 = ceil(radius).toInt()
+    for (x in radius2 downTo -radius2) {
+        for (y in radius2 downTo -radius2) {
+            for (z in radius2 downTo -radius2) {
+                val result: BlockHitResult = level.clip(
+                    ClipContext(
+                        Vec3.atCenterOf(explodePos),
+                        Vec3.atCenterOf(explodePos.offset(x, y, z)),
+                        ClipContext.Block.COLLIDER,
+                        ClipContext.Fluid.NONE, null
+                    )
+                )
+                if (result.type == HitResult.Type.BLOCK) {
+                    val blockPos = result.blockPos
+                    val ship =
+                        level.getShipObjectManagingPos(blockPos) as? ServerShip
+                    if (ship != null) {
+                        val forceVector =
+                            Vec3.atCenterOf(explodePos).toJOML() //Start at center position
+                        val distanceMult = max(
+                            0.5, 1.0 - (radius /
+                                    forceVector.distance(Vec3.atCenterOf(blockPos).toJOML()))
+                        )
+                        val powerMult = max(0.1, (radius / 4).toDouble()) //TNT blast radius = 4
+
+                        forceVector.sub(Vec3.atCenterOf(blockPos).toJOML()) //Subtract hit block pos to get direction
+                        forceVector.normalize()
+                        forceVector.mul(-VSGameConfig.SERVER.explosionBlastForce) //Multiply by blast force at center position. Negative because of how we got the direction.
+                        forceVector.mul(distanceMult) //Multiply by distance falloff
+                        forceVector.mul(powerMult) //Multiply by radius, roughly equivalent to power
+
+                        val forceApplier =
+                            ship.getAttachment(GameTickForceApplier::class.java)
+                        val shipCoords = ship.shipTransform.shipPositionInShipCoordinates
+                        if (forceVector.isFinite) {
+                            forceApplier!!.applyInvariantForceToPos(
+                                forceVector,
+                                Vec3.atCenterOf(blockPos).toJOML().sub(shipCoords)
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 }

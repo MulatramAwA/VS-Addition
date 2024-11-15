@@ -90,6 +90,9 @@ dependencies {
     // VMod
     modCompileOnly("maven.modrinth:vmod:TxPLy2oN")
     modCompileOnly files("jars/valkyrien-ship-schematics-fabric-1.0.jar")
+
+    // Vic's Point Blank
+    modCompileOnly("maven.modrinth:vics-point-blank:m6YvwPBt")
 }
 
 publishing {
