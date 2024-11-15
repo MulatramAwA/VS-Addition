@@ -11,9 +11,9 @@ import java.util.List;
 @Pseudo
 @Mixin(ArmBlockEntity.class)
 public interface ArmBlockEntityMixinAccessor {
-    @Accessor
+    @Accessor(remap = false)
     List<ArmInteractionPoint> getInputs();
 
-    @Accessor
+    @Accessor(remap = false)
     List<ArmInteractionPoint> getOutputs();
 }

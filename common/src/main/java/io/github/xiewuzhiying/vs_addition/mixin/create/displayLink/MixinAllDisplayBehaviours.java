@@ -24,7 +24,7 @@ import java.util.Map;
 
 @Mixin(AllDisplayBehaviours.class)
 public abstract class MixinAllDisplayBehaviours {
-    @Shadow @Final public static Map<ResourceLocation, DisplayBehaviour> GATHERER_BEHAVIOURS;
+    @Shadow(remap = false) @Final public static Map<ResourceLocation, DisplayBehaviour> GATHERER_BEHAVIOURS;
 
     @WrapMethod(
             method = "sourcesOf(Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;)Ljava/util/List;"
