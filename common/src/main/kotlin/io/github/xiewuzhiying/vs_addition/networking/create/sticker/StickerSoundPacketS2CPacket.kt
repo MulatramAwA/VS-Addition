@@ -1,6 +1,8 @@
 package io.github.xiewuzhiying.vs_addition.networking.create.sticker
 
+import com.simibubi.create.content.contraptions.chassis.StickerBlock
 import com.simibubi.create.content.contraptions.chassis.StickerBlockEntity
+import com.simibubi.create.content.contraptions.glue.SuperGlueItem
 import dev.architectury.networking.NetworkManager
 import dev.architectury.utils.Env
 import io.github.xiewuzhiying.vs_addition.VSAdditionMod
@@ -37,8 +39,19 @@ class StickerSoundPacketS2CPacket(private val blockPos: BlockPos, private val at
 
             val blockPos = buf.readBlockPos()
             val attach = buf.readBoolean()
-            val be = ctx.player.level().getBlockEntity(blockPos)
+
+            val level = ctx.player.level()
+            val be = level.getBlockEntity(blockPos)
             if (be is StickerBlockEntity) {
+                if (attach) {
+                    SuperGlueItem.spawnParticles(
+                        level,
+                        blockPos,
+                        level.getBlockState(blockPos).getValue(StickerBlock.FACING),
+                        true
+                    )
+                }
+
                 be.playSound(attach)
             }
         }

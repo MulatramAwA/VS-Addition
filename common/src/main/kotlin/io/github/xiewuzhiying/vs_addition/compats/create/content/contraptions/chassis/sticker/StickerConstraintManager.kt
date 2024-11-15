@@ -23,7 +23,10 @@ import org.valkyrienskies.core.apigame.constraints.VSAttachmentConstraint
 import org.valkyrienskies.core.apigame.constraints.VSFixedOrientationConstraint
 import org.valkyrienskies.core.apigame.world.ServerShipWorldCore
 import org.valkyrienskies.core.util.expand
-import org.valkyrienskies.mod.common.*
+import org.valkyrienskies.mod.common.dimensionId
+import org.valkyrienskies.mod.common.isTickingChunk
+import org.valkyrienskies.mod.common.shipObjectWorld
+import org.valkyrienskies.mod.common.toWorldCoordinates
 import org.valkyrienskies.mod.util.logger
 
 open class StickerConstraintManager(val level: ServerLevel, val ship: ServerShip?, val blockPos: BlockPos, val getFacing: () -> Direction, override val core: ServerShipWorldCore = level.shipObjectWorld) : ConstraintManager(core) {
@@ -88,7 +91,9 @@ open class StickerConstraintManager(val level: ServerLevel, val ship: ServerShip
     }
 
     override fun onRemoveAllConstraintGroups(map: Int2ObjectOpenHashMap<ConstraintGroup>) {
-        StickerSoundPacketS2CPacket(blockPos, false).sendToPlayers(level.players())
+        if (map.size > 0) {
+            StickerSoundPacketS2CPacket(blockPos, false).sendToPlayers(level.players())
+        }
     }
 
     open fun checkStickerConstraint() {
