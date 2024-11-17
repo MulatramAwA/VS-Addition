@@ -12,7 +12,7 @@ import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
 @Pseudo
 @Mixin(DefaultChunkRenderer.class)
-public class MixinDefaultChunkRenderer {
+public abstract class MixinDefaultChunkRenderer {
     @Inject(
             method = "getVisibleFaces",
             at = @At("HEAD"),
