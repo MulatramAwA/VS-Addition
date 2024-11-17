@@ -1,3 +1,4 @@
+/*
 package io.github.xiewuzhiying.vs_addition.forge.asm;
 
 import com.chocohead.mm.Asm;
@@ -10,3 +11,4 @@ public class EarlyRiser implements Runnable {
         VSAdditionPatch.INSTANCE.run();
     }
 }
+*/
