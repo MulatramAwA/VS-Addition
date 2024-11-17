@@ -1,6 +1,6 @@
 package io.github.xiewuzhiying.vs_addition.util
 
-import io.github.xiewuzhiying.vs_addition.mixin.minecraft.HitResultAccessor
+import io.github.xiewuzhiying.vs_addition.mixinducks.minecraft.HitResultMixinDuck
 import io.github.xiewuzhiying.vs_addition.mixinducks.valkyrienskies.ShipInertiaDataImplMixinDuck
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
@@ -106,7 +106,7 @@ fun Level.getPosStandingOnFromShips(blockPosInGlobal: Vector3dc, radius: Double 
 
 @JvmOverloads
 fun Level.clipIncludeShipsWrapper(ctx: ClipContext, clipFunction: (Level, ClipContext) -> HitResult = { _: Level, c: ClipContext -> vanillaClip(c) },
-                                  shouldTransformHitPos: Boolean = true, skipShips: List<ShipId>? = null): HitResult {
+                                  skipShips: List<ShipId>? = null): HitResult {
     val originHit = clipFunction(this, ctx)
 
     if (this.shipObjectWorld == null) {
@@ -163,9 +163,8 @@ fun Level.clipIncludeShipsWrapper(ctx: ClipContext, clipFunction: (Level, ClipCo
         entity.boundingBox = originalAabb!!
     }
 
-    if (shouldTransformHitPos) {
-        (closestHit as HitResultAccessor).setLocation(closestHitPos)
-    }
+    (closestHit as HitResultMixinDuck).`vs_addition$setOriginPos`(closestHit.location)
+    closestHit.`vs_addition$setLocation`(closestHitPos)
 
     return closestHit
 }

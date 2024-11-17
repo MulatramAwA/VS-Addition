@@ -10,6 +10,7 @@
     "createaddition.MixinPortableEnergyInterfaceMovement",
     "netmusic.MusicToClientMessageAccessor",
     "tacz.MixinBlockRayTrace",
+    "tacz.MixinEntityKineticBullet",
     "tacz.MixinProjectileExplosion",
     "valkyrienskies.water.MixinEntity",
     "xaeros_minimap.client.MixinMinimapRenderer"

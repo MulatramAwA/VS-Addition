@@ -19,6 +19,6 @@ public abstract class MixinBlockRayTrace {
             remap = false
     )
     private static BlockHitResult wrap(Level level, ClipContext context, Operation<BlockHitResult> original) {
-        return (BlockHitResult) clipIncludeShipsWrapper(level, context, original::call, false);
+        return (BlockHitResult) clipIncludeShipsWrapper(level, context, original::call);
     }
 }
