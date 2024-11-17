@@ -27,8 +27,7 @@
     "tallyho.MixinCommonEvents",
     "tallyho.MixinPhysBearingBlockEntity",
     "tallyho.MixinTallyhoMod",
-    "valkyrienskies.water.MixinEntity",
-    "xaeros_minimap.client.MixinMinimapRenderer"
+    "valkyrienskies.water.MixinEntity"
   ],
   "client": [
     "embeddium.client.MixinDefaultChunkRenderer",
@@ -37,7 +36,8 @@
     "netmusic.client.MixinMusicToClientMessage",
     "presencefootsteps.client.MixinPFSolver",
     "presencefootsteps.client.MixinTerrestrialStepSoundGenerator",
-    "tacz.client.MixinBulletHoleParticle"
+    "tacz.client.MixinBulletHoleParticle",
+    "xaeros_minimap.client.MixinMinimapRenderer"
   ],
   "injectors": {
     "defaultRequire": 1

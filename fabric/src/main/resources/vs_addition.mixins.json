@@ -12,8 +12,7 @@
     "tacz.MixinBlockRayTrace",
     "tacz.MixinEntityKineticBullet",
     "tacz.MixinProjectileExplosion",
-    "valkyrienskies.water.MixinEntity",
-    "xaeros_minimap.client.MixinMinimapRenderer"
+    "valkyrienskies.water.MixinEntity"
   ],
   "client": [
     "netmusic.client.MixinMusicToClientMessageReceiver",
@@ -21,7 +20,8 @@
     "presencefootsteps.client.MixinTerrestrialStepSoundGenerator",
     "sodium.client.MixinDefaultChunkRenderer",
     "tacz.client.MixinBulletHoleParticle",
-    "voxelmap.client.MixinGameVariableAccessShim"
+    "voxelmap.client.MixinGameVariableAccessShim",
+    "xaeros_minimap.client.MixinMinimapRenderer"
   ],
   "injectors": {
     "defaultRequire": 1
