@@ -14,9 +14,14 @@ public class VSAdditionCommonMixinCanceller implements MixinCanceller {
         /*if (mixinClassName.contains("org.valkyrienskies.mod.mixin.feature.explosions.MixinExplosion")) {
             return !(Platform.isModLoaded("lithium") || Platform.isModLoaded("radium") || Platform.isModLoaded("canary"));
         }*/
-        if (mixinClassName.contains("org.valkyrienskies.mod.mixin.feature.transform_particles.MixinLevelRenderer")) {
+        if (mixinsShouldCancel.contains(mixinClassName)) {
             return true;
         }
         return false;
     }
+
+    public static List<String> mixinsShouldCancel = List.of(
+            "org.valkyrienskies.mod.mixin.feature.transform_particles.MixinLevelRenderer",
+            "org.valkyrienskies.mod.mixin.mod_compat.create_big_cannons.MixinCBCUtils"
+    );
 }
