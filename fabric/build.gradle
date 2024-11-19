@@ -86,7 +86,7 @@ dependencies {
     modImplementation("maven.modrinth:create-clockwork:8JdnD9wo")
 
     // ComputerCraft
-    modImplementation("maven.modrinth:cc-tweaked:B9b58ZKh")
+    modImplementation("maven.modrinth:cc-tweaked:1.114.0")
 
     // CBC
     String rplSuffix = Boolean.valueOf(use_local_rpl_build) ? "" : "-build.${rpl_build}";
