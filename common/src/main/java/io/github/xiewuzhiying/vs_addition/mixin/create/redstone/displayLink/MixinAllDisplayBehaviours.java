@@ -31,13 +31,7 @@ public abstract class MixinAllDisplayBehaviours {
         final List<DisplaySource> originalLIst = original.call(level, pos);
         if (!originalLIst.isEmpty()) return originalLIst;
 
-        if (!level.isClientSide()) {
-            return vs_addition$returnIfHasShip((Level) level, pos);
-        } else if (level.isClientSide()) {
-            return vs_addition$returnIfHasShip((Level) level, pos);
-        } else {
-            return originalLIst;
-        }
+        return vs_addition$returnIfHasShip((Level) level, pos);
     }
 
     @Unique
