@@ -138,6 +138,9 @@ dependencies {
 
     // Ballistix
     modCompileOnly("maven.modrinth:ballistix:1.20.1-0.7.0-4")
+
+    // Forgematica
+    modCompileOnly("maven.modrinth:forgematica:0.1.7-mc1.20.1")
 }
 
 processResources {
