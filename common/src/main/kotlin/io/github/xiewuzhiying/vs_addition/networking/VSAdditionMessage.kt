@@ -10,9 +10,6 @@ import net.minecraft.resources.ResourceLocation
 
 object VSAdditionMessage {
     @JvmStatic
-    val FAKE_AIR_POCKET_UPDATE: ResourceLocation = ResourceLocation(VSAdditionMod.MOD_ID, "air_pocket_update")
-
-    @JvmStatic
     val FAKE_AIR_POCKET_SYNC_BY_ID : ResourceLocation = ResourceLocation(VSAdditionMod.MOD_ID, "air_pocket_sync_by_id")
 
     @JvmStatic
@@ -26,7 +23,6 @@ object VSAdditionMessage {
 
     @JvmStatic
     fun registerS2CPackets() {
-        NetworkManager.registerReceiver(NetworkManager.Side.S2C, FAKE_AIR_POCKET_UPDATE, UpdatePocketsS2CPacket::receive)
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, FAKE_AIR_POCKET_SYNC_BY_ID, SyncSinglePocketS2CPacket::receive)
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, FAKE_AIR_POCKET_SYNC_ALL, SyncAllPocketsS2CPacket::receive)
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, ENTITY_SHIP_COLLISION_DISABLER, EntityShipCollisionDisablerS2CPacket::receive)

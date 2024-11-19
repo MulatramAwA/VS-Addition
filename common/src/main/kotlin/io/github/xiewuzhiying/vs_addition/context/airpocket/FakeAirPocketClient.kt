@@ -1,6 +1,5 @@
 package io.github.xiewuzhiying.vs_addition.context.airpocket
 
-import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
@@ -11,13 +10,15 @@ import dev.architectury.event.events.client.ClientCommandRegistrationEvent
 import io.github.xiewuzhiying.vs_addition.VSAdditionConfig
 import io.github.xiewuzhiying.vs_addition.networking.airpocket.SyncAllPocketsC2SPacket
 import io.github.xiewuzhiying.vs_addition.util.*
-import io.netty.util.collection.LongObjectHashMap
-import io.netty.util.collection.LongObjectMap
+import it.unimi.dsi.fastutil.longs.Long2ObjectFunction
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import net.minecraft.client.Camera
 import net.minecraft.client.Minecraft
-import net.minecraft.client.renderer.*
-import net.minecraft.client.renderer.texture.OverlayTexture
-import net.minecraft.client.resources.model.ModelBakery
+import net.minecraft.client.renderer.LevelRenderer
+import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.client.renderer.RenderStateShard
+import net.minecraft.client.renderer.RenderType
 import net.minecraft.commands.CommandBuildContext
 import net.minecraft.network.chat.Component
 import net.minecraft.world.phys.AABB
@@ -43,15 +44,15 @@ import kotlin.math.atan2
 
 object FakeAirPocketClient {
     @JvmStatic
-    val map : LongObjectMap<LongObjectMap<AABBdc>> = LongObjectHashMap()
+    val map : Long2ObjectMap<Long2ObjectMap<AABBdc>> = Long2ObjectOpenHashMap()
 
     @JvmStatic
     fun setAirPocket(shipId: ShipId, pocketId: PocketId, aabb : AABBdc) {
-        map[shipId]?.put(pocketId, aabb)
+        map.computeIfAbsent(shipId, Long2ObjectFunction { Long2ObjectOpenHashMap() })
     }
 
     @JvmStatic
-    fun setAirPockets(shipId: ShipId, pockets : LongObjectMap<AABBdc>) {
+    fun setAirPockets(shipId: ShipId, pockets : Long2ObjectMap<AABBdc>) {
         map[shipId] = pockets
     }
 
@@ -64,7 +65,7 @@ object FakeAirPocketClient {
         while (iterator.hasNext()) {
             val ship: Ship = iterator.next()
             val shipId = ship.id
-            val pockets: LongObjectMap<AABBdc> = map[shipId] ?: continue
+            val pockets: Long2ObjectMap<AABBdc> = map[shipId] ?: continue
             pockets.forEach { (_, pocket) ->
                 if (pocket.containsPoint(ship.worldToShip.transformPosition(point, Vector3d()))) {
                     return true
@@ -83,7 +84,7 @@ object FakeAirPocketClient {
         while (iterator.hasNext()) {
             val ship: Ship = iterator.next()
             val shipId = ship.id
-            val pockets: LongObjectMap<AABBdc> = map[shipId] ?: continue
+            val pockets: Long2ObjectMap<AABBdc> = map[shipId] ?: continue
             var polygon: ConvexPolygonc? = null
             pockets.forEach { (_, pocket) ->
                 if (polygon == null) polygon = getCollider().createPolygonFromAABB(aabb, ship.transform.worldToShip, ship.id)
@@ -120,7 +121,7 @@ object FakeAirPocketClient {
         while (iterator.hasNext()) {
             val ship: Ship = iterator.next()
             val shipId = ship.id
-            val pockets: LongObjectMap<AABBdc> = map[shipId] ?: continue
+            val pockets: Long2ObjectMap<AABBdc> = map[shipId] ?: continue
             var polygon: ConvexPolygonc? = null
             pockets.forEach { (_, pocket) ->
                 if (!pointBl) {
