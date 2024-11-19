@@ -49,6 +49,7 @@
     "valkyrienskies.MixinDefaultBlockStateInfoProvider",
     "valkyrienskies.MixinEntityDragger",
     "valkyrienskies.MixinEntityDraggingInformation",
+    "valkyrienskies.MixinEntityPolygonCollider",
     "valkyrienskies.MixinEntityShipCollisionUtils",
     "valkyrienskies.MixinMassDatapackResolver",
     "valkyrienskies.MixinShipInertiaDataImpl",

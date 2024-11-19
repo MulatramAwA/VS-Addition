@@ -152,6 +152,10 @@ object VSAdditionConfig {
     }
 
     class Common {
+
+        @JsonSchema(description = "Maximum tilt angle (in degrees) at which an entity can stand on a ship.")
+        var maxTiltAngle = 45.0
+
         val create = CREATE()
 
         class CREATE {
