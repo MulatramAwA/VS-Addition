@@ -6,10 +6,8 @@ import com.simibubi.create.content.redstone.displayLink.AllDisplayBehaviours;
 import com.simibubi.create.content.redstone.displayLink.DisplayBehaviour;
 import com.simibubi.create.content.redstone.displayLink.source.DisplaySource;
 import io.github.xiewuzhiying.vs_addition.compats.create.content.redstone.displayLink.ShipDataDisplaySource;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import org.spongepowered.asm.mixin.Final;
@@ -33,10 +31,10 @@ public abstract class MixinAllDisplayBehaviours {
         final List<DisplaySource> originalLIst = original.call(level, pos);
         if (!originalLIst.isEmpty()) return originalLIst;
 
-        if (level instanceof ServerLevel serverLevel) {
-            return vs_addition$returnIfHasShip(serverLevel, pos);
-        } else if (level instanceof ClientLevel clientLevel) {
-            return vs_addition$returnIfHasShip(clientLevel, pos);
+        if (!level.isClientSide()) {
+            return vs_addition$returnIfHasShip((Level) level, pos);
+        } else if (level.isClientSide()) {
+            return vs_addition$returnIfHasShip((Level) level, pos);
         } else {
             return originalLIst;
         }
