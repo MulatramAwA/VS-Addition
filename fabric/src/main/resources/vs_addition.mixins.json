@@ -9,7 +9,6 @@
     "create.fluids.transfer.MixinHosePulleyBlockEntity",
     "createaddition.MixinPortableEnergyInterfaceMovement",
     "netmusic.MusicToClientMessageAccessor",
-    "tacz.MixinBlockRayTrace",
     "tacz.MixinEntityKineticBullet",
     "tacz.MixinProjectileExplosion",
     "valkyrienskies.water.MixinEntity"

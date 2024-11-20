@@ -24,12 +24,9 @@ import org.valkyrienskies.core.api.ships.ServerShip
 import org.valkyrienskies.core.api.ships.Ship
 import org.valkyrienskies.core.api.ships.properties.ShipId
 import org.valkyrienskies.core.util.expand
+import org.valkyrienskies.mod.common.*
 import org.valkyrienskies.mod.common.BlockStateInfo.get
 import org.valkyrienskies.mod.common.config.VSGameConfig
-import org.valkyrienskies.mod.common.getShipManagingPos
-import org.valkyrienskies.mod.common.getShipObjectManagingPos
-import org.valkyrienskies.mod.common.getShipsIntersecting
-import org.valkyrienskies.mod.common.shipObjectWorld
 import org.valkyrienskies.mod.common.util.DimensionIdProvider
 import org.valkyrienskies.mod.common.util.GameTickForceApplier
 import org.valkyrienskies.mod.common.util.toJOML
@@ -242,9 +239,9 @@ fun Level.transformFromWorldToNearbyLoadedShipsAndWorld(aabb: AABBdc, cb: Consum
 
 @JvmOverloads
 fun Level.explosionWrapper(explode: () -> Unit, getOriginalPos: () -> Vector3d, setPos: (Vector3dc) -> Unit, radius: Double, setNoRayTrace: ((Boolean) -> Unit)? = null, doExplodeForce: ((level: Level, pos: Vector3dc, radius: Double) -> Unit)? = null) : Unit {
+    val originalPos = this.toWorldCoordinates(getOriginalPos())
+    setPos(originalPos)
     explode()
-
-    val originalPos = getOriginalPos()
 
     if (setNoRayTrace != null) { setNoRayTrace(true) }
 
