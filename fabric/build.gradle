@@ -102,9 +102,6 @@ dependencies {
     // VoxelMap Updated
     modCompileOnly("maven.modrinth:voxelmap-updated:1.20.1-1.12.13")
 
-    // Sodium
-    modCompileOnly("maven.modrinth:sodium:mc1.20.1-0.5.11")
-
     // Presence Footsteps
     modCompileOnly("maven.modrinth:presence-footsteps:1.9.4+1.20.1")
 

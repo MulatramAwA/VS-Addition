@@ -96,9 +96,6 @@ dependencies {
 
     // Sodium
     modCompileOnly("maven.modrinth:sodium:mc1.20.1-0.5.11")
-
-    // Litematica
-    modCompileOnly("maven.modrinth:litematica:0.15.4")
 }
 
 publishing {

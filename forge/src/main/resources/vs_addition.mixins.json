@@ -30,10 +30,8 @@
     "valkyrienskies.water.MixinEntity"
   ],
   "client": [
-    "embeddium.client.MixinDefaultChunkRenderer",
     "embeddium.client.MixinSodiumWorldRenderer",
     "embeddiumplus.client.MixinEmbyTools",
-    "litematica.client.MixinSodiumWorldRenderer",
     "netmusic.client.MixinMusicToClientMessage",
     "presencefootsteps.client.MixinPFSolver",
     "presencefootsteps.client.MixinTerrestrialStepSoundGenerator",

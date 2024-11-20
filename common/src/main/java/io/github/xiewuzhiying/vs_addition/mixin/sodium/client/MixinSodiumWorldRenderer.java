@@ -1,12 +1,12 @@
-package io.github.xiewuzhiying.vs_addition.forge.mixin.litematica.client;
+package io.github.xiewuzhiying.vs_addition.mixin.sodium.client;
 
 import com.bawnorton.mixinsquared.TargetHandler;
 import com.mojang.blaze3d.vertex.PoseStack;
-import fi.dy.masa.litematica.world.WorldSchematic;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import me.jellysquid.mods.sodium.client.render.SodiumWorldRenderer;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
@@ -22,7 +22,7 @@ import java.util.SortedSet;
 
 @Pseudo
 @Restriction(
-        require = @Condition("forgematica")
+        require = @Condition("litematica")
 )
 @Mixin(value = SodiumWorldRenderer.class, priority = 1200)
 public abstract class MixinSodiumWorldRenderer {
@@ -41,7 +41,7 @@ public abstract class MixinSodiumWorldRenderer {
                                         final Long2ObjectMap<SortedSet<BlockDestructionProgress>> blockBreakingProgressions,
                                         final float tickDelta, final MultiBufferSource.BufferSource immediate, final double camX, final double camY,
                                         final double camZ, final BlockEntityRenderDispatcher dispatcher, final BlockEntity entity, final CallbackInfo ci) {
-        if (dispatcher.level instanceof WorldSchematic) {
+        if (!(dispatcher.level instanceof ClientLevel)) {
             ci.cancel();
         }
     }

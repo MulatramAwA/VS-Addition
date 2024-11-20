@@ -18,7 +18,6 @@
     "netmusic.client.MixinMusicToClientMessageReceiver",
     "presencefootsteps.client.MixinPFSolver",
     "presencefootsteps.client.MixinTerrestrialStepSoundGenerator",
-    "sodium.client.MixinDefaultChunkRenderer",
     "tacz.client.MixinBulletHoleParticle",
     "voxelmap.client.MixinGameVariableAccessShim",
     "xaeros_minimap.client.MixinMinimapRenderer"

@@ -1,4 +1,4 @@
-package io.github.xiewuzhiying.vs_addition.forge.mixin.embeddium.client;
+package io.github.xiewuzhiying.vs_addition.mixin.sodium.client;
 
 import me.jellysquid.mods.sodium.client.model.quad.properties.ModelQuadFacing;
 import me.jellysquid.mods.sodium.client.render.chunk.DefaultChunkRenderer;
