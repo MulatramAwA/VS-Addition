@@ -1,4 +1,4 @@
-package io.github.xiewuzhiying.vs_addition.mixin.vs_clockwork;
+package io.github.xiewuzhiying.vs_addition.mixin.vs_clockwork.grab;
 
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;

@@ -2,7 +2,7 @@ package io.github.xiewuzhiying.vs_addition.compats.computercraft.peripheral
 
 import dan200.computercraft.api.lua.LuaFunction
 import dan200.computercraft.api.peripheral.IPeripheral
-import io.github.xiewuzhiying.vs_addition.mixin.vs_clockwork.flap_bearing.FlapBearingBlockEntityAccessor
+import io.github.xiewuzhiying.vs_addition.mixin.vs_clockwork.flapBearing.FlapBearingBlockEntityAccessor
 import io.github.xiewuzhiying.vs_addition.mixinducks.vs_clockwork.flap_bearing.FlapBearingBlockEntityMixinDuck
 import org.valkyrienskies.clockwork.content.contraptions.flap.FlapBearingBlockEntity
 

@@ -54,16 +54,17 @@
     "valkyrienskies.MixinMassDatapackResolver",
     "valkyrienskies.MixinShipInertiaDataImpl",
     "valkyrienskies.MixinVSCommands",
-    "vs_clockwork.MixinDyedWing",
-    "vs_clockwork.MixinGrabTool",
     "vs_clockwork.fan.MixinEncasedFanBlockEntity",
     "vs_clockwork.fan.MixinEncasedFanCreateData",
     "vs_clockwork.fan.MixinEncasedFanData",
     "vs_clockwork.fan.MixinEncasedFanUpdateData",
-    "vs_clockwork.flap_bearing.FlapBearingBlockEntityAccessor",
-    "vs_clockwork.flap_bearing.MixinFlapBearingBlockEntity",
-    "vs_clockwork.phys_bearing.MixinBearingController",
-    "vs_clockwork.phys_bearing.MixinPhysBearingBlockEntity"
+    "vs_clockwork.flapBearing.FlapBearingBlockEntityAccessor",
+    "vs_clockwork.flapBearing.MixinFlapBearingBlockEntity",
+    "vs_clockwork.grab.MixinGrabTool",
+    "vs_clockwork.grab.MixinGravitronState",
+    "vs_clockwork.physBearing.MixinBearingController",
+    "vs_clockwork.physBearing.MixinPhysBearingBlockEntity",
+    "vs_clockwork.wing.MixinDyedWing"
   ],
   "client": [
     "computercraft.client.MixinSpeakerSound",

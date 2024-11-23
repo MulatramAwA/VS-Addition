@@ -1,4 +1,4 @@
-package io.github.xiewuzhiying.vs_addition.mixin.vs_clockwork.flap_bearing;
+package io.github.xiewuzhiying.vs_addition.mixin.vs_clockwork.flapBearing;
 
 import com.simibubi.create.content.contraptions.ControlledContraptionEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;

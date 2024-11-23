@@ -1,23 +1,30 @@
 package io.github.xiewuzhiying.vs_addition.mixin.valkyrienskies;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import io.github.xiewuzhiying.vs_addition.context.EntityShipCollisionDisabler;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import kotlin.Pair;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
+import org.joml.Vector3d;
 import org.joml.Vector3dc;
+import org.joml.primitives.AABBd;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.valkyrienskies.core.api.ships.Ship;
+import org.valkyrienskies.core.apigame.collision.ConvexPolygonc;
+import org.valkyrienskies.mod.common.VSGameUtilsKt;
 import org.valkyrienskies.mod.common.util.EntityShipCollisionUtils;
 
 import java.util.Iterator;
 
 @Pseudo
 @Mixin(EntityShipCollisionUtils.class)
-public abstract class MixinEntityShipCollisionUtils<ShipType extends Ship> {
+public abstract class MixinEntityShipCollisionUtils {
     @ModifyExpressionValue(
             method = "getShipPolygonsCollidingWithEntity",
             at = @At(
@@ -26,7 +33,7 @@ public abstract class MixinEntityShipCollisionUtils<ShipType extends Ship> {
                     remap = false
             )
     )
-    private Iterable<ShipType> getShipPolygonsCollidingWithEntity(Iterable<ShipType> original, @Local(argsOnly = true) Entity entity) {
+    private <ShipType extends Ship> Iterable<ShipType> getShipPolygonsCollidingWithEntity(Iterable<ShipType> original, @Local(argsOnly = true) Entity entity) {
         if (entity instanceof EntityShipCollisionDisabler disabler) {
             final Iterator<ShipType> iterator = original.iterator();
             final LongSet exclusions = disabler.getDisabledCollisionBodies();
@@ -52,5 +59,27 @@ public abstract class MixinEntityShipCollisionUtils<ShipType extends Ship> {
         if(original.component2() != null && entity != null)
             entity.setOnGround(true);
         return original;
+    }
+
+    @WrapOperation(
+            method = "getShipPolygonsCollidingWithEntity",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lorg/valkyrienskies/core/apigame/collision/ConvexPolygonc;getEnclosingAABB(Lorg/joml/primitives/AABBd;)Lorg/joml/primitives/AABBd;"
+            ),
+            remap = false
+    )
+    private AABBd check(ConvexPolygonc instance, AABBd aabb, Operation<AABBd> original, @Local(argsOnly = true) Level level) {
+        final Ship ship0 = VSGameUtilsKt.getShipManagingPos(level, aabb.minX, aabb.minY, aabb.minZ);
+        final Ship ship1 = VSGameUtilsKt.getShipManagingPos(level, aabb.maxX, aabb.maxY, aabb.maxZ);
+        if (ship0 != ship1) {
+            if (ship0 != null) {
+                aabb.setMin(ship0.getTransform().getShipToWorld().transformPosition(aabb.minX, aabb.minY, aabb.minZ, new Vector3d()));
+            }
+            if (ship1 != null) {
+                aabb.setMax(ship1.getTransform().getShipToWorld().transformPosition(aabb.maxX, aabb.maxY, aabb.maxZ, new Vector3d()));
+            }
+        }
+        return aabb;
     }
 }

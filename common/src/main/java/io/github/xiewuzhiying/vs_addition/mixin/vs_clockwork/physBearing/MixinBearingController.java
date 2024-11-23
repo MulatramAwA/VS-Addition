@@ -1,4 +1,4 @@
-package io.github.xiewuzhiying.vs_addition.mixin.vs_clockwork.phys_bearing;
+package io.github.xiewuzhiying.vs_addition.mixin.vs_clockwork.physBearing;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;

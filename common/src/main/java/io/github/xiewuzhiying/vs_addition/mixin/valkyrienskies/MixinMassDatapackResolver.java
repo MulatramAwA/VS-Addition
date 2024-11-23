@@ -20,10 +20,10 @@ public abstract class MixinMassDatapackResolver {
     @Shadow @Final private static double DEFAULT_HARDNESS;
 
     @Inject(
-            method = "<init>",
+            method = "<clinit>",
             at = @At("TAIL")
     )
-    private void configureDefaults(CallbackInfo ci) {
+    private static void configureDefaults(CallbackInfo ci) {
         DEFAULT_ELASTICITY = VSAdditionConfig.SERVER.getDefaultBlockElasticity();
         DEFAULT_FRICTION = VSAdditionConfig.SERVER.getDefaultBlockFriction();
         DEFAULT_HARDNESS = VSAdditionConfig.SERVER.getDefaultBlockHardness();

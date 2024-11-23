@@ -1,4 +1,4 @@
-package io.github.xiewuzhiying.vs_addition.mixin.vs_clockwork;
+package io.github.xiewuzhiying.vs_addition.mixin.vs_clockwork.wing;
 
 import com.simibubi.create.foundation.placement.IPlacementHelper;
 import com.simibubi.create.foundation.placement.PlacementHelpers;
