@@ -5,7 +5,7 @@
   "name": "VS Addition",
   "description": "Some little additions for VS2 and other mods.",
   "authors": [
-    "xiewuzhying"
+    "xiewuzhiying"
   ],
   "contact": {
     "homepage": "https://valkyrienskies.org/",
@@ -18,13 +18,13 @@
     "main": [
       {
         "adapter": "kotlin",
-        "value": "io.github.xiewuzhiying.vs_addition.fabric.VSAdditionModFabric"
+        "value": "io.github.xiewuzhiying.vs_addition.fabric.VSAdditionModFabric::onInitialize"
       }
     ],
     "client": [
       {
         "adapter": "kotlin",
-        "value": "io.github.xiewuzhiying.vs_addition.fabric.VSAdditionModFabricClient"
+        "value": "io.github.xiewuzhiying.vs_addition.fabric.VSAdditionModFabric::onInitializeClient"
       }
     ],
     "modmenu": [
@@ -37,6 +37,7 @@
   ],
   "accessWidener" : "vs_addition-common.accesswidener",
   "depends": {
+    "fabric-language-kotlin": ">=1.10.10+kotlin.1.9.10",
     "minecraft": "=1.20.1",
     "architectury": ">=9.0.0",
     "fabricloader": ">=0.15.7",

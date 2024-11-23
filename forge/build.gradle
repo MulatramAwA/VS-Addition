@@ -80,7 +80,7 @@ dependencies {
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 
     // Kotlin for Forge
-    implementation "thedarkcolour:kotlinforforge:$forge_kotlin_version"
+    implementation("thedarkcolour:kotlinforforge:$forge_kotlin_version")
 
     // Create compats
     modImplementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }

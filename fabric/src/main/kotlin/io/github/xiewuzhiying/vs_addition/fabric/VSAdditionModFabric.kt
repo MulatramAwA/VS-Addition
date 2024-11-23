@@ -7,8 +7,6 @@ import io.github.xiewuzhiying.vs_addition.VSAdditionMod.initClient
 import io.github.xiewuzhiying.vs_addition.compats.computercraft.PeripheralCommon.registerGenericPeripheralCommon
 import io.github.xiewuzhiying.vs_addition.fabric.compats.computercraft.FabricPeripheralLookup.peripheralProvider
 import io.github.xiewuzhiying.vs_addition.fabric.stuff.FakeRenderer
-import net.fabricmc.api.ClientModInitializer
-import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.minecraft.core.BlockPos
@@ -18,9 +16,8 @@ import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import org.valkyrienskies.mod.fabric.common.ValkyrienSkiesModFabric
 
-class VSAdditionModFabric : ModInitializer {
-
-    override fun onInitialize() {
+object VSAdditionModFabric {
+    fun onInitialize() {
         ValkyrienSkiesModFabric().onInitialize();
         init()
         if (CC_ACTIVE) {
@@ -31,9 +28,8 @@ class VSAdditionModFabric : ModInitializer {
             PlatformUtilsImpl.minecraft = server
         }
     }
-}
-class VSAdditionModFabricClient : ClientModInitializer {
-    override fun onInitializeClient() {
+
+    fun onInitializeClient() {
         initClient()
         WorldRenderEvents.BEFORE_DEBUG_RENDER.register(FakeRenderer())
         WorldRenderEvents.LAST.register(FakeRenderer())
