@@ -3,6 +3,8 @@ package io.github.xiewuzhiying.vs_addition.forge.mixin.embeddium.client;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import me.fallenbreath.conditionalmixin.api.annotation.Condition;
+import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import me.jellysquid.mods.sodium.client.render.SodiumWorldRenderer;
 import me.jellysquid.mods.sodium.client.render.viewport.Viewport;
 import net.minecraft.client.Minecraft;
@@ -12,6 +14,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
 @Mixin(SodiumWorldRenderer.class)
+@Restriction(
+        require = @Condition(value = "embeddium", versionPredicates = ">=0.3.12+mc1.20.1")
+)
 public abstract class MixinSodiumWorldRenderer {
     @ModifyExpressionValue(
             method = "renderBlockEntities(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/RenderBuffers;Lit/unimi/dsi/fastutil/longs/Long2ObjectMap;FLnet/minecraft/client/renderer/MultiBufferSource$BufferSource;DDDLnet/minecraft/client/renderer/blockentity/BlockEntityRenderDispatcher;)V",
