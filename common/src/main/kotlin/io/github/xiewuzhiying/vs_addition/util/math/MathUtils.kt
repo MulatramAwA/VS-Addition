@@ -1,4 +1,4 @@
-package io.github.xiewuzhiying.vs_addition.util
+package io.github.xiewuzhiying.vs_addition.util.math
 
 import org.joml.Vector3d
 import org.joml.Vector3dc

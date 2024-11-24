@@ -4,11 +4,15 @@ import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.INamedIc
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollOptionBehaviour;
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.utility.Lang;
+import io.github.xiewuzhiying.vs_addition.compats.create.content.contraptions.actors.psi.PortableStorageInterfaceWithShipController;
 
-public interface IPSIBehavior {
-    default ScrollOptionBehaviour<WorkigMode> vs_addition$getWorkingMode() {
-        return null;
-    }
+public interface IPSIWithShipBehavior {
+
+    void setController(PortableStorageInterfaceWithShipController controller);
+
+    PortableStorageInterfaceWithShipController getController();
+
+    ScrollOptionBehaviour<WorkigMode> getWorkingMode();
 
     enum WorkigMode implements INamedIconOptions {
 

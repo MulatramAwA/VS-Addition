@@ -10,6 +10,7 @@ import dev.architectury.event.events.client.ClientCommandRegistrationEvent
 import io.github.xiewuzhiying.vs_addition.VSAdditionConfig
 import io.github.xiewuzhiying.vs_addition.networking.airpocket.SyncAllPocketsC2SPacket
 import io.github.xiewuzhiying.vs_addition.util.*
+import io.github.xiewuzhiying.vs_addition.util.math.*
 import it.unimi.dsi.fastutil.longs.Long2ObjectFunction
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap

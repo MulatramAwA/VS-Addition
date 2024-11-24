@@ -16,6 +16,7 @@ import net.minecraft.world.phys.Vec3
 import net.minecraft.world.phys.shapes.CollisionContext
 import org.joml.*
 import org.joml.primitives.AABBd
+import org.valkyrienskies.core.api.ships.ClientShip
 import org.valkyrienskies.core.api.ships.Ship
 import org.valkyrienskies.core.api.ships.properties.ShipId
 import org.valkyrienskies.mod.common.*
@@ -23,45 +24,19 @@ import org.valkyrienskies.mod.common.util.EntityDraggingInformation
 import org.valkyrienskies.mod.common.util.toJOML
 import org.valkyrienskies.mod.common.util.toMinecraft
 import java.io.Serializable
-import java.lang.Math
 import kotlin.math.abs
 
-val Direction.toQuaterniond : Quaterniond
-    get() =
-        when (this) {
-            Direction.UP -> Quaterniond()
-            Direction.DOWN -> Quaterniond(AxisAngle4d(Math.PI, Vector3d(1.0, 0.0, 0.0)))
-            Direction.EAST -> Quaterniond(AxisAngle4d(0.5 * Math.PI, Vector3d(0.0, 1.0, 0.0))).mul(
-                Quaterniond(
-                    AxisAngle4d(
-                        Math.PI / 2.0, Vector3d(1.0, 0.0, 0.0)
-                    )
-                )
-            ).normalize()
+val Direction.toVector3d : Vector3d
+    get() = directionIndexToVector3d[this.ordinal]
 
-            Direction.WEST -> Quaterniond(AxisAngle4d(1.5 * Math.PI, Vector3d(0.0, 1.0, 0.0))).mul(
-                Quaterniond(
-                    AxisAngle4d(
-                        Math.PI / 2.0, Vector3d(1.0, 0.0, 0.0)
-                    )
-                )
-            ).normalize()
-
-            Direction.SOUTH -> Quaterniond(AxisAngle4d(Math.PI / 2.0, Vector3d(1.0, 0.0, 0.0))).normalize()
-            Direction.NORTH -> Quaterniond(AxisAngle4d(Math.PI, Vector3d(0.0, 1.0, 0.0))).mul(
-                Quaterniond(
-                    AxisAngle4d(
-                        Math.PI / 2.0, Vector3d(1.0, 0.0, 0.0)
-                    )
-                )
-            ).normalize()
-        }
-
-val Direction.toQuaternionf : Quaternionf
-    get() = Quaternionf(this.toQuaterniond)
+val directionIndexToVector3d = arrayOf(
+    Vector3d(0.0, -1.0, 0.0), Vector3d(0.0, 1.0, 0.0), // ±Y
+    Vector3d(0.0, 0.0, -1.0), Vector3d(0.0, 0.0, 1.0), // ±Z
+    Vector3d(-1.0, 0.0, 0.0), Vector3d(1.0, 0.0, 0.0) // ±X
+)
 
 fun Vec3.toShipyardCoordinates(ship: Ship): Vec3 {
-    val vector3d = ship.worldToShip.transformPosition(this.toJOML())
+    val vector3d = (ship as? ClientShip)?.renderTransform?.worldToShip?.transformPosition(this.toJOML()) ?: ship.transform.worldToShip.transformPosition(this.toJOML())
     return vector3d.toMinecraft()
 }
 
@@ -91,6 +66,9 @@ val Vector3fc.toVector3i: Vector3i
 
 val Vec3.toVector3i: Vector3i
     get() = Vector3i(Mth.floor(this.x()), Mth.floor(this.y()), Mth.floor(this.z()))
+
+val Vector3dc.toVec3: Vec3
+    get() = Vec3(this.x(), this.y(), this.z())
 
 val Vec3i.toVec3: Vec3
     get() = Vec3(this.x.toDouble(), this.y.toDouble(), this.z.toDouble())
@@ -179,8 +157,12 @@ fun ClipContext.setTo(vec3: Vec3) {
 }
 
 fun ServerLevel.getBodyId(pos: Any) : ShipId {
-    val vector = toVector3dc(pos)
+    val vector = toVector3d(pos)
     return this.getShipManagingPos(vector.x().toInt() shr 4, vector.z().toInt() shr  4)?.id ?: this.shipObjectWorld.dimensionToGroundBodyIdImmutable[this.dimensionId]!!
+}
+
+fun toRenderWorldCoordinates(pos: Vector3d) : Vector3d {
+    return VSClientGameUtils.getClientShip(pos.x, pos.y, pos.z)?.renderTransform?.shipToWorld?.transformPosition(pos) ?: pos
 }
 
 var EntityDraggingInformation.addedPitchRotLastTick : Double
@@ -188,8 +170,8 @@ var EntityDraggingInformation.addedPitchRotLastTick : Double
     set(value) { (this as EntityDraggingInformationMixinDuck).addedPitchRotLastTick = value }
 
 fun Level.squaredDistanceBetweenInclShips(inputPos1: Any, inputPos2: Any) : Double {
-    val vector1 = toVector3dc(inputPos1)
-    val vector2 = toVector3dc(inputPos2)
+    val vector1 = toVector3d(inputPos1)
+    val vector2 = toVector3d(inputPos2)
     return this.squaredDistanceBetweenInclShips(vector1.x(),vector1.y(), vector1.z(), vector2.x(), vector2.y(), vector2.z())
 }
 
@@ -197,13 +179,13 @@ data class Quadruple<A,B,C,D>(var first: A, var second: B, var third: C, var fou
     override fun toString(): String = "($first, $second, $third, $fourth)"
 }
 
-fun toVector3dc(inputPos: Any) : Vector3dc {
+fun toVector3d(inputPos: Any) : Vector3d {
     return when (inputPos) {
         is Vec3i -> inputPos.centerJOMLD
         is Position -> inputPos.toJOML()
         is Vector3i -> inputPos.centerJOMLD
         is Vector3fc -> Vector3d(inputPos.x().toDouble(), inputPos.y().toDouble(), inputPos.z().toDouble())
-        is Vector3dc -> inputPos
+        is Vector3dc -> Vector3d(inputPos)
         else -> throw IllegalArgumentException("Unsupported type: ${inputPos::class.simpleName}")
     }
 }

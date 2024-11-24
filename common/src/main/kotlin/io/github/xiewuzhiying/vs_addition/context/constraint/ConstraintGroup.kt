@@ -1,15 +1,32 @@
 package io.github.xiewuzhiying.vs_addition.context.constraint
 
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.ListTag
 import org.valkyrienskies.physics_api.ConstraintId
 
-open class ConstraintGroup(open val constraintId0: ConstraintId, open val constraintId1: ConstraintId) {
-    constructor(tag: CompoundTag) : this(tag.getInt("constraintId0"), tag.getInt("constraintId1"))
+open class ConstraintGroup(open val constraintIds: Iterable<ConstraintId>) {
     open val compoundTag : CompoundTag
         get() {
             val tag = CompoundTag()
-            tag.putInt("constraintId0", constraintId0)
-            tag.putInt("constraintId1", constraintId1)
+            val list = ListTag()
+            constraintIds.forEach {
+                val tmp = CompoundTag()
+                tmp.putInt("constraintId", it)
+                list.add(tmp)
+            }
+            tag.put("constraintGroup", list)
             return tag
         }
+
+    companion object {
+        @JvmStatic
+        fun createFromTag(tag: CompoundTag): ConstraintGroup {
+            return ConstraintGroup(getConstraintsFromTag(tag))
+        }
+
+        @JvmStatic
+        fun getConstraintsFromTag(tag: CompoundTag): Iterable<ConstraintId> {
+            return (tag.get("constraintGroup") as ListTag).map { (it as CompoundTag).getInt("constraintId") }
+        }
+    }
 }

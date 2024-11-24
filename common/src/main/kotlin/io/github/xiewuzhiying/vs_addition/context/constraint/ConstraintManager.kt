@@ -50,7 +50,7 @@ abstract class ConstraintManager(open val core: ServerShipWorldCore) {
     }
 
     open fun createFormCompoundTag(tag: CompoundTag): ConstraintGroup {
-        return ConstraintGroup(tag)
+        return ConstraintGroup.createFromTag(tag)
     }
 
     open fun onBodiesBeDeleted(core: ServerShipWorldCore, constraintAndId: ConstraintAndId) {
@@ -65,13 +65,14 @@ abstract class ConstraintManager(open val core: ServerShipWorldCore) {
         this.core.removeConstraint(id)
     }
 
-    fun createConstraint(constraint: VSConstraint) : ConstraintId? {
-        return this.core.createNewConstraint(constraint)
+    fun VSConstraint.createConstraint() : ConstraintId? {
+        return core.createNewConstraint(this)
     }
 
     open fun onRemoveConstraintGroup(id: Int, group: ConstraintGroup) {
-        this.removeConstraint(group.constraintId0)
-        this.removeConstraint(group.constraintId1)
+        group.constraintIds.forEach {
+            this.removeConstraint(it)
+        }
     }
 
     open fun onRemoveAllConstraintGroups(map: Int2ObjectOpenHashMap<ConstraintGroup>) {

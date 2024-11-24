@@ -27,6 +27,7 @@ object VSAdditionMod {
     const val MOD_ID = "vs_addition"
 
     @JvmStatic var CREATE_ACTIVE = false
+    @JvmStatic var CREATE_ADDITION_ACTIVE = false
     @JvmStatic var CC_ACTIVE = false
     @JvmStatic var CLOCKWORK_ACTIVE = false
     @JvmStatic var CBC_ACTIVE = false
@@ -42,6 +43,7 @@ object VSAdditionMod {
     @JvmStatic
     fun init() {
         CREATE_ACTIVE = Platform.isModLoaded("create")
+        CREATE_ADDITION_ACTIVE = Platform.isModLoaded("create_addition")
         CC_ACTIVE = Platform.isModLoaded("computercraft")
         CLOCKWORK_ACTIVE = Platform.isModLoaded("vs_clockwork")
         CBC_ACTIVE = Platform.isModLoaded("createbigcannons")

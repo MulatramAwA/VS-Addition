@@ -112,7 +112,7 @@ dependencies {
     modCompileOnly files("jars/cbcmodernwarfare-0.0.5f+mc.1.20.1-forge.jar")
 
     // CC&A
-    modImplementation("maven.modrinth:createaddition:1.20.1-1.2.4d")
+    modImplementation("maven.modrinth:createaddition:1.20.1-1.2.4e")
 
     // Create Tweaked Controllers
     modImplementation("maven.modrinth:create-tweaked-controllers:1.20.1-1.2.4")

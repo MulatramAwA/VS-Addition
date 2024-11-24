@@ -38,7 +38,7 @@ import kotlin.math.floor
 import kotlin.math.max
 
 fun ServerShip?.addMass(mass: Double, pos: Any) {
-    val vector = toVector3dc(pos)
+    val vector = toVector3d(pos)
     this.addMass(mass, vector.x(), vector.y(), vector.z())
 }
 
@@ -60,7 +60,7 @@ fun Level?.getLoadedShipsIntersecting(aabb: AABB): Iterable<LoadedShip> {
 }
 
 fun Level?.getShipManagingPos2(position: Any) : Ship? {
-    val pos = toVector3dc(position)
+    val pos = toVector3d(position)
     return this.getShipManagingPos(pos)
 }
 
