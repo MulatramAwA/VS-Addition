@@ -1,23 +1,16 @@
 package io.github.xiewuzhiying.vs_addition.mixin.valkyrienskies;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import io.github.xiewuzhiying.vs_addition.context.EntityShipCollisionDisabler;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import kotlin.Pair;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Level;
-import org.joml.Vector3d;
 import org.joml.Vector3dc;
-import org.joml.primitives.AABBd;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.valkyrienskies.core.api.ships.Ship;
-import org.valkyrienskies.core.apigame.collision.ConvexPolygonc;
-import org.valkyrienskies.mod.common.VSGameUtilsKt;
 import org.valkyrienskies.mod.common.util.EntityShipCollisionUtils;
 
 import java.util.Iterator;
@@ -61,7 +54,7 @@ public abstract class MixinEntityShipCollisionUtils {
         return original;
     }
 
-    @WrapOperation(
+    /*@WrapOperation(
             method = "getShipPolygonsCollidingWithEntity",
             at = @At(
                     value = "INVOKE",
@@ -81,5 +74,5 @@ public abstract class MixinEntityShipCollisionUtils {
             }
         }
         return aabb;
-    }
+    }*/
 }

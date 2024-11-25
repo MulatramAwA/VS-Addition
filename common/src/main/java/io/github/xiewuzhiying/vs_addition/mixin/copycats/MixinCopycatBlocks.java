@@ -28,7 +28,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class MixinCopycatBlocks {
     @Inject(
             method = "getStateForPlacement",
-            at = @At("HEAD")
+            at = @At("HEAD"),
+            remap = false
     )
     private void beforeGetStateForPlacement(BlockPlaceContext context, CallbackInfoReturnable<BlockState> cir) {
         ((IBE<MultiStateCopycatBlockEntity>)this).withBlockEntityDo(context.getLevel(), context.getClickedPos(), ufte -> {
@@ -43,7 +44,8 @@ public abstract class MixinCopycatBlocks {
 
     @Inject(
             method = "getStateForPlacement",
-            at = @At("RETURN")
+            at = @At("RETURN"),
+            remap = false
     )
     private void afterGetStateForPlacement(BlockPlaceContext context, CallbackInfoReturnable<BlockState> cir) {
         ((IBE<MultiStateCopycatBlockEntity>)this).withBlockEntityDo(context.getLevel(), context.getClickedPos(), ufte -> {

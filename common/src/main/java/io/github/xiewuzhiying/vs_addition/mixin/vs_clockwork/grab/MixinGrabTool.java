@@ -8,7 +8,9 @@ import io.github.xiewuzhiying.vs_addition.networking.disable_entity_ship_collisi
 import io.github.xiewuzhiying.vs_addition.context.EntityShipCollisionDisabler;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import org.joml.Vector3dc;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
@@ -24,10 +26,13 @@ public abstract class MixinGrabTool {
             method = "grabShip"
     )
     private void onGrab(Player player, ServerShip ship, Vector3dc grabPosInShip, Operation<Void> original) {
-        if (VSAdditionConfig.COMMON.getClockwork().getDisableGrabbedShipCollision() && player.level() instanceof ServerLevel serverLevel && player instanceof EntityShipCollisionDisabler disabler) {
-            final long shipId = ship.getId();
-            disabler.addDisabledCollisionBody(shipId);
-            new EntityShipCollisionDisablerS2CPacket(shipId, true, ObjectOpenHashSet.of(player)).sendToPlayers(serverLevel.players());
+        if (VSAdditionConfig.COMMON.getClockwork().getDisableGrabbedShipCollision() && player != null) {
+            final Level level = player.level();
+            if (!level.isClientSide() && player instanceof EntityShipCollisionDisabler disabler) {
+                final long shipId = ship.getId();
+                disabler.addDisabledCollisionBody(shipId);
+                new EntityShipCollisionDisablerS2CPacket(shipId, true, ObjectOpenHashSet.of((Entity)player)).sendToPlayers(((ServerLevel)level).players());
+            }
         }
         original.call(player, ship, grabPosInShip);
     }
@@ -42,9 +47,12 @@ public abstract class MixinGrabTool {
             index = 0
     )
     private long onDrop(long shipId, @Local(argsOnly = true) Player player) {
-        if (VSAdditionConfig.COMMON.getClockwork().getDisableGrabbedShipCollision() && player.level() instanceof ServerLevel serverLevel && player instanceof EntityShipCollisionDisabler disabler) {
-            disabler.removeDisabledCollisionBody(shipId);
-            new EntityShipCollisionDisablerS2CPacket(shipId, false, ObjectOpenHashSet.of(player)).sendToPlayers(serverLevel.players());
+        if (VSAdditionConfig.COMMON.getClockwork().getDisableGrabbedShipCollision() && player != null) {
+            final Level level = player.level();
+            if (!level.isClientSide() && player instanceof EntityShipCollisionDisabler disabler) {
+                disabler.removeDisabledCollisionBody(shipId);
+                new EntityShipCollisionDisablerS2CPacket(shipId, false, ObjectOpenHashSet.of((Entity)player)).sendToPlayers(((ServerLevel)level).players());
+            }
         }
         return shipId;
     }

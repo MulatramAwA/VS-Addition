@@ -5,14 +5,18 @@ import net.minecraft.core.BlockPos
 import net.minecraft.nbt.CompoundTag
 import org.valkyrienskies.physics_api.ConstraintId
 
-open class StickerConstraintGroup(override val constraintId0: ConstraintId, override val constraintId1: ConstraintId, open val blockPos: BlockPos) : ConstraintGroup(constraintId0, constraintId1) {
-    constructor(tag: CompoundTag) : this(tag.getInt("constraintId0"), tag.getInt("constraintId1"), BlockPos(tag.getInt("blockPosX"), tag.getInt("blockPosY"), tag.getInt("blockPosZ")))
+open class StickerConstraintGroup(override val constraintIds: Iterable<ConstraintId>, open val blockPos: BlockPos) : ConstraintGroup(constraintIds) {
     override val compoundTag : CompoundTag
         get() {
             val tag = super.compoundTag
-            tag.putInt("blockPosX", blockPos.x)
-            tag.putInt("blockPosY", blockPos.y)
-            tag.putInt("blockPosZ", blockPos.z)
+            tag.putLong("blockPos", blockPos.asLong())
             return tag
         }
+
+    companion object {
+        @JvmStatic
+        fun createFromTag(tag: CompoundTag): StickerConstraintGroup {
+            return StickerConstraintGroup(getConstraintsFromTag(tag), BlockPos.of(tag.getLong("blockPos")))
+        }
+    }
 }

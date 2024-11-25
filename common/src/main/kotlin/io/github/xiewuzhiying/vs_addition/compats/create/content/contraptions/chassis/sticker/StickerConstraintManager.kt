@@ -82,10 +82,10 @@ open class StickerConstraintManager(val level: ServerLevel, val ship: ServerShip
                 maxForce,
             )
 
-            this.addConstraintGroup(StickerConstraintGroup(this.createConstraint(attachmentConstraint) ?: return@transformFromWorldToNearbyLoadedShipsAndWorld, this.createConstraint(fixOrientationConstraint) ?: return@transformFromWorldToNearbyLoadedShipsAndWorld, pos.toBlockPos))
+            this.addConstraintGroup(StickerConstraintGroup(listOf(attachmentConstraint.createConstraint() ?: return@transformFromWorldToNearbyLoadedShipsAndWorld, fixOrientationConstraint.createConstraint() ?: return@transformFromWorldToNearbyLoadedShipsAndWorld), pos.toBlockPos))
             shouldPlaySound = true
         }
-        if (shouldPlaySound) {
+        if (!level.isClientSide() && shouldPlaySound) {
             StickerSoundPacketS2CPacket(blockPos, true).sendToPlayers(level.players())
         }
     }
@@ -111,7 +111,7 @@ open class StickerConstraintManager(val level: ServerLevel, val ship: ServerShip
     }
 
     override fun createFormCompoundTag(tag: CompoundTag): ConstraintGroup {
-        return StickerConstraintGroup(tag)
+        return StickerConstraintGroup.createFromTag(tag)
     }
 
     companion object {

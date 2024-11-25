@@ -47,31 +47,29 @@ public abstract class MixinStickerBlockEntity extends SmartBlockEntity {
             )
     )
     public void stickerConstraints(CallbackInfo ci) {
-        if (this.level == null) return;
+        if (this.level == null || this.level.isClientSide()) return;
 
         boolean isExtended = this.isBlockStateExtended();
         StickerConstraintManager manager = this.getManager();
 
-        if (!this.level.isClientSide() && isExtended) {
-            if (manager != null) {
+        if (manager != null) {
+            if (isExtended) {
                 manager.checkStickerConstraint();
             }
-        }
 
-        if (isExtended != this.wasBlockStateExtended) {
-            this.needUpdate = true;
-            this.wasBlockStateExtended = isExtended;
-        }
+            if (isExtended != this.wasBlockStateExtended) {
+                this.needUpdate = true;
+                this.wasBlockStateExtended = isExtended;
+            }
 
-        if (this.needUpdate) {
-            if (!this.level.isClientSide() && manager != null) {
+            if (this.needUpdate) {
                 if (isExtended) {
                     manager.createStickerConstraint();
                 } else {
                     manager.removeAllConstraintGroups();
                 }
+                this.needUpdate = false;
             }
-            this.needUpdate = false;
         }
     }
 

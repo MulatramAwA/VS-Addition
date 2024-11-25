@@ -76,7 +76,7 @@ object VSAdditionConfig {
             var stickerMaxForce : Double = 1e10
 
             @JsonSchema(description = "Enable encased fan to work between ships")
-            var encasedFanMixin : Boolean = true
+            var encasedFanMixin : Boolean = false
 
             @JsonSchema(description = "Not available yet. DO NOT OPEN THIS!")
             var copycatMaterialMass : Boolean = false
@@ -86,7 +86,7 @@ object VSAdditionConfig {
 
         class CREATEBIGCANNONS {
             @JsonSchema(description = "Adds the ship's velocity vector to the initial velocity of the cannon's projectile")
-            var addShipVelocity: Boolean = true
+            var addShipVelocity: Boolean = false
 
             @JsonSchema(description = "Enable cannon recoil feature")
             var enableCannonRecoil: Boolean = true

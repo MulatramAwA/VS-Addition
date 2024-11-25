@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.*;
 @Mixin(RedstoneMethods.class)
 public abstract class MixinRedstoneMethods {
 
-    @Shadow @Final private RedstoneAccess redstone;
+    @Shadow(remap = false) @Final private RedstoneAccess redstone;
 
     @LuaFunction({"setAnalogOutput", "setAnalogueOutput"})
     public final void setAnalogOutput(ComputerSide side, int value) throws LuaException {

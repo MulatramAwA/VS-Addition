@@ -4,6 +4,7 @@ import dev.architectury.networking.NetworkManager
 import io.github.xiewuzhiying.vs_addition.VSAdditionMod
 import io.github.xiewuzhiying.vs_addition.context.EntityShipCollisionDisabler
 import io.netty.buffer.Unpooled
+import it.unimi.dsi.fastutil.ints.IntArrayList
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerPlayer
@@ -27,25 +28,27 @@ class EntityShipCollisionDisablerS2CPacket(private val shipId: ShipId, private v
         val buf = FriendlyByteBuf(Unpooled.buffer());
         buf.writeLong(shipId)
         buf.writeBoolean(addOrRemove)
-        buf.writeInt(entities.count())
+        val list = IntArrayList()
         entities.forEach {
-            buf.writeInt(it.id)
+            list.add(it.id)
         }
+        buf.writeIntIdList(list)
         return buf;
     }
 
     companion object {
+        @JvmStatic
         fun receive(buf: FriendlyByteBuf, ctx: NetworkManager.PacketContext) {
             val shipId = buf.readLong()
             val addOrRemove = buf.readBoolean()
+            val list = buf.readIntIdList()
             val level = ctx.player.level()
-            val count = buf.readInt()
-            for (i in 0 until count) {
-                (level.getEntity(buf.readInt()) as? EntityShipCollisionDisabler)?.let {
+            list.forEach {
+                (level.getEntity(it) as? EntityShipCollisionDisabler)?.let { entity ->
                     if (addOrRemove) {
-                        it.addDisabledCollisionBody(shipId)
+                        entity.addDisabledCollisionBody(shipId)
                     } else {
-                        it.removeDisabledCollisionBody(shipId)
+                        entity.removeDisabledCollisionBody(shipId)
                     }
                 }
             }

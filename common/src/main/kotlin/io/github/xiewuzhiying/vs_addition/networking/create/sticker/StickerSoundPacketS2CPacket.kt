@@ -4,7 +4,6 @@ import com.simibubi.create.content.contraptions.chassis.StickerBlock
 import com.simibubi.create.content.contraptions.chassis.StickerBlockEntity
 import com.simibubi.create.content.contraptions.glue.SuperGlueItem
 import dev.architectury.networking.NetworkManager
-import dev.architectury.utils.Env
 import io.github.xiewuzhiying.vs_addition.VSAdditionMod
 import io.netty.buffer.Unpooled
 import net.minecraft.core.BlockPos
@@ -35,8 +34,6 @@ class StickerSoundPacketS2CPacket(private val blockPos: BlockPos, private val at
     companion object {
         @JvmStatic
         fun receive(buf: FriendlyByteBuf, ctx: NetworkManager.PacketContext) {
-            if (ctx.environment.equals(Env.SERVER)) return
-
             val blockPos = buf.readBlockPos()
             val attach = buf.readBoolean()
 

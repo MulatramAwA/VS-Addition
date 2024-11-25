@@ -5,14 +5,16 @@ import io.github.xiewuzhiying.vs_addition.context.EntityShipCollisionDisabler;
 import io.github.xiewuzhiying.vs_addition.networking.disable_entity_ship_collision.EntityShipCollisionDisablerS2CPacket;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.valkyrienskies.clockwork.content.curiosities.tools.gravitron.GravitronState;
 
-@Mixin(targets = "org.valkyrienskies.clockwork.content.curiosities.tools.gravitron.GravitronState$Companion")
+@Mixin(GravitronState.Companion.class)
 public abstract class MixinGravitronState {
     @Inject(
             method = "leftClickItem",
@@ -22,11 +24,14 @@ public abstract class MixinGravitronState {
             )
     )
     private void leftClickItem(Player player, GravitronState state, CallbackInfoReturnable<Boolean> cir) {
-        if (VSAdditionConfig.COMMON.getClockwork().getDisableGrabbedShipCollision() && player.level() instanceof ServerLevel serverLevel && player instanceof EntityShipCollisionDisabler disabler) {
-            Long shipId = state.getShipID();
-            if (shipId != null) {
-                disabler.removeDisabledCollisionBody(shipId);
-                new EntityShipCollisionDisablerS2CPacket(shipId, false, ObjectOpenHashSet.of(player)).sendToPlayers(serverLevel.players());
+        if (VSAdditionConfig.COMMON.getClockwork().getDisableGrabbedShipCollision() && player != null) {
+            final Level level = player.level();
+            if (!level.isClientSide()) {
+                Long shipId = state.getShipID();
+                if (shipId != null && player instanceof EntityShipCollisionDisabler disabler) {
+                    disabler.removeDisabledCollisionBody(shipId);
+                    new EntityShipCollisionDisablerS2CPacket(shipId, false, ObjectOpenHashSet.of((Entity)player)).sendToPlayers(((ServerLevel)level).players());
+                }
             }
         }
     }
