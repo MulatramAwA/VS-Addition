@@ -174,15 +174,16 @@ class VSAdditionSchemCompat : SchemCompatItem {
     }
 
     private fun onPasteBeforeEvent(level: ServerLevel, loadedShips: List<Pair<ServerShip, Long>>, file: ISerializable?, globalMap: MutableMap<String, Any>, unregister: () -> Unit) {
+        file ?: return
         val data = CompoundTagSerializable()
-        data.deserialize(file!!.serialize())
+        data.deserialize(file.serialize())
         val tag = data.tag ?: return
 
         val mapper = getMapper()
 
         val oldToShip = loadedShips.associate { Pair(it.second, it.first) }
 
-        (tag["data"] as ListTag).map { it ->
+        (tag["data"] as ListTag).map {
             it as CompoundTag
 
             val oldId = it.getLong("oldId")
