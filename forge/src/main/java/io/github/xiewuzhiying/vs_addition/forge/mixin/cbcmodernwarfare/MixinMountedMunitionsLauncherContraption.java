@@ -13,21 +13,21 @@ import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 import org.valkyrienskies.mod.common.util.VectorConversionsMCKt;
-import riftyboi.cbcmodernwarfare.cannon_control.contraption.MountedMunitionsLauncherContraption;
 
 @Pseudo
 @Restriction(
         require = @Condition(value = "cbcmodernwarfare", versionPredicates = "0.0.5f+mc.1.20.1-forge")
 )
-@Mixin(MountedMunitionsLauncherContraption.class)
+@Mixin(targets = "riftyboi.cbcmodernwarfare.cannon_control.contraption.MountedMunitionsLauncherContraption")
 public abstract class MixinMountedMunitionsLauncherContraption {
     @ModifyExpressionValue(
             method = "fireShot",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/phys/Vec3;subtract(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;",
+                    target = "Lnet/minecraft/world/phys/Vec3;m_82546_(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;",
                     ordinal = 1
-            )
+            ),
+            remap = false
     )
     private Vec3 transformToWorld(final Vec3 original, final @Local(argsOnly = true) ServerLevel level, final @Local(name = "vec") LocalRef<Vec3> vec) {
         if (VSGameUtilsKt.isBlockInShipyard(level, original)) {

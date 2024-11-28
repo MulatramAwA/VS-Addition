@@ -2,8 +2,6 @@ package io.github.xiewuzhiying.vs_addition.compats.computercraft
 
 import dan200.computercraft.api.ComputerCraftAPI
 import dan200.computercraft.api.peripheral.IPeripheral
-import dan200.computercraft.impl.Peripherals
-import dan200.computercraft.shared.peripheral.generic.methods.InventoryMethods
 import dev.architectury.platform.Platform
 import io.github.xiewuzhiying.vs_addition.VSAdditionConfig
 import io.github.xiewuzhiying.vs_addition.VSAdditionMod.CLOCKWORK_ACTIVE
@@ -11,17 +9,13 @@ import io.github.xiewuzhiying.vs_addition.VSAdditionMod.EUREKA_ACTIVE
 import io.github.xiewuzhiying.vs_addition.compats.computercraft.PeripheralCommon.PeripheralSupplier
 import io.github.xiewuzhiying.vs_addition.compats.computercraft.peripheral.*
 import net.minecraft.core.BlockPos
-import net.minecraft.core.Direction
-import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
-import net.minecraft.world.level.block.state.BlockState
 import org.valkyrienskies.clockwork.ClockworkBlocks
 import org.valkyrienskies.clockwork.content.contraptions.flap.FlapBearingBlockEntity
 import org.valkyrienskies.eureka.EurekaBlocks
 import org.valkyrienskies.eureka.blockentity.ShipHelmBlockEntity
-import rbasamoyai.createbigcannons.cannon_control.cannon_mount.CannonMountBlockEntity
 
 object PeripheralCommon {
     private val peripheralMap: MutableMap<Block, PeripheralSupplier> = HashMap()

@@ -1,7 +1,6 @@
 package io.github.xiewuzhiying.vs_addition.forge.mixin.tallyho;
 
 import dev.architectury.platform.Platform;
-import edn.stratodonut.tallyho.CommonEvents;
 import net.minecraftforge.event.level.ExplosionEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
@@ -10,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Pseudo
-@Mixin(CommonEvents.class)
+@Mixin(targets = "edn.stratodonut.tallyho.CommonEvents")
 public abstract class MixinCommonEvents {
     @Inject(
             method = "onExplosion",

@@ -108,9 +108,6 @@ dependencies {
     modImplementation files("jars/createbigcannons-5.6.0-dev-mc.1.20.1-forge-build.87.jar")
     modImplementation("maven.modrinth:create-unify:Np3KoD0u")
 
-    // CBC Modern Warfare
-    modCompileOnly files("jars/cbcmodernwarfare-0.0.5f+mc.1.20.1-forge.jar")
-
     // CC&A
     modImplementation("maven.modrinth:createaddition:1.20.1-1.2.4e")
 
@@ -129,9 +126,6 @@ dependencies {
 
     // Presence Footsteps
     modCompileOnly("curse.maven:presence-footsteps-forge-433068:5015286")
-
-    //Tallyho
-    modCompileOnly files("jars/tallyho-3.0.8.jar")
 
     //Xaero's minimap
     modCompileOnly("maven.modrinth:xaeros-minimap-fair:FP24.2.0_Forge_1.20")

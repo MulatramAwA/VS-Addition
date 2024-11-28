@@ -16,10 +16,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import rbasamoyai.createbigcannons.cannon_control.contraption.PitchOrientedContraptionEntity;
 import rbasamoyai.createbigcannons.munitions.autocannon.AbstractAutocannonProjectile;
-import riftyboi.cbcmodernwarfare.cannon_control.contraption.MountedRotarycannonContraption;
 
 @Pseudo
-@Mixin(MountedRotarycannonContraption.class)
+@Mixin(targets = "riftyboi.cbcmodernwarfare.cannon_control.contraption.MountedRotarycannonContraption")
 public abstract class MixinMountedRotarycannonContraption implements MountedAutocannonContraptionMixinDuck {
 
     @Unique
@@ -29,8 +28,9 @@ public abstract class MixinMountedRotarycannonContraption implements MountedAuto
             method = "fireShot",
             at = @At(
                     value = "INVOKE",
-                    target = "Lrbasamoyai/createbigcannons/munitions/autocannon/AbstractAutocannonProjectile;shoot(DDDFF)V"
-            )
+                    target = "Lrbasamoyai/createbigcannons/munitions/autocannon/AbstractAutocannonProjectile;m_6686_(DDDFF)V"
+            ),
+            remap = false
     )
     public void shoot(AbstractAutocannonProjectile instance, double x, double y, double z, float velocity, float inaccuracy, Operation<Void> original, @Local(argsOnly = true) PitchOrientedContraptionEntity entity) {
         CannonUtils.modify(instance, x, y, z, velocity, inaccuracy, entity, VSAdditionConfig.SERVER.getCreateBigCannons().getRotaryCannonRecoilForce(), original::call);

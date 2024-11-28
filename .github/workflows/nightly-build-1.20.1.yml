@@ -38,54 +38,6 @@ jobs:
           distribution: "temurin"
           java-version: 17
 
-      - name: Download Modern Warfare
-        uses: Fork-on-the-Table-Collective/upload-to-download-from-gdrive@v2.0.0
-        with:
-          credentials: ${{ secrets.GSA_CREDENTIALS }}
-          actionType: download
-          localPath: ./forge/jars/cbcmodernwarfare-0.0.5f+mc.1.20.1-forge.jar
-          googleFileId: 15KCNyGuQKrEgxLQ0tSdnper99MO-CEyv
-
-      - name: Download Create Big Cannons (Common)
-        uses: Fork-on-the-Table-Collective/upload-to-download-from-gdrive@v2.0.0
-        with:
-          credentials: ${{ secrets.GSA_CREDENTIALS }}
-          actionType: download
-          localPath: ./common/jars/createbigcannons-5.6.0-dev-mc.1.20.1-fabric-build.87.jar
-          googleFileId: 1e_HE8RAPTTIpMtmHp4n1VsoGumqyFlzG
-
-      - name: Download Create Big Cannons (Fabric)
-        uses: Fork-on-the-Table-Collective/upload-to-download-from-gdrive@v2.0.0
-        with:
-          credentials: ${{ secrets.GSA_CREDENTIALS }}
-          actionType: download
-          localPath: ./fabric/jars/createbigcannons-5.6.0-dev-mc.1.20.1-fabric-build.87.jar
-          googleFileId: 1e_HE8RAPTTIpMtmHp4n1VsoGumqyFlzG
-
-      - name: Download Create Big Cannons (Forge)
-        uses: Fork-on-the-Table-Collective/upload-to-download-from-gdrive@v2.0.0
-        with:
-          credentials: ${{ secrets.GSA_CREDENTIALS }}
-          actionType: download
-          localPath: ./forge/jars/createbigcannons-5.6.0-dev-mc.1.20.1-forge-build.87.jar
-          googleFileId: 1eaFIoPYUcroNHynGEgTK-gg5t1n_OHyl
-
-      - name: Download Valkyrien Ship Schematics
-        uses: Fork-on-the-Table-Collective/upload-to-download-from-gdrive@v2.0.0
-        with:
-          credentials: ${{ secrets.GSA_CREDENTIALS }}
-          actionType: download
-          localPath: ./common/jars/valkyrien-ship-schematics-fabric-1.0.jar
-          googleFileId: 1hGQuv304eS5rO0VmR992T9WqmOTqHde2
-
-      - name: Download Tallyho
-        uses: Fork-on-the-Table-Collective/upload-to-download-from-gdrive@v2.0.0
-        with:
-          credentials: ${{ secrets.GSA_CREDENTIALS }}
-          actionType: download
-          localPath: ./forge/jars/tallyho-3.0.8.jar
-          googleFileId: 1B0JbYHXQOj_g666pOvs-FmDvK6hUd7LK
-
       - name: Make Gradle Wrapper Executable
         if: ${{ runner.os != 'Windows' }}
         run: chmod +x ./gradlew

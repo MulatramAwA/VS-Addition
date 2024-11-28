@@ -8,7 +8,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.valkyrienskies.mod.compat.CreateCompat;
-import riftyboi.cbcmodernwarfare.cannon_control.contraption.MountedMunitionsLauncherContraption;
 
 @Pseudo
 @Restriction(
@@ -25,6 +24,6 @@ public abstract class MixinCreateCompat {
             remap = false
     )
     private static boolean withOutMunitionsLauncher(Class instance, Object o, Operation<Boolean> original) {
-        return original.call(instance, o) && !(o instanceof MountedMunitionsLauncherContraption);
+        return original.call(instance, o) && !(o.getClass().getName().equals("riftyboi.cbcmodernwarfare.cannon_control.contraption.MountedMunitionsLauncherContraption"));
     }
 }

@@ -18,10 +18,10 @@ classes
 .settings
 *.launch
 
-common/jars/
-fabric/jars/
-forge/jars/
-jars/
+common/jars/ignore
+fabric/jars/ignore
+forge/jars/ignore
+jars/ignore
 .architectury-transformer
 
 reports

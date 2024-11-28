@@ -8,21 +8,22 @@ import io.github.xiewuzhiying.vs_addition.compats.createbigcannons.CannonUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Coerce;
 import rbasamoyai.createbigcannons.cannon_control.contraption.PitchOrientedContraptionEntity;
-import riftyboi.cbcmodernwarfare.cannon_control.contraption.MountedMediumcannonContraption;
-import riftyboi.cbcmodernwarfare.munitions.medium_cannon.AbstractMediumcannonProjectile;
+import rbasamoyai.createbigcannons.munitions.AbstractCannonProjectile;
 
 @Pseudo
-@Mixin(MountedMediumcannonContraption.class)
+@Mixin(targets = "riftyboi.cbcmodernwarfare.cannon_control.contraption.MountedMediumcannonContraption")
 public abstract class MixinMountedMediumcannonContraption{
     @WrapOperation(
             method = "fireShot",
             at = @At(
                     value = "INVOKE",
-                    target = "Lriftyboi/cbcmodernwarfare/munitions/medium_cannon/AbstractMediumcannonProjectile;shoot(DDDFF)V"
-            )
+                    target = "Lriftyboi/cbcmodernwarfare/munitions/medium_cannon/AbstractMediumcannonProjectile;m_6686_(DDDFF)V"
+            ),
+            remap = false
     )
-    public void shoot(AbstractMediumcannonProjectile instance, double x, double y, double z, float velocity, float inaccuracy, Operation<Void> original, @Local(argsOnly = true) PitchOrientedContraptionEntity entity) {
-        CannonUtils.modify(instance, x, y, z, velocity, inaccuracy, entity, VSAdditionConfig.SERVER.getCreateBigCannons().getMediumCannonRecoilForce(), original::call);
+    public void shoot(@Coerce Object instance, double x, double y, double z, float velocity, float inaccuracy, Operation<Void> original, @Local(argsOnly = true) PitchOrientedContraptionEntity entity) {
+        CannonUtils.modify((AbstractCannonProjectile) instance, x, y, z, velocity, inaccuracy, entity, VSAdditionConfig.SERVER.getCreateBigCannons().getMediumCannonRecoilForce(), original::call);
     }
 }
