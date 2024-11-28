@@ -84,6 +84,25 @@ object VSAdditionConfig {
 
             @JsonSchema(description = "Not available yet. DO NOT OPEN THIS!")
             var copycatMaterialMass : Boolean = false
+
+            val psi = PSI()
+
+            class PSI {
+                @JsonSchema(description = "Temporary item storage for each pair of interfaces (unit: slot)", min = 0.0, max = Double.MAX_VALUE)
+                var itemTemp : Int = 8
+
+                @JsonSchema(description = "Temporary fluid storage for each pair of interfaces (unit: bucket)", min = 0.0, max = Double.MAX_VALUE)
+                var fluidTemp : Int = 4
+
+                @JsonSchema(description = "Temporary energy storage for each pair of interfaces (unit: FE/ME)", min = 0.0, max = Double.MAX_VALUE)
+                var energyTemp : Int = 1000000
+
+                @JsonSchema(description = "Max Input every tick of energy interfaces (unit: FE/ME)", min = 0.0, max = Double.MAX_VALUE)
+                var energyMaxInput : Int = 5000
+
+                @JsonSchema(description = "Max Output every tick of energy interfaces (unit: FE/ME)", min = 0.0, max = Double.MAX_VALUE)
+                var energyMaxOutput : Int = 5000
+            }
         }
 
         val createBigCannons = CREATEBIGCANNONS()

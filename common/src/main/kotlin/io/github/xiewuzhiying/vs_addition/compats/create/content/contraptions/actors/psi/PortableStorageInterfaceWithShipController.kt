@@ -32,6 +32,7 @@ open class PortableStorageInterfaceWithShipController(open val be: PortableStora
     open var manager: PortableStorageInterfaceConstraintManager? = null
     open var connectionAnimation: LerpedFloat = LerpedFloat.linear().startWithValue(0.0);
     open var transferTimer = 0
+    open var latestOtherPos = Vector3d()
     open var latestDistance = 0.0
 
     open fun startTransferringTo(otherController: PortableStorageInterfaceWithShipController) {
@@ -61,11 +62,10 @@ open class PortableStorageInterfaceWithShipController(open val be: PortableStora
     }
 
     open fun canTransfer() : Boolean {
-        //return true
         if (!isConnected) {
             stopTransferring();
         }
-        return this.other!= null //&& (this.be as PortableStorageInterfaceBlockEntityAccessor).getIsConnected()
+        return this.other!= null && this.isConnected && this.other!!.isConnected
     }
 
     open fun tick(ci: CallbackInfo) {
@@ -98,12 +98,24 @@ open class PortableStorageInterfaceWithShipController(open val be: PortableStora
         val other = this.other
 
         if (other != null) {
-            val pos0 = getConnectionCenter(level, this.be)
-            val pos1 = getConnectionCenter(level, other.be)
+            val pos0 = getConnectionPos(level, this.be)
+            val pos1 = getConnectionPos(level, other.be)
             latestDistance = pos0.distance(pos1)
         }
 
         return (connectionAnimation.getValue(partialTicks).pow(2.0f) * latestDistance / 2).toFloat()
+    }
+
+    open fun getConnectionCenter() : Vector3d {
+        val level = be.level ?: return Vector3d()
+        val other = this.other
+
+        val pos0 = getConnectionPos(level, this.be)
+        if (other != null) {
+            latestOtherPos.set(getConnectionPos(level, other.be))
+        }
+
+        return pos0.lerp(latestOtherPos, 0.5)
     }
 
     open fun updateDistance() {
@@ -162,7 +174,7 @@ open class PortableStorageInterfaceWithShipController(open val be: PortableStora
             }
         }
 
-        findPSI(aabb)
+        findPSI(worldAabb)
     }
 
     open fun getConstraintManager() : PortableStorageInterfaceConstraintManager? {
@@ -188,7 +200,7 @@ open class PortableStorageInterfaceWithShipController(open val be: PortableStora
     }
 
     companion object {
-        fun getConnectionCenter(level: Level, be: PortableStorageInterfaceBlockEntity) : Vector3d {
+        fun getConnectionPos(level: Level, be: PortableStorageInterfaceBlockEntity) : Vector3d {
             val center = be.blockPos.centerJOMLD
             val ship = level.getShipManagingPos(center)
             val blockState = be.blockState

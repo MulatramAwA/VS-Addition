@@ -25,12 +25,16 @@ class InterfaceFluidHandler(wrapped: Storage<FluidVariant>, private val behavior
         return drain
     }
 
-    override fun iterator(): MutableIterator<StorageView<FluidVariant>> {
-        return ProcessingIterator(super.iterator()) { view: StorageView<FluidVariant> -> this.listen(view) }
+    override fun exactView(resource: FluidVariant?): StorageView<FluidVariant?> {
+        return this.listen(super.exactView(resource))
     }
 
-    private fun <T> listen(view: StorageView<T>?): StorageView<T> {
-        return ListeningStorageView(view) { this.keepAlive() }
+    override fun iterator(): MutableIterator<StorageView<FluidVariant>> {
+        return ProcessingIterator(super.iterator()) { view -> this.listen(view) }
+    }
+
+    fun <T> listen(view: StorageView<T?>?): StorageView<T?> {
+        return ListeningStorageView<T?>(view) { this.keepAlive() }
     }
 
     fun setWrapped(wrapped: Storage<FluidVariant>) {

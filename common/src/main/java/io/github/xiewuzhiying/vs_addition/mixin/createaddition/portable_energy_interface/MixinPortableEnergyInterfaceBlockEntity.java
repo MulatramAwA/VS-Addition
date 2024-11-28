@@ -6,7 +6,9 @@ import com.mrh0.createaddition.blocks.portable_energy_interface.PortableEnergyIn
 import io.github.xiewuzhiying.vs_addition.compats.create.content.contraptions.actors.psi.PortableStorageInterfaceWithShipController;
 import io.github.xiewuzhiying.vs_addition.mixinducks.create.portable_interface.IPSIWithShipBehavior;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 
+@Pseudo
 @Mixin(PortableEnergyInterfaceBlockEntity.class)
 public abstract class MixinPortableEnergyInterfaceBlockEntity {
     @WrapMethod(

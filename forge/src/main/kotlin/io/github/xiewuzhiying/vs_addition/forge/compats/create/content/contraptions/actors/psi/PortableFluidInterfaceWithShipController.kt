@@ -1,6 +1,8 @@
 package io.github.xiewuzhiying.vs_addition.forge.compats.create.content.contraptions.actors.psi
 
 import com.simibubi.create.content.contraptions.actors.psi.PortableFluidInterfaceBlockEntity
+import io.github.xiewuzhiying.vs_addition.PlatformUtils
+import io.github.xiewuzhiying.vs_addition.VSAdditionConfig
 import io.github.xiewuzhiying.vs_addition.compats.create.content.contraptions.actors.psi.PortableStorageInterfaceWithShipController
 import io.github.xiewuzhiying.vs_addition.mixinducks.create.portable_interface.IPSIWithShipBehavior
 import net.minecraftforge.common.util.LazyOptional
@@ -20,7 +22,7 @@ open class PortableFluidInterfaceWithShipController(be: PortableFluidInterfaceBl
         }
         val oldCap0 = capability
         val oldCap1 = otherController.capability
-        capability = LazyOptional.of { InterfaceFluidHandler(FluidTank(4000), be as IPSIWithShipBehavior) }
+        capability = LazyOptional.of { InterfaceFluidHandler(FluidTank(PlatformUtils.getBucketToFluidUnit(VSAdditionConfig.SERVER.create.psi.fluidTemp)), be as IPSIWithShipBehavior) }
         otherController.capability = capability
         oldCap0?.invalidate()
         oldCap1?.invalidate()

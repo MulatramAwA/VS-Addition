@@ -23,8 +23,7 @@ class InterfaceFluidHandler(private val wrapped: IFluidHandler, private val beha
     }
 
     override fun fill(resource: FluidStack, action: FluidAction): Int {
-        //if (!(behavior.controller.be as PortableStorageInterfaceBlockEntityAccessor).getIsConnected()) return 0
-        if (!behavior.controller.canTransfer()) return 0
+        if (!behavior.controller.isConnected) return 0
         val fill = wrapped.fill(resource, action)
         if (fill > 0 && action.execute()) this.keepAlive()
         return fill

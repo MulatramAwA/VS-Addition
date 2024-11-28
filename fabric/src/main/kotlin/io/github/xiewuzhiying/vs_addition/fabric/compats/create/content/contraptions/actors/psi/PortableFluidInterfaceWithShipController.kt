@@ -2,7 +2,10 @@ package io.github.xiewuzhiying.vs_addition.fabric.compats.create.content.contrap
 
 import com.simibubi.create.content.contraptions.actors.psi.PortableFluidInterfaceBlockEntity
 import io.github.fabricators_of_create.porting_lib.transfer.fluid.FluidTank
+import io.github.xiewuzhiying.vs_addition.PlatformUtils
+import io.github.xiewuzhiying.vs_addition.VSAdditionConfig
 import io.github.xiewuzhiying.vs_addition.compats.create.content.contraptions.actors.psi.PortableStorageInterfaceWithShipController
+import io.github.xiewuzhiying.vs_addition.fabric.compats.createaddition.content.contraptions.actors.psi.PortableEnergyInterfaceWithShipController
 import io.github.xiewuzhiying.vs_addition.mixinducks.create.portable_interface.IPSIWithShipBehavior
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage
 
@@ -17,15 +20,15 @@ open class PortableFluidInterfaceWithShipController(be: PortableFluidInterfaceBl
         if (otherController !is PortableFluidInterfaceWithShipController || this == otherController || this.other == otherController) {
             return
         }
-        val wrapped = FluidTank(4000)
-        capability?.setWrapped(wrapped)
-        otherController.capability?.setWrapped(wrapped)
+        this.capability = InterfaceFluidHandler(FluidTank(PlatformUtils.getBucketToFluidUnit(VSAdditionConfig.SERVER.create.psi.fluidTemp).toLong()), this.be as IPSIWithShipBehavior)
+        otherController.capability = this.capability
 
         super.startTransferringTo(otherController)
     }
 
     override fun stopTransferring() {
         capability?.setWrapped(Storage.empty())
+        (other as? PortableFluidInterfaceWithShipController)?.capability?.setWrapped(Storage.empty())
         other?.let { it.isPassive = false }
         super.stopTransferring()
     }

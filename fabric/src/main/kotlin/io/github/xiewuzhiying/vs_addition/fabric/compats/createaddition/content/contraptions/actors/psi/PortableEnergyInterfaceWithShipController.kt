@@ -1,7 +1,7 @@
 package io.github.xiewuzhiying.vs_addition.fabric.compats.createaddition.content.contraptions.actors.psi
 
 import com.mrh0.createaddition.blocks.portable_energy_interface.PortableEnergyInterfaceBlockEntity
-import com.mrh0.createaddition.config.Config
+import io.github.xiewuzhiying.vs_addition.VSAdditionConfig
 import io.github.xiewuzhiying.vs_addition.compats.create.content.contraptions.actors.psi.PortableStorageInterfaceWithShipController
 import io.github.xiewuzhiying.vs_addition.fabric.compats.create.content.contraptions.actors.psi.FabricPortableStorageInterfaceWithShipController
 import io.github.xiewuzhiying.vs_addition.mixinducks.create.portable_interface.IPSIWithShipBehavior
@@ -19,9 +19,15 @@ open class PortableEnergyInterfaceWithShipController(be: PortableEnergyInterface
         if (otherController !is PortableEnergyInterfaceWithShipController || this == otherController || this.other == otherController) {
             return
         }
-        val wrapped = SimpleEnergyStorage(Config.ACCUMULATOR_CAPACITY.get() / 2, Config.ACCUMULATOR_MAX_INPUT.get(), Config.ACCUMULATOR_MAX_OUTPUT.get())
-        capability?.setWrapped(wrapped)
-        otherController.capability?.setWrapped(wrapped)
+        capability = InterfaceEnergyHandler(
+            SimpleEnergyStorage(
+                VSAdditionConfig.SERVER.create.psi.energyTemp.toLong(),
+                VSAdditionConfig.SERVER.create.psi.energyMaxInput.toLong(),
+                VSAdditionConfig.SERVER.create.psi.energyMaxOutput.toLong()
+            ),
+            be as IPSIWithShipBehavior
+        )
+        otherController.capability = capability
 
         super.startTransferringTo(otherController)
     }
