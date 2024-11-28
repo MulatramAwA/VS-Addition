@@ -165,6 +165,10 @@ fun toRenderWorldCoordinates(pos: Vector3d) : Vector3d {
     return VSClientGameUtils.getClientShip(pos.x, pos.y, pos.z)?.renderTransform?.shipToWorld?.transformPosition(pos) ?: pos
 }
 
+fun toRenderWorldCoordinates(pos: Vec3) : Vec3 {
+    return toRenderWorldCoordinates(pos.toJOML()).toMinecraft()
+}
+
 var EntityDraggingInformation.addedPitchRotLastTick : Double
     get() = (this as EntityDraggingInformationMixinDuck).addedPitchRotLastTick
     set(value) { (this as EntityDraggingInformationMixinDuck).addedPitchRotLastTick = value }
