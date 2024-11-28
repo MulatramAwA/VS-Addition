@@ -49,6 +49,10 @@ object VSAdditionConfig {
         @JsonSchema(description = "VS2 default block hardness")
         var defaultBlockHardness : Double = 1.0
 
+        var defaultFluidDensity : Double = 100.0
+
+        var defaultFluidDragCoefficient : Double = 0.3
+
         @JsonSchema(description = "Disable some annoying console logs :)")
         var getEntitiesAabbSizeLimit = 1000.0
 

@@ -31,6 +31,7 @@
     "tallyho.MixinCommonEvents",
     "tallyho.MixinPhysBearingBlockEntity",
     "tallyho.MixinTallyhoMod",
+    "valkyrienskies.MixinValkyrienSkiesModForge",
     "valkyrienskies.water.MixinEntity"
   ],
   "client": [

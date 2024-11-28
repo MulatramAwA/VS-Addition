@@ -22,6 +22,7 @@ import io.github.xiewuzhiying.vs_addition.networking.airpocket.SyncAllPocketsC2S
 import net.spaceeye.vmod.compat.schem.SchemCompatObj
 import org.valkyrienskies.core.impl.config.VSConfigClass
 import org.valkyrienskies.core.impl.hooks.VSEvents
+import org.valkyrienskies.mod.common.BlockStateInfo
 
 object VSAdditionMod {
     const val MOD_ID = "vs_addition"
@@ -56,9 +57,11 @@ object VSAdditionMod {
 
         VSConfigClass.registerConfig("vs_addition", VSAdditionConfig::class.java)
 
-        EntityEvent.ADD.register(EntityEvent.Add { entity, world -> EntityFreshCaller.freshEntityInShipyard(entity, world) } )
-
         VSAdditionMessage.registerC2SPackets()
+
+        BlockStateInfo.init()
+
+        EntityEvent.ADD.register(EntityEvent.Add { entity, world -> EntityFreshCaller.freshEntityInShipyard(entity, world) } )
 
         CommandRegistrationEvent.EVENT.register { dispatcher, registry, selection ->
             FakeAirPocket.registerCommands(dispatcher, registry, selection)

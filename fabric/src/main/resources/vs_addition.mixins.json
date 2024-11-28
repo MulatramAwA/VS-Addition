@@ -15,6 +15,7 @@
     "netmusic.MusicToClientMessageAccessor",
     "tacz.MixinEntityKineticBullet",
     "tacz.MixinProjectileExplosion",
+    "valkyrienskies.MixinValkyrienSkiesModFabric",
     "valkyrienskies.water.MixinEntity"
   ],
   "client": [
