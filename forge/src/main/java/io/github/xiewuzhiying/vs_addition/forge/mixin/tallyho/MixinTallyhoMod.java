@@ -1,23 +1,20 @@
 package io.github.xiewuzhiying.vs_addition.forge.mixin.tallyho;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.sugar.Local;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Pseudo
 @Mixin(targets = "edn.stratodonut.tallyho.TallyhoMod")
 public abstract class MixinTallyhoMod {
-    @ModifyExpressionValue(
+    @ModifyVariable(
             method = "onCommonSetup",
-            at = @At(
-                    value = "CONSTANT",
-                    args = "intValue==0"
-            ),
+            at = @At("STORE"),
+            ordinal = 0,
             remap = false
     )
-    private int onCommonSetup(int value, @Local(ordinal = 0) int var4) {
-        return var4;
+    private int onCommonSetup(int value) {
+        return 0;
     }
 }
