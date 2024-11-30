@@ -132,8 +132,6 @@ dependencies {
 
     // Ballistix
     modCompileOnly("maven.modrinth:ballistix:1.20.1-0.7.0-4")
-
-    modCompileOnly files("jars/tallyho-3.0.8.jar")
 }
 
 processResources {
