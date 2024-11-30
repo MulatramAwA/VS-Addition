@@ -1,9 +1,9 @@
 package io.github.xiewuzhiying.vs_addition.networking.airpocket
 
 import dev.architectury.networking.NetworkManager
-import io.github.xiewuzhiying.vs_addition.networking.VSAdditionMessage.FAKE_AIR_POCKET_SYNC_BY_ID
 import io.github.xiewuzhiying.vs_addition.context.airpocket.FakeAirPocketClient.setAirPocket
 import io.github.xiewuzhiying.vs_addition.context.airpocket.PocketId
+import io.github.xiewuzhiying.vs_addition.networking.VSAdditionMessage.FAKE_AIR_POCKET_SYNC_BY_ID
 import io.github.xiewuzhiying.vs_addition.util.readAABBd
 import io.github.xiewuzhiying.vs_addition.util.writeAABBdc
 import io.netty.buffer.Unpooled
@@ -19,10 +19,7 @@ class SyncSinglePocketS2CPacket(private val shipId: ShipId, private val pocketId
     }
 
     fun sendToPlayers(players: Iterable<ServerPlayer>) {
-        val buf = getBuf()
-        players.forEach {
-            NetworkManager.sendToPlayer(it, FAKE_AIR_POCKET_SYNC_BY_ID, buf)
-        }
+        NetworkManager.sendToPlayers(players,  FAKE_AIR_POCKET_SYNC_BY_ID, getBuf())
     }
 
     private fun getBuf() : FriendlyByteBuf {

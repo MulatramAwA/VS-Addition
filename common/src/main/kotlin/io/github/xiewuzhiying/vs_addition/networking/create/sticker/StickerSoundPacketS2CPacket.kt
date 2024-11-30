@@ -18,10 +18,7 @@ class StickerSoundPacketS2CPacket(private val blockPos: BlockPos, private val at
     }
 
     fun sendToPlayers(players: Iterable<ServerPlayer>) {
-        val buf = getBuf()
-        players.forEach {
-            NetworkManager.sendToPlayer(it, STICKER_SOUND, buf)
-        }
+        NetworkManager.sendToPlayers(players, STICKER_SOUND, getBuf())
     }
 
     private fun getBuf() : FriendlyByteBuf {

@@ -18,10 +18,7 @@ class EntityShipCollisionDisablerS2CPacket(private val shipId: ShipId, private v
     }
 
     fun sendToPlayers(players: Iterable<ServerPlayer>) {
-        val buf = getBuf()
-        players.forEach {
-            NetworkManager.sendToPlayer(it, ENTITY_SHIP_COLLISION_DISABLER, buf)
-        }
+        NetworkManager.sendToPlayers(players, ENTITY_SHIP_COLLISION_DISABLER, getBuf())
     }
 
     private fun getBuf() : FriendlyByteBuf {

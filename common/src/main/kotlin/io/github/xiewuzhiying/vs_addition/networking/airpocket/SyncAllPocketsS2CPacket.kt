@@ -20,10 +20,7 @@ class SyncAllPocketsS2CPacket(private val shipId: ShipId, private val pockets: M
     }
 
     fun sendToPlayers(players: Iterable<ServerPlayer>) {
-        val buf = getBuf()
-        players.forEach {
-            NetworkManager.sendToPlayer(it, FAKE_AIR_POCKET_SYNC_ALL, buf)
-        }
+        NetworkManager.sendToPlayers(players, FAKE_AIR_POCKET_SYNC_ALL, getBuf())
     }
 
     private fun getBuf() : FriendlyByteBuf {
