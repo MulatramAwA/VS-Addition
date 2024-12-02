@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+import dev.architectury.platform.Platform;
 import io.github.xiewuzhiying.vs_addition.context.conditiontester.ExplosionConditionTester;
 import io.github.xiewuzhiying.vs_addition.util.ConversionUtilsKt;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
@@ -26,6 +27,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.valkyrienskies.core.api.ships.LoadedServerShip;
+import org.valkyrienskies.core.api.ships.LoadedShip;
 import org.valkyrienskies.core.util.AABBdUtilKt;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 import org.valkyrienskies.mod.common.config.VSGameConfig;
@@ -38,8 +40,7 @@ import static io.github.xiewuzhiying.vs_addition.util.ShipUtilsKt.getLoadedShips
 
 @Pseudo
 @Restriction(
-        require = @Condition(type = Condition.Type.TESTER, tester = ExplosionConditionTester.class),
-        conflict = { @Condition("lithium"), @Condition("radium"), @Condition("canary") }
+        require = @Condition(type = Condition.Type.TESTER, tester = ExplosionConditionTester.class)
 )
 @Mixin(Explosion.class)
 public abstract class MixinExplosion {
@@ -74,16 +75,23 @@ public abstract class MixinExplosion {
             method = "explode",
             at = @At("HEAD")
     )
-    private void getShips(final CallbackInfo ci, @Share("ships") final LocalRef<Iterable<ImmutablePair<LoadedServerShip, GameTickForceApplier>>> pairs) {
-        final List<ImmutablePair<LoadedServerShip, GameTickForceApplier>> list = new ArrayList<>();
-        getLoadedShipsIntersecting(this.level, AABBdUtilKt.expand(new AABBd(this.x, this.y, this.z, this.x, this.y, this.z), this.radius)).forEach(ship -> {
-            if (ship instanceof LoadedServerShip serverShip) {
-                if (serverShip.getAttachment(GameTickForceApplier.class) == null) {
-                    serverShip.setAttachment(GameTickForceApplier.class, new GameTickForceApplier());
-                }
-                list.add(ImmutablePair.of(serverShip, serverShip.getAttachment(GameTickForceApplier.class)));
+    private void getShips(final CallbackInfo ci, @Share("pairs") final LocalRef<Iterable<ImmutablePair<LoadedShip, GameTickForceApplier>>> pairs) {
+        final List<ImmutablePair<LoadedShip, GameTickForceApplier>> list = new ArrayList<>();
+        final Iterable<LoadedShip> ships = getLoadedShipsIntersecting(this.level, AABBdUtilKt.expand(new AABBd(this.x, this.y, this.z, this.x, this.y, this.z), this.radius));
+        for (LoadedShip ship : ships) {
+            if (this.level.isClientSide()) {
+                list.add(ImmutablePair.of(ship, null));
+                continue;
             }
-        });
+            if (ship instanceof LoadedServerShip serverShip) {
+                GameTickForceApplier applier = serverShip.getAttachment(GameTickForceApplier.class);
+                if (applier == null) {
+                    applier = new GameTickForceApplier();
+                    serverShip.setAttachment(GameTickForceApplier.class, applier);
+                }
+                list.add(ImmutablePair.of(serverShip, applier));
+            }
+        }
         pairs.set(Collections.unmodifiableList(list));
     }
 
@@ -96,9 +104,9 @@ public abstract class MixinExplosion {
     )
     private boolean injector(final boolean original, @Local(ordinal = 4) final double m, @Local(ordinal = 5) final double n, @Local(ordinal = 6) final double o,
                              @Local(ordinal = 0) final LocalFloatRef h, @Local final Set<BlockPos> set,
-                             @Share("pairs") final LocalRef<Iterable<ImmutablePair<LoadedServerShip, GameTickForceApplier>>> pairs) {
+                             @Share("pairs") final LocalRef<Iterable<ImmutablePair<LoadedShip, GameTickForceApplier>>> pairs) {
         boolean needToBreak = false;
-        for (final ImmutablePair<LoadedServerShip, GameTickForceApplier> pair : pairs.get()) {
+        for (final ImmutablePair<LoadedShip, GameTickForceApplier> pair : pairs.get()) {
             if (!(h.get() > 0.0F)) {
                 needToBreak = true;
                 break;
@@ -113,17 +121,21 @@ public abstract class MixinExplosion {
             if (optional.isPresent()) {
                 final float originH = h.get();
                 final float sub = (optional.get() + 0.3F) * 0.3F;
-                final Vector3d vec32 = worldToShip.transformPosition(new Vector3d(this.x, this.y, this.z));
+                if (!this.level.isClientSide()) {
+                    final GameTickForceApplier forceApplier = pair.getRight();
+                    if (forceApplier != null) {
+                        final Vector3d vec32 = worldToShip.transformPosition(new Vector3d(this.x, this.y, this.z));
 
-                vec32.sub(vec31);
-                final double distanceMult = Math.max(0, (this.radius - vec32.length()));
-                vec32.normalize();
-                vec32.mul(distanceMult);
-                vec32.mul(VSGameConfig.SERVER.getExplosionBlastForce() * Math.min(originH, sub) * 0.000001);
+                        vec32.sub(vec31);
+                        final double distanceMult = Math.max(0, (this.radius - vec32.length()));
+                        vec32.normalize();
+                        vec32.mul(distanceMult);
+                        vec32.mul(VSGameConfig.SERVER.getExplosionBlastForce() * Math.min(originH, sub) * 0.000001);
 
-                final GameTickForceApplier forceApplier = pair.getRight();
-                if (vec32.isFinite()) {
-                    forceApplier.applyInvariantForceToPos(vec32, vec31);
+                        if (vec32.isFinite()) {
+                            forceApplier.applyInvariantForceToPos(vec32, vec31);
+                        }
+                    }
                 }
                 h.set(originH - sub);
             }

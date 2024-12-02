@@ -46,6 +46,7 @@
     "minecraft.MixinClipContext",
     "minecraft.MixinCompassItem",
     "minecraft.MixinEntity",
+    "minecraft.MixinExplosion",
     "minecraft.MixinHitResult",
     "minecraft.MixinLevelChunk",
     "minecraft.MixinServerLevel",
