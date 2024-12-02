@@ -3,6 +3,7 @@ package io.github.xiewuzhiying.vs_addition.forge.mixin.embeddium.client;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import io.github.xiewuzhiying.vs_addition.VSAdditionConfig;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import me.jellysquid.mods.sodium.client.render.SodiumWorldRenderer;
@@ -27,7 +28,11 @@ public abstract class MixinSodiumWorldRenderer {
             remap = false
     )
     private boolean enableBlockEntityCulling1(boolean original) {
-        return true;
+        if (VSAdditionConfig.CLIENT.getEmbeddium().getEnableBlockEntityCullOnShips()) {
+            return true;
+        } else {
+            return original;
+        }
     }
 
     @ModifyExpressionValue(
@@ -39,7 +44,11 @@ public abstract class MixinSodiumWorldRenderer {
             remap = false
     )
     private boolean enableBlockEntityCulling2(boolean original) {
-        return true;
+        if (VSAdditionConfig.CLIENT.getEmbeddium().getEnableBlockEntityCullOnShips()) {
+            return true;
+        } else {
+            return original;
+        }
     }
 
     @WrapOperation(
@@ -51,7 +60,7 @@ public abstract class MixinSodiumWorldRenderer {
             remap = false
     )
     private boolean transformToWorld(Viewport instance, AABB aabb, Operation<Boolean> original) {
-        if (VSGameUtilsKt.isBlockInShipyard(Minecraft.getInstance().level, aabb.minX, aabb.minY, aabb.minZ)) {
+        if (VSAdditionConfig.CLIENT.getEmbeddium().getEnableBlockEntityCullOnShips() && VSGameUtilsKt.isBlockInShipyard(Minecraft.getInstance().level, aabb.minX, aabb.minY, aabb.minZ)) {
             return original.call(instance, VSGameUtilsKt.transformAabbToWorld(Minecraft.getInstance().level, aabb));
         } else {
             return original.call(instance, aabb);

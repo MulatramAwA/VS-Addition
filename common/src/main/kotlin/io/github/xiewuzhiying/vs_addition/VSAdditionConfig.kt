@@ -16,6 +16,13 @@ object VSAdditionConfig {
         @JsonSchema(description = "Enable mechanical arm item remove unavailable interaction point")
         var enablePointRemoval = true
 
+        val embeddium = EMBEDDIUM()
+
+        class EMBEDDIUM {
+            @JsonSchema()
+            var enableBlockEntityCullOnShips = false
+        }
+
         val experimental = EXPERIMENTAL()
 
         class EXPERIMENTAL {
